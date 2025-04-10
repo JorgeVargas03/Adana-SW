@@ -2,7 +2,13 @@ const express = require("express");
 const router = express.Router();
 const controllerDeb = require("../controllers/debController");
 
-const { authenticateToken } = require('../middleware/authMiddleware');
+//Esta implementacion queda temporalmente desactivada hasta se llegue a la parte de autenticacion de usuarios
+//const { authenticateToken } = require('../middleware/authMiddleware');
+
+
+
+
+/* RUTAS DE LOS ENDPOINTS, TOMAR EN CUENTA QUE SON SOLO PARA BASARNOS
 
 //Endpoint para ver todos los debates
 router.get("/debates", authenticateToken, controllerDeb.getAllDebates);
@@ -18,5 +24,7 @@ router.post("/debate/:id", authenticateToken, controllerDeb.addCommentToDebate);
 
 //Endpoint para editar un comentario 
 router.put("/comment/:idComentario", authenticateToken, controllerDeb.updateComment);
+
+*/
 
 module.exports = router;
