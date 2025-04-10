@@ -1,0 +1,117 @@
+/* PALETA DE COLORES */
+:root {
+    --bg-color: #F0F1D2;
+    --bar-color: #FFFDEF;
+    --accent-color: #C3C37E;
+    --accent2-color: #7E7EC3;
+    --font-color: #413324;
+  }
+  
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Estilos generales del body */
+  body {
+    font-family: 'Outfit';
+    background-color: var(--bg-color);
+    color: #333;
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  
+  /* Enlaces */
+  a {
+    color: var(--font-color);
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+   
+  /* Navegación */
+  .navbar {
+    font-family: 'Outfit';
+    font-weight: 700;
+    font-size: larger;
+    background-color: var(--bar-color);
+    border-bottom: 1px solid #ddd;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    font-size: small;
+  }
+  
+  .nav-links li {
+    display: inline;
+  }
+  
+  /* Footer */
+  footer {
+    background-color: var(--bar-color);
+    color: var(--font-color);
+    margin-top: 2rem;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  
+  /* Main layout */
+  main {
+    padding: 2rem; 
+  }
+  
+  /* Botones */
+  button {
+    font-family: 'Outfit';
+    background-color: var(--accent2-color);
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: var(--accent2-color);
+  }
+  
+  /* OUTFIT REGULAR */
+@font-face {
+    font-family: 'Outfit';
+    src: url('../../assets/fonts/Outfit-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  /* OUTFIT BOLD */
+  @font-face {
+    font-family: 'Outfit';
+    src: url('../../assets/fonts/Outfit-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  /* OUTFIT LIGHT */
+  @font-face {
+    font-family: 'Outfit';
+    src: url('../../assets/fonts/Outfit-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  /* OUTFIT THIN */
+  @font-face {
+    font-family: 'Outfit';
+    src: url('../../assets/fonts/Outfit-Thin.ttf') format('truetype');
+    font-weight: 100;
+    font-style: normal;
+  }
