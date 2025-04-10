@@ -1,12 +1,12 @@
 {
-  "name": "publicaciones",
+  "name": "adana-sw",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
     "start": "app.js"
   },
   "keywords": [],
-  "author": "Jorge Betancourt",
+  "author": "Jorge Vargas",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -16,10 +16,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JorgeVargas03/API-publications-authentication.git"
-  },
-  "bugs": {
-    "url": "https://github.com/JorgeVargas03/API-publications-authentication/issues"
-  },
-  "homepage": "https://github.com/JorgeVargas03/API-publications-authentication#readme"
-}
+    "url": "git+https://github.com/JorgeVargas03/Adana-SW.git"
+  }
+  }

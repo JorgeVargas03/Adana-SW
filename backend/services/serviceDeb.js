@@ -1,5 +1,5 @@
 // services/serviceDeb.js
-const { debateCollection } = require("../models/debate");
+const { debateCollection } = require("../models/payments");
 
 exports.getAllDebates = async () => {
   try {
