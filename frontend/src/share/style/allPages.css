@@ -1,11 +1,13 @@
+@import "tailwindcss";
+
 /* PALETA DE COLORES */
-:root {
+@theme {
     --bg-color: #F0F1D2;
     --bar-color: #FFFDEF;
     --accent-color: #C3C37E;
     --accent2-color: #7E7EC3;
     --font-color: #413324;
-  }
+}
   
 
 /* Reset básico */
