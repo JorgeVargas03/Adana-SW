@@ -31,7 +31,6 @@ exports.register = async (req, res) => {
 
     // Guardar en Firestore
     const newUserRef = await userCollection.add(userData);
-
     res.status(201).json({ message: "Usuario registrado exitosamente", id: newUserRef.id });
   } catch (error) {
     res.status(500).json({ message: "Error del servidor" });
@@ -49,7 +48,7 @@ exports.login = async (req, res) => {
       .where("email", "==", email)
       .get();
     if (userSnapshot.empty) {
-      return res.status(400).json({ message: "Argumentos no coinciden" });
+      return res.status(400).json({ message: "Usuario no encontrado!" });
     }
 
     const userDoc = userSnapshot.docs[0];
@@ -58,7 +57,7 @@ exports.login = async (req, res) => {
     // Comparar la contraseña proporcionada con la almacenada
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Argumentos no coinciden" });
+      return res.status(400).json({ message: "Credenciales incorrectas" });
     }
 
     const time = "30m";
@@ -69,11 +68,34 @@ exports.login = async (req, res) => {
       { expiresIn: time }
     );
 
-    res.status(200).json({ token, info: `La solicitud se ha completado con éxito. Sesion: ${time}` });
+    res.status(200).json({ token, info: `Inicio de sesion exitoso, sesion valida durante: ${time}` });
   } catch (error) {
     res.status(500).json({ message: "Error al iniciar sesión" });
   }
 };
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const usersSnapshot = await userCollection.get();
+
+    // Verificar si hay documentos
+    if (usersSnapshot.empty) {
+      return res.status(404).json({ message: "No hay usuarios registrados" });
+    }
+
+    // Mapear los documentos a objetos con sus datos e ID
+    const users = usersSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Error obteniendo usuarios:", err);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+};
+
 
 /*
 const validateCredentials = async (username, password) => {
