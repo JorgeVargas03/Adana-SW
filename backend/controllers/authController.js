@@ -7,23 +7,32 @@ const SECRET_KEY = process.env.JWT_SECRET;
 
 // Función para registrar un nuevo usuario
 exports.register = async (req, res) => {
-  const { username, password } = req.body;
-
-  // Validar credenciales
-  const validation = await validateCredentials(username, password);
-  if (!validation.valid) {
-    return res.status(400).json({ message: "Las credenciales no coinciden" });
-  }
+  const { name, lastname, password, email, gender, phone, role } = req.body;
 
   try {
-    // Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear un nuevo usuario
-    const newUserRef = await userCollection.add({ username, password: hashedPassword });
+    // Armar el objeto base del usuario
+    const userData = {
+      name,
+      lastname,
+      password: hashedPassword,
+      email,
+      gender,
+      phone,
+      role
+    };
 
-    res.status(200).json({ message: "La solicitud se ha completado con exito" +
-      ". Usuario registrado correctamente", userId: newUserRef.id });
+    // Si es instructor, agregar el arreglo vacío de clases
+    if (role.toLowerCase() === "instructor") {
+      userData.clases = []; // O cualquier otro arreglo que necesites
+    }
+    userData.status = "active";
+
+    // Guardar en Firestore
+    const newUserRef = await userCollection.add(userData);
+
+    res.status(201).json({ message: "Usuario registrado exitosamente", id: newUserRef.id });
   } catch (error) {
     res.status(500).json({ message: "Error del servidor" });
   }
@@ -32,12 +41,12 @@ exports.register = async (req, res) => {
 
 // Función para iniciar sesión
 exports.login = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     // Buscar al usuario por nombre de usuario en Firestore
     const userSnapshot = await userCollection
-      .where("username", "==", username)
+      .where("email", "==", email)
       .get();
     if (userSnapshot.empty) {
       return res.status(400).json({ message: "Argumentos no coinciden" });
@@ -66,6 +75,7 @@ exports.login = async (req, res) => {
   }
 };
 
+/*
 const validateCredentials = async (username, password) => {
   // Validar que el username no tenga espacios y no supere los 16 caracteres
   if (!username || username.includes(" ") || username.length > 16) {
@@ -90,3 +100,4 @@ const validateCredentials = async (username, password) => {
   }
 };
 
+*/

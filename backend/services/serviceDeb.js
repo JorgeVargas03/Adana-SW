@@ -1,9 +1,9 @@
 // services/serviceDeb.js
-const { debateCollection } = require("../models/payments");
+const { paymentsCollection } = require("../models/payments");
 
 exports.getAllDebates = async () => {
   try {
-    const snapshot = await debateCollection.get();
+    const snapshot = await paymentsCollection.get();
     const debates = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     return { success: true, debates };
   } catch (error) {
