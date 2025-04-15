@@ -1,5 +1,5 @@
 // controllers/controllerDeb.js
-const debServices = require("../services/serviceDeb");
+const debServices = require("../services/servicePayments");
 
 exports.getAllDebates = async (req, res) => {
   try {
