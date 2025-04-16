@@ -1,7 +1,9 @@
-// controllers/authController.js
+// controllers/userController.js
 const { userCollection } = require("../models/users");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
+const userService = require("../services/userService");
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
@@ -12,24 +14,25 @@ exports.register = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Armar el objeto base del usuario
+    // Build the base user object
     const userData = {
       name,
       lastname,
-      password: hashedPassword,
       email,
+      password: hashedPassword,
+      role,
+      status: "active",
       gender,
       phone,
-      role
+      registeredAt: new Date().toISOString(),
     };
 
-    // Si es instructor, agregar el arreglo vacío de clases
+    // If the user is an instructor, add an empty object for classes
     if (role.toLowerCase() === "instructor") {
-      userData.clases = []; // O cualquier otro arreglo que necesites
+      userData.classes = {};
     }
-    userData.status = "active";
 
-    // Guardar en Firestore
+    // Save to Firestore
     const newUserRef = await userCollection.add(userData);
     res.status(201).json({ message: "Usuario registrado exitosamente", id: newUserRef.id });
   } catch (error) {
@@ -74,26 +77,34 @@ exports.login = async (req, res) => {
   }
 };
 
+//Obtener todos los usuarios
 exports.getAllUsers = async (req, res) => {
-  try {
-    const usersSnapshot = await userCollection.get();
+  const response = await userService.getAllUsers();
 
-    // Verificar si hay documentos
-    if (usersSnapshot.empty) {
-      return res.status(404).json({ message: "No hay usuarios registrados" });
-    }
-
-    // Mapear los documentos a objetos con sus datos e ID
-    const users = usersSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    res.status(200).json(users);
-  } catch (err) {
-    console.error("Error obteniendo usuarios:", err);
-    res.status(500).json({ error: "Error del servidor" });
+  if (!response.success) {
+    return res.status(404).json({ message: response.message });
   }
+
+  return res.status(200).json(response.data);
+};
+
+//Cambiar el estado de un usuario
+exports.updateUserStatus = async (req, res) => {
+  const { userId } = req.params;
+  const { status } = req.body;
+
+  // Validar que se proporcionó un nuevo estado
+  if (!status) {
+    return res.status(400).json({ message: "Status is required" });
+  }
+
+  const response = await updateUserStatusService(userId, status);
+
+  if (!response.success) {
+    return res.status(404).json({ message: response.message });
+  }
+
+  return res.status(200).json({ message: response.message });
 };
 
 
