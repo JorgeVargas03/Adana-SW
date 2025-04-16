@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const controllerDeb = require("../controllers/debController");
+const controllerDeb = require("../controllers/paymentsController");
 
 //Esta implementacion queda temporalmente desactivada hasta se llegue a la parte de autenticacion de usuarios
 //const { authenticateToken } = require('../middleware/authMiddleware');
