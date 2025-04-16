@@ -98,7 +98,7 @@ exports.updateUserStatus = async (req, res) => {
     return res.status(400).json({ message: "Status is required" });
   }
 
-  const response = await updateUserStatusService(userId, status);
+  const response = await userService.updateUserStatusService(userId, status);
 
   if (!response.success) {
     return res.status(404).json({ message: response.message });
