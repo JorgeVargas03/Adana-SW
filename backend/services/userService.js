@@ -30,11 +30,11 @@ exports.updateUserStatusService = async (userId, newStatus) => {
     const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
-      return { success: false, message: "User not found" };
+      return { success: false, message: "No se encontró el usuario" };
     }
 
     await userRef.update({ status: newStatus });
-    return { success: true, message: "User status updated successfully" };
+    return { success: true, message: "Estado del usuario actualizado exitosamente" };
   } catch (error) {
     console.error("Error updating user status:", error);
     return { success: false, message: "Server error" };
