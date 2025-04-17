@@ -4,7 +4,7 @@ import logo from '../assets/images/icon.png';
 
 const Navbar = () => {
   return (
-    <nav className="flex items-center justify-between h-20 px-8 bg-white shadow-md">
+    <nav className="flex items-center justify-between h-18 px-8 bg-white shadow-md">
       <div className="flex items-center">
         <img src={logo} alt="Adana logo" className="h-8 mr-3" />
         <span className="font-[Outfit] font-semibold text-2xl text-[#413324]">Adana Pilates Estudio</span>
