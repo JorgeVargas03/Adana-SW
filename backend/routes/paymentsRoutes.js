@@ -7,7 +7,6 @@ const controllerDeb = require("../controllers/paymentsController");
 
 
 
-
 /* RUTAS DE LOS ENDPOINTS, TOMAR EN CUENTA QUE SON SOLO PARA BASARNOS
 
 //Endpoint para ver todos los debates
