@@ -51,3 +51,104 @@ exports.createClass = async (instructorId, classData) => {
         return { success: false, message: "Error del servidor" };
     }
 };
+
+// Obtener clases disponibles con código de colores y filtro de fechas
+exports.getAvailableClasses = async () => {
+    try {
+        const usersSnapshot = await userCollection.where("role", "==", "instructor").get();
+
+        if (usersSnapshot.empty) {
+            return { success: false, message: "No hay instructores registrados." };
+        }
+
+        const allClasses = [];
+        const today = new Date();
+        const maxDate = new Date();
+        maxDate.setMonth(maxDate.getMonth() + 2); // Hasta 2 meses desde hoy
+
+        usersSnapshot.forEach(doc => {
+            const instructor = doc.data();
+            const instructorId = doc.id;
+
+            if (instructor.clases) {
+                Object.entries(instructor.clases).forEach(([classId, clase]) => {
+                    const classDate = new Date(clase.schedule?.date);
+                    if (classDate >= today && classDate <= maxDate) {
+                        const reservedCount = clase.reservations ? Object.keys(clase.reservations).length : 0;
+                        const availableSpots = clase.capacity - reservedCount;
+
+                        let availability = "green"; // Alta disponibilidad
+                        if (availableSpots === 0) availability = "red"; // Sin disponibilidad
+                        else if (availableSpots <= 5) availability = "yellow"; // Media disponibilidad
+
+                        allClasses.push({
+                            id: classId,
+                            title: clase.title,
+                            description: clase.description,
+                            //type: clase.type || "pilates",
+                            date: clase.schedule?.date,
+                            time: clase.schedule?.time,
+                            capacity: clase.capacity,
+                            availableSpots,
+                            availability,
+                            instructorId,
+                            instructorName: `${instructor.name} ${instructor.lastname}`
+                        });
+                    }
+                });
+            }
+        });
+
+        return { success: true, data: allClasses };
+    } catch (error) {
+        console.error("Error obteniendo clases:", error);
+        return { success: false, message: "Error del servidor." };
+    }
+};
+
+
+
+
+//Servicio para obtener todo el historial de clases creadas
+exports.getAllClassesHistory = async () => {
+    try {
+      const usersSnapshot = await userCollection.where("role", "==", "instructor").get();
+  
+      const allClasses = [];
+  
+      usersSnapshot.forEach(doc => {
+        const instructor = doc.data();
+        const instructorId = doc.id;
+  
+        if (instructor.clases) {
+          Object.entries(instructor.clases).forEach(([classId, clase]) => {
+            const reservations = clase.reservations
+              ? Object.entries(clase.reservations).map(([resId, res]) => ({
+                  reservationId: resId,
+                  ...res
+                }))
+              : [];
+  
+            allClasses.push({
+              id: classId,
+              title: clase.title,
+              description: clase.description,
+              price: clase.price,
+              schedule: clase.schedule,
+              capacity: clase.capacity,
+              reservations,
+              instructorId,
+              instructorName: `${instructor.name} ${instructor.lastname}`,
+              //type: clase.type || "N/A", // Por si usas un campo llamado "type"
+              //duration: clase.duration || "N/A"
+            });
+          });
+        }
+      });
+  
+      return { success: true, data: allClasses };
+    } catch (error) {
+      console.error("Error obteniendo historial de clases:", error);
+      return { success: false, message: "Error del servidor." };
+    }
+  };
