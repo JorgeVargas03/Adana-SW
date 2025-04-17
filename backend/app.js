@@ -8,9 +8,9 @@ const paymentsRoutes = require('./routes/paymentsRoutes');
 
 app.use(express.json());
 app.use("/auth", authRoutes);
-app.use("/adana-api/v1/users/",userRoutes);
-app.use("/adana-api/v1/classes/", classRoutes);
-app.use("/adana-api/v1/payments/", paymentsRoutes);
+app.use("/adana-api/v1/users",userRoutes);
+app.use("/adana-api/v1/classes", classRoutes);
+app.use("/adana-api/v1/payments", paymentsRoutes);
 
 //  Middleware para rutas no definidas (404 global)
 app.use((req, res, next) => {
