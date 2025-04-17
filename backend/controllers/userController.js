@@ -106,31 +106,3 @@ exports.updateUserStatus = async (req, res) => {
 
   return res.status(200).json({ message: response.message });
 };
-
-
-/*
-const validateCredentials = async (username, password) => {
-  // Validar que el username no tenga espacios y no supere los 16 caracteres
-  if (!username || username.includes(" ") || username.length > 16) {
-    return { valid: false, message: "El nombre de usuario no es válido, no se admite dejar en blanco, usar espacios, o exceder de 16 caracteres" };
-  }
-
-  // Validar que la contraseña tenga al menos 8 caracteres y no tenga espacios
-  if (!password || password.length < 8 || password.includes(" ")) {
-    return { valid: false, message: "La contraseña no cumple con los requisitos. Requisitos: mínimo 8 caracteres, NO espacios en blanco" };
-  }
-
-  try {
-    // Verificar si el usuario ya existe en Firestore
-    const userSnapshot = await userCollection.where("username", "==", username).get();
-    if (!userSnapshot.empty) {
-      return { valid: false, message: "El nombre de usuario ya está en uso" };
-    }
-
-    return { valid: true, message: "Credenciales válidas" };
-  } catch (error) {
-    return { valid: false, message: "Error al validar credenciales" };
-  }
-};
-
-*/
