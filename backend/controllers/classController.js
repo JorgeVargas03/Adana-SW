@@ -1,5 +1,5 @@
 // controllers/classController.js
-const { classService } = require("../services/classService");
+const classService = require("../services/classService");
 
 // Controlador para crear una nueva clase
 exports.createNewClass = async (req, res) => {
@@ -14,7 +14,7 @@ exports.createNewClass = async (req, res) => {
       return res.status(400).json({ message: `Faltan campos obligatorios: ${missingFields.join(", ")}` });
     }
   
-    const response = await classService.createClass()
+    const response = await classService.createClass(instructorId, classData);
   
     if (!response.success) {
       return res.status(400).json({ message: response.message });
@@ -22,3 +22,5 @@ exports.createNewClass = async (req, res) => {
   
     return res.status(201).json({ message: response.message, classId: response.classId });
   };
+
+  
