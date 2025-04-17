@@ -37,3 +37,22 @@ exports.getCalendarAvailability = async (req, res) => {
     res.status(500).json({ message: "Error del servidor" });
   }
 };
+
+
+
+//Obtener el historial de clases creadas
+exports.getAllClassesHistory = async (req, res) => {
+  try {
+    const result = await classService.getAllClassesHistory();
+
+    if (!result.success) {
+      return res.status(500).json({ message: result.message });
+    }
+
+    return res.status(200).json(result.data);
+  } catch (error) {
+    console.error("Error en controlador de historial de clases:", error);
+    return res.status(500).json({ message: "Error del servidor." });
+  }
+};
+
