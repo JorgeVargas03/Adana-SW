@@ -130,6 +130,7 @@ Sistema diseñado para optimizar:
   }
 }
 
+```
 ### 💳 Estructura de Pagos
 ```json
 {
