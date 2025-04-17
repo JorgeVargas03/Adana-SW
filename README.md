@@ -2,41 +2,39 @@
 
 ![Badge en desarrollo](https://img.shields.io/badge/ESTADO-EN%20DESARROLLO-yellow) 
 
-Plataforma web para gestión de reservas y horarios en estudio de pilates.
+ADANA SW es una plataforma web desarrollada para facilitar la **reserva de clases de pilates** y la **gestión de horarios** en el estudio de pilates **Adana**. Este software busca optimizar la experiencia del cliente y al mismo tiempo ofrecer a administradores e instructores una herramienta eficiente para el manejo de sesiones.
 
 ## 📋 Descripción del Proyecto
 
-Sistema diseñado para optimizar:
-- Experiencia de reserva para clientes
-- Gestión de sesiones para instructores
-- Administración centralizada
+El sistema permite a los clientes:
+- Registrarse como usuarios
+- Consultar clases disponibles
+- Reservar un cupo en sesiones específicas
 
-## 🚀 Funcionalidades Principales
+Y a los instructores y administradores:
+- Crear nuevas clases
+- Gestionar las reservas realizadas por los clientes
+- Visualizar el historial de clases
 
-### 👤 Módulo de Usuarios
-- Registro de nuevos usuarios (clientes, instructores, administradores)
-- Consulta de usuarios registrados
-- Gestión de estados (Activo/Bloqueado/Baneado)
 
-### 🧘 Módulo de Clases
-- Creación de clases con detalles completos
-- Consulta de disponibilidad con código de colores
-- Historial completo (pasadas/futuras)
-- Sistema de reservas integrado
+## 🚫 Limitaciones Actuales: ¿Qué NO incluye esta versión del sistema?
 
-### 💳 Módulo de Pagos (Simulado)
-- Registro de transacciones
-- Seguimiento de estados (completado/pendiente)
-- Historial de movimientos
-
-## 🚫 Limitaciones Actuales
 | Función                    | Estado  |
 |----------------------------|---------|
-| Cancelación/modificación    | ❌      |
+| Cancelación/modificación de reservaciones    | ❌      |
 | Reservas >2 meses           | ❌      |
-| Múltiples cupos             | ❌      |
+| Compra dem múltiples cupos  | ❌      |
 | Recordatorios automáticos   | ❌      |
-| Pagos reales                | ❌      |
+| Gestión de pagos reales     | ❌      |
+
+## 📚 Funcionalidades implementadas
+
+✅ Registro de usuario: Alta de nuevos usuarios (cliente, instructor o administrador).  
+✅ Consulta de todos los usuarios registrados.  
+✅ Cambio de estado de usuario: Activar, bloquear, banear.  
+✅ Creación de clases: Por parte de instructores, con cupo, fecha, descripción, etc.  
+✅ Consulta de disponibilidad de clases con código de colores.  
+✅ Historial completo de clases (pasadas y futuras).  
 
 ## 🛠️ Modelo de Datos
 
@@ -143,3 +141,4 @@ Sistema diseñado para optimizar:
   }
 }
 ```
+**Nota**: Esta es una versión en desarrollo del sistema. En futuras etapas se agregarán validaciones más robustas, autenticación de usuarios, recordatorios automáticos y una interfaz gráfica para clientes y administradores.
