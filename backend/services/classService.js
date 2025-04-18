@@ -38,7 +38,7 @@ exports.createClass = async (instructorId, classData) => {
         };
 
         // Agregar clase al objeto existente o crear campo si no existe
-        const updatedClasses = instructor.clases || {};
+        const updatedClasses = instructor.classes || {};
         updatedClasses[classId] = newClass;
 
         // Actualizar documento del instructor con la nueva clase

@@ -40,7 +40,8 @@ exports.getCalendarAvailability = async (req, res) => {
 
 // Controlador para reservar clase
 exports.reserveClass = async (req, res) => {
-  const userId = req.userId; // Asumimos que el middleware de auth inyecta el ID del usuario
+  //const userId = req.userId; // Asumimos que el middleware de auth inyecta el ID del usuario
+  const userId = req.params.userId;
   const { classId, instructorId } = req.body;
 
   if (!classId || !instructorId) {
