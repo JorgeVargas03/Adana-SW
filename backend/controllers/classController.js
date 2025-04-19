@@ -1,27 +1,27 @@
 // controllers/classController.js
 const classService = require("../services/classService");
 
-  // Controlador para crear una nueva clase
-  exports.createNewClass = async (req, res) => {
-    const instructorId = req.params.instructorId;
-    const classData = req.body;
+// Controlador para crear una nueva clase
+exports.createNewClass = async (req, res) => {
+  const instructorId = req.params.instructorId;
+  const classData = req.body;
 
-    // Validar que se hayan recibido todos los campos necesarios
-    const requiredFields = ["title", "description", "price", "schedule", "capacity"];
-    const missingFields = requiredFields.filter(field => !classData[field]);
+  // Validar que se hayan recibido todos los campos necesarios
+  const requiredFields = ["title", "description", "price", "schedule", "capacity"];
+  const missingFields = requiredFields.filter(field => !classData[field]);
 
-    if (missingFields.length > 0) {
-      return res.status(400).json({ message: `Faltan campos obligatorios: ${missingFields.join(", ")}` });
-    }
+  if (missingFields.length > 0) {
+    return res.status(400).json({ message: `Faltan campos obligatorios: ${missingFields.join(", ")}` });
+  }
 
-    const response = await classService.createClass(instructorId, classData);
+  const response = await classService.createClass(instructorId, classData);
 
-    if (!response.success) {
-      return res.status(400).json({ message: response.message });
-    }
+  if (!response.success) {
+    return res.status(400).json({ message: response.message });
+  }
 
-    return res.status(201).json({ message: response.message, classId: response.classId });
-  };
+  return res.status(201).json({ message: response.message, classId: response.classId });
+};
 
 
 // Obtener todas las clases disponibles con su disponibilidad en colores
@@ -54,6 +54,19 @@ exports.reserveClass = async (req, res) => {
     return res.status(200).json({ message: result.message });
   } else {
     return res.status(400).json({ message: result.message });
+  }
+};
+
+// Controlador para consultar las reservas de un usuario
+exports.getUserReservations = async (req, res) => {
+  const userId = req.params.userId;
+
+  const result = await classService.getUserReservations(userId);
+
+  if (result.success) {
+    res.status(200).json({ reservaciones: result.data });
+  } else {
+    res.status(result.status).json({ message: result.message });
   }
 };
 

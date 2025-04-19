@@ -11,6 +11,8 @@ router.post('/:instructorId/newClass', classController.createNewClass);
 router.get('/availability', classController.getCalendarAvailability);
 router.get('/', classController.getAllClassesHistory);
 router.post('/reserve/:userId', classController.reserveClass);
+router.get("/reserves/:userId", classController.getUserReservations);
+
 
 
 module.exports = router;

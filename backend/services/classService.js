@@ -160,6 +160,43 @@ exports.reserveClass = async (userId, classId, instructorId) => {
     }
 };
 
+// Servicio para obtener las reservas de un usuario
+exports.getUserReservations = async (userId) => {
+    try {
+        const snapshot = await userCollection.get();
+        const reservations = [];
+
+        snapshot.forEach((doc) => {
+            const instructorData = doc.data();
+            const instructorName = `${instructorData.name} ${instructorData.lastname}`;
+            const clases = instructorData.clases || {};
+
+            Object.entries(clases).forEach(([classId, classData]) => {
+                const classReservations = classData.reservations || {};
+                Object.values(classReservations).forEach((reservation) => {
+                    if (reservation.client_id === userId) {
+                        reservations.push({
+                            classTitle: classData.title,
+                            instructor: instructorName,
+                            date: classData.schedule.date,
+                            time: classData.schedule.time
+                        });
+                    }
+                });
+            });
+        });
+
+        if (reservations.length === 0) {
+            return { success: false, status: 404, message: "Este usuario no tiene reservaciones registradas." };
+        }
+
+        return { success: true, data: reservations };
+    } catch (error) {
+        console.error("Error al obtener las reservaciones del usuario:", error);
+        return { success: false, status: 500, message: "Error al consultar las reservaciones." };
+    }
+};
+
 
 
 //Servicio para obtener todo el historial de clases creadas
