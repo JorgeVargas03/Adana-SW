@@ -20,7 +20,7 @@ exports.sendConfirmationEmail = async (destination, classData) => {
   //Convertir de fecha YYYY-MM-DD a una cadena
   const dateString = new Date(classData.date);
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  const formatedDate = fecha.toLocaleDateString('es-ES', options);
+  const formatedDate = dateString.toLocaleDateString('es-ES', options);
 
   const mailOptions = {
     from: `"Equipo Adana Pilates" <${process.env.EMAIL_SENDER}>`,
