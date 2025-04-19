@@ -83,6 +83,20 @@ exports.getInstructorClasses = async (req, res) => {
   }
 };
 
+// Controlador para consultar el listado de alumnos de una clase
+exports.getClassWithReservations = async (req, res) => {
+  const { instructorId, classId } = req.params;
+
+  const result = await classService.getClassWithReservations(instructorId, classId);
+
+  if (!result.success) {
+    return res.status(result.code).json({ message: result.message });
+  }
+
+  res.json(result.class);
+};
+
+
 
 
 //Obtener el historial de clases creadas

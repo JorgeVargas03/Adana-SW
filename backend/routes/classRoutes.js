@@ -13,6 +13,8 @@ router.get('/', classController.getAllClassesHistory);
 router.post('/reserve/:userId', classController.reserveClass);
 router.get("/reserves/:userId", classController.getUserReservations);
 router.get('/instructor/:instructorId/myClasses', classController.getInstructorClasses);
+router.get("/instructor/:instructorId/class/:classId/details", classController.getClassWithReservations);
+
 
 
 
