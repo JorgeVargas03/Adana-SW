@@ -11,9 +11,17 @@ exports.register = async (req, res) => {
   const { name, lastname, password, email, gender, phone, role } = req.body;
 
   try {
+    // Verificar si ya existe un usuario con el mismo correo
+    const existingUserSnapshot = await userCollection.where("email", "==", email).get();
+
+    if (!existingUserSnapshot.empty) {
+      return res.status(400).json({ message: "El usuario ya existe con ese correo electrónico" });
+    }
+
+    // Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Build the base user object
+    // Construir el objeto del nuevo usuario
     const userData = {
       name,
       lastname,
@@ -26,15 +34,16 @@ exports.register = async (req, res) => {
       registeredAt: new Date().toISOString(),
     };
 
-    // If the user is an instructor, add an empty object for classes
+    // Si el usuario es instructor, agregar un objeto vacío de clases
     if (role.toLowerCase() === "instructor") {
       userData.classes = {};
     }
 
-    // Save to Firestore
+    // Guardar en Firestore
     const newUserRef = await userCollection.add(userData);
     res.status(201).json({ message: "Usuario registrado exitosamente", id: newUserRef.id });
   } catch (error) {
+    console.error("Error al registrar usuario:", error);
     res.status(500).json({ message: "Error del servidor" });
   }
 };
@@ -136,7 +145,8 @@ exports.login = async (req, res) => {
     const time = "30m";
     // Generar un token JWT
     const token = jwt.sign(
-      { userId: userDoc.id, 
+      {
+        userId: userDoc.id,
         username: user.username,
         userlastname: user.lastname,
         useremail: user.email,
@@ -157,9 +167,9 @@ exports.login = async (req, res) => {
         role: user.role
       }
     });
-    
+
   } catch (error) {
-  
+
   }
 };
 
