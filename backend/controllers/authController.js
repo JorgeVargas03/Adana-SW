@@ -11,9 +11,17 @@ exports.register = async (req, res) => {
   const { name, lastname, password, email, gender, phone, role } = req.body;
 
   try {
+    // Verificar si ya existe un usuario con el mismo correo
+    const existingUserSnapshot = await userCollection.where("email", "==", email).get();
+
+    if (!existingUserSnapshot.empty) {
+      return res.status(400).json({ message: "El usuario ya existe con ese correo electrónico" });
+    }
+
+    // Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Build the base user object
+    // Construir el objeto del nuevo usuario
     const userData = {
       name,
       lastname,
@@ -26,15 +34,16 @@ exports.register = async (req, res) => {
       registeredAt: new Date().toISOString(),
     };
 
-    // If the user is an instructor, add an empty object for classes
+    // Si el usuario es instructor, agregar un objeto vacío de clases
     if (role.toLowerCase() === "instructor") {
       userData.classes = {};
     }
 
-    // Save to Firestore
+    // Guardar en Firestore
     const newUserRef = await userCollection.add(userData);
     res.status(201).json({ message: "Usuario registrado exitosamente", id: newUserRef.id });
   } catch (error) {
+    console.error("Error al registrar usuario:", error);
     res.status(500).json({ message: "Error del servidor" });
   }
 };
@@ -65,13 +74,79 @@ exports.login = async (req, res) => {
     const time = "30m";
     // Generar un token JWT
     const token = jwt.sign(
-      { userId: userDoc.id, username: user.username },
+      {
+        userId: userDoc.id,
+        username: user.username,
+        userlastname: user.lastname,
+        useremail: user.email,
+        userrole: user.role
+      },
       SECRET_KEY,
       { expiresIn: time }
     );
 
-    res.status(200).json({ token, info: `Inicio de sesion exitoso, sesion valida durante: ${time}` });
+    res.status(200).json({
+      message: `Inicio de sesión exitoso. Sesión válida durante: ${time}`,
+      token,
+      user: {
+        id: userDoc.id,
+        name: user.name,
+        lastname: user.lastname,
+        email: user.email,
+        role: user.role
+      }
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "Error al iniciar sesión" });
+
+  }
+};
+
+//Función para iniciar sesión con Google
+exports.signinWithGoogle = async (req, res) => {
+  const { idToken } = req.body;
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { email, name } = decodedToken;
+
+    // Buscar el usuario en Firestore
+    const userSnapshot = await userCollection.where("email", "==", email).get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({
+        message: "No existe una cuenta asociada a ese correo. Por favor, regístrate primero."
+      });
+    }
+
+    const userDoc = userSnapshot.docs[0];
+    const user = userDoc.data();
+
+    const token = jwt.sign(
+      {
+        userId: userDoc.id,
+        name: user.name,
+        lastname: user.lastname || "",
+        email: user.email,
+        role: user.role
+      },
+      SECRET_KEY,
+      { expiresIn: "30m" }
+    );
+
+    res.status(200).json({
+      message: "Inicio de sesión con Google exitoso",
+      token,
+      user: {
+        id: userDoc.id,
+        name: user.name,
+        lastname: user.lastname || "",
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error("Error al iniciar sesión con Google:", error);
+    res.status(500).json({ message: "Error al verificar token de Google" });
   }
 };
