@@ -17,6 +17,11 @@ const transporter = nodemailer.createTransport({
  * @param {string} classData - Arreglo de informacion de la clase
  */
 exports.sendConfirmationEmail = async (destination, classData) => {
+  //Convertir de fecha YYYY-MM-DD a una cadena
+  const dateString = new Date(classData.date);
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  const formatedDate = fecha.toLocaleDateString('es-ES', options);
+
   const mailOptions = {
     from: `"Equipo Adana Pilates" <${process.env.EMAIL_SENDER}>`,
     to: destination,
@@ -28,7 +33,7 @@ exports.sendConfirmationEmail = async (destination, classData) => {
       <p>Has reservado exitosamente tu clase de <strong>${classData.title}</strong>.</p>
       <ul style="list-style-type: none; padding: 0;">
         <li><strong>Instructor:</strong> ${classData.instructor}</li>
-        <li><strong>Fecha:</strong> ${classData.date}</li>
+        <li><strong>Fecha:</strong> ${formatedDate}</li>
         <li><strong>Hora:</strong> ${classData.time}</li>
       </ul>
       <p>Te esperamos con mucha energía ✨</p>
