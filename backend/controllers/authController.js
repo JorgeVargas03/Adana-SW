@@ -1,7 +1,8 @@
-// controllers/authController.js
+// controllers/userController.js
 const { userCollection } = require("../models/users");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 
 const SECRET_KEY = process.env.JWT_SECRET;
 
@@ -12,24 +13,25 @@ exports.register = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Armar el objeto base del usuario
+    // Build the base user object
     const userData = {
       name,
       lastname,
-      password: hashedPassword,
       email,
+      password: hashedPassword,
+      role,
+      status: "active",
       gender,
       phone,
-      role
+      registeredAt: new Date().toISOString(),
     };
 
-    // Si es instructor, agregar el arreglo vacío de clases
+    // If the user is an instructor, add an empty object for classes
     if (role.toLowerCase() === "instructor") {
-      userData.clases = []; // O cualquier otro arreglo que necesites
+      userData.classes = {};
     }
-    userData.status = "active";
 
-    // Guardar en Firestore
+    // Save to Firestore
     const newUserRef = await userCollection.add(userData);
     res.status(201).json({ message: "Usuario registrado exitosamente", id: newUserRef.id });
   } catch (error) {
@@ -73,53 +75,3 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Error al iniciar sesión" });
   }
 };
-
-exports.getAllUsers = async (req, res) => {
-  try {
-    const usersSnapshot = await userCollection.get();
-
-    // Verificar si hay documentos
-    if (usersSnapshot.empty) {
-      return res.status(404).json({ message: "No hay usuarios registrados" });
-    }
-
-    // Mapear los documentos a objetos con sus datos e ID
-    const users = usersSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    res.status(200).json(users);
-  } catch (err) {
-    console.error("Error obteniendo usuarios:", err);
-    res.status(500).json({ error: "Error del servidor" });
-  }
-};
-
-
-/*
-const validateCredentials = async (username, password) => {
-  // Validar que el username no tenga espacios y no supere los 16 caracteres
-  if (!username || username.includes(" ") || username.length > 16) {
-    return { valid: false, message: "El nombre de usuario no es válido, no se admite dejar en blanco, usar espacios, o exceder de 16 caracteres" };
-  }
-
-  // Validar que la contraseña tenga al menos 8 caracteres y no tenga espacios
-  if (!password || password.length < 8 || password.includes(" ")) {
-    return { valid: false, message: "La contraseña no cumple con los requisitos. Requisitos: mínimo 8 caracteres, NO espacios en blanco" };
-  }
-
-  try {
-    // Verificar si el usuario ya existe en Firestore
-    const userSnapshot = await userCollection.where("username", "==", username).get();
-    if (!userSnapshot.empty) {
-      return { valid: false, message: "El nombre de usuario ya está en uso" };
-    }
-
-    return { valid: true, message: "Credenciales válidas" };
-  } catch (error) {
-    return { valid: false, message: "Error al validar credenciales" };
-  }
-};
-
-*/
