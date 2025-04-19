@@ -40,6 +40,8 @@ body, html {
   color: #fff;
   text-align: center;
 }
+
+
   /* Estilos generales del body */
   body {
     font-family: 'Outfit';
@@ -113,6 +115,13 @@ body, html {
   button:hover {
     background-color: var(--accent2-color);
   }
+
+  a {
+    font-family: 'Outfit';
+    color: #7E7EC3;
+    font-weight: 400;
+
+  }
   
   /* OUTFIT REGULAR */
 @font-face {
@@ -153,3 +162,5 @@ body, html {
     font-weight: 200;
     font-style: normal;
   }
+
+  
