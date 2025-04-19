@@ -70,6 +70,19 @@ exports.getUserReservations = async (req, res) => {
   }
 };
 
+// Controlador para consultar clases de un instructor
+exports.getInstructorClasses = async (req, res) => {
+  const instructorId = req.params.instructorId;
+
+  const result = await classService.getInstructorClasses(instructorId);
+
+  if (result.success) {
+    res.status(200).json({Clases: result.data});
+  } else {
+    res.status(result.status).json({ message: result.message });
+  }
+};
+
 
 
 //Obtener el historial de clases creadas

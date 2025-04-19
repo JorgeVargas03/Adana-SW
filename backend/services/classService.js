@@ -197,7 +197,36 @@ exports.getUserReservations = async (userId) => {
     }
 };
 
+// Servicio para obtener las clases de un instructor
+exports.getInstructorClasses = async (instructorId) => {
+    try {
+        const instructorDoc = await userCollection.doc(instructorId).get();
 
+        if (!instructorDoc.exists) {
+            return { success: false, status: 404, message: "Instructor no encontrado." };
+        }
+
+        const instructorData = instructorDoc.data();
+        const clases = instructorData.clases || {};
+
+        const formattedClasses = Object.entries(clases).map(([classId, classData]) => {
+            const reservationCount = Object.keys(classData.reservations || {}).length;
+
+            return {
+                id: classId,
+                title: classData.title,
+                schedule: classData.schedule,
+                capacity: classData.capacity,
+                reserved: reservationCount,
+            };
+        });
+
+        return { success: true, data: formattedClasses };
+    } catch (error) {
+        console.error("Error al obtener las clases del instructor:", error);
+        return { success: false, status: 500, message: "Error al consultar las clases." };
+    }
+};
 
 //Servicio para obtener todo el historial de clases creadas
 exports.getAllClassesHistory = async () => {
