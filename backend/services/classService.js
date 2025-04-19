@@ -160,7 +160,123 @@ exports.reserveClass = async (userId, classId, instructorId) => {
     }
 };
 
+// Servicio para obtener las reservas de un usuario
+exports.getUserReservations = async (userId) => {
+    try {
+        const snapshot = await userCollection.get();
+        const reservations = [];
 
+        snapshot.forEach((doc) => {
+            const instructorData = doc.data();
+            const instructorName = `${instructorData.name} ${instructorData.lastname}`;
+            const clases = instructorData.clases || {};
+
+            Object.entries(clases).forEach(([classId, classData]) => {
+                const classReservations = classData.reservations || {};
+                Object.values(classReservations).forEach((reservation) => {
+                    if (reservation.client_id === userId) {
+                        reservations.push({
+                            classTitle: classData.title,
+                            instructor: instructorName,
+                            date: classData.schedule.date,
+                            time: classData.schedule.time
+                        });
+                    }
+                });
+            });
+        });
+
+        if (reservations.length === 0) {
+            return { success: false, status: 404, message: "Este usuario no tiene reservaciones registradas." };
+        }
+
+        return { success: true, data: reservations };
+    } catch (error) {
+        console.error("Error al obtener las reservaciones del usuario:", error);
+        return { success: false, status: 500, message: "Error al consultar las reservaciones." };
+    }
+};
+
+// Servicio para obtener las clases de un instructor
+exports.getInstructorClasses = async (instructorId) => {
+    try {
+        const instructorDoc = await userCollection.doc(instructorId).get();
+
+        if (!instructorDoc.exists) {
+            return { success: false, status: 404, message: "Instructor no encontrado." };
+        }
+
+        const instructorData = instructorDoc.data();
+        const clases = instructorData.clases || {};
+
+        const formattedClasses = Object.entries(clases).map(([classId, classData]) => {
+            const reservationCount = Object.keys(classData.reservations || {}).length;
+
+            return {
+                id: classId,
+                title: classData.title,
+                schedule: classData.schedule,
+                capacity: classData.capacity,
+                reserved: reservationCount,
+            };
+        });
+
+        return { success: true, data: formattedClasses };
+    } catch (error) {
+        console.error("Error al obtener las clases del instructor:", error);
+        return { success: false, status: 500, message: "Error al consultar las clases." };
+    }
+};
+
+//Servicio para consultar el listado de alumnos de una clase
+exports.getClassWithReservations = async (instructorId, classId) => {
+    try {
+      const instructorDoc = await userCollection.doc(instructorId).get();
+      if (!instructorDoc.exists) {
+        return { success: false, code: 404, message: "Instructor no encontrado" };
+      }
+  
+      const instructorData = instructorDoc.data();
+      const classData = instructorData.clases?.[classId];
+  
+      if (!classData) {
+        return { success: false, code: 404, message: "Clase no encontrada" };
+      }
+  
+      const reservations = classData.reservations || {};
+      const students = [];
+  
+      for (const res of Object.values(reservations)) {
+        const clientDoc = await userCollection.doc(res.client_id).get();
+        if (clientDoc.exists) {
+          const clientData = clientDoc.data();
+          students.push({
+            id: res.client_id,
+            name: `${clientData.name} ${clientData.lastname}`,
+            email: clientData.email,
+            status: res.status
+          });
+        }
+      }
+  
+      return {
+        success: true,
+        class: {
+          id: classId,
+          title: classData.title,
+          date: classData.schedule?.date,
+          time: classData.schedule?.time,
+          capacity: classData.capacity,
+          available: classData.capacity - students.length,
+          instructor: `${instructorData.name} ${instructorData.lastname}`,
+          students
+        }
+      };
+    } catch (error) {
+      console.error("Error al obtener detalles de la clase:", error);
+      return { success: false, code: 500, message: "Error interno del servidor" };
+    }
+  };
 
 //Servicio para obtener todo el historial de clases creadas
 exports.getAllClassesHistory = async () => {
