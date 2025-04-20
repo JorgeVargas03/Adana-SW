@@ -295,22 +295,18 @@ exports.getAllClassesHistory = async () => {
                     const reservations = clase.reservations
                         ? Object.entries(clase.reservations).map(([resId, res]) => ({
                             reservationId: resId,
-                            ...res
+                            client_name: res.client_name
                         }))
                         : [];
 
                     allClasses.push({
                         id: classId,
                         title: clase.title,
-                        description: clase.description,
-                        price: clase.price,
-                        schedule: clase.schedule,
-                        capacity: clase.capacity,
-                        reservations,
                         instructorId,
                         instructorName: `${instructor.name} ${instructor.lastname}`,
-                        //type: clase.type || "N/A", // Por si usas un campo llamado "type"
-                        //duration: clase.duration || "N/A"
+                        date: clase.schedule.date,
+                        time: clase.schedule.time,
+                        reservations
                     });
                 });
             }
