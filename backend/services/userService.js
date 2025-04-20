@@ -40,3 +40,35 @@ exports.updateUserStatusService = async (userId, newStatus) => {
     return { success: false, message: "Server error" };
   }
 };
+
+// Servicio para actualizar el perfil de un usuario
+exports.updateUserProfile = async (userId, updateData) => {
+  try {
+    const userRef = userCollection.doc(userId);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return { success: false, status: 404, message: "Usuario no encontrado" };
+    }
+
+    const allowedFields = ["name", "lastname", "profile_picture"];
+    const fieldsToUpdate = {};
+
+    for (const key of allowedFields) {
+      if (updateData[key]) {
+        fieldsToUpdate[key] = updateData[key];
+      }
+    }
+
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      return { success: false, status: 400, message: "No se proporcionaron datos válidos para actualizar" };
+    }
+
+    await userRef.update(fieldsToUpdate);
+
+    return { success: true, message: "Perfil actualizado correctamente" };
+  } catch (error) {
+    console.error("Error al actualizar perfil del usuario:", error);
+    return { success: false, status: 500, message: "Error interno del servidor" };
+  }
+};

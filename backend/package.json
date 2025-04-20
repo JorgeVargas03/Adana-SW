@@ -9,10 +9,12 @@
   "author": "Jorge Vargas",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "firebase-admin": "^13.1.0",
+    "fs": "^0.0.1-security",
     "nodemailer": "^6.10.1"
   },
   "repository": {
