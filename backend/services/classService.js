@@ -43,7 +43,7 @@ exports.createClass = async (instructorId, classData) => {
 
         // Actualizar documento del instructor con la nueva clase
         await instructorRef.update({
-            clases: updatedClasses
+            classes: updatedClasses
         });
 
         return { success: true, message: "Clase creada exitosamente", classId };
@@ -71,8 +71,8 @@ exports.getAvailableClasses = async () => {
             const instructor = doc.data();
             const instructorId = doc.id;
 
-            if (instructor.clases) {
-                Object.entries(instructor.clases).forEach(([classId, clase]) => {
+            if (instructor.classes) {
+                Object.entries(instructor.classes).forEach(([classId, clase]) => {
                     const classDate = new Date(clase.schedule?.date);
                     if (classDate >= today && classDate <= maxDate) {
                         const reservedCount = clase.reservations ? Object.keys(clase.reservations).length : 0;
@@ -117,7 +117,7 @@ exports.reserveClass = async (userId, classId, instructorId) => {
         }
 
         const instructorData = instructorDoc.data();
-        const classData = instructorData.clases?.[classId];
+        const classData = instructorData.classes?.[classId];
         if (!classData) {
             return { success: false, message: "Clase no encontrada" };
         }
@@ -128,20 +128,21 @@ exports.reserveClass = async (userId, classId, instructorId) => {
             return { success: false, message: "Clase sin disponibilidad" };
         }
 
+        // Obtener datos del cliente
+        const clientDoc = await userCollection.doc(userId).get();
+        const clientData = clientDoc.data();
+
         // Agregar reserva
         const reservationId = `res_${Date.now()}`;
         classData.reservations = classData.reservations || {};
         classData.reservations[reservationId] = {
             client_id: userId,
+            client_name: `${clientData.name} ${clientData.lastname}`,
             status: "confirmed",
         };
 
         // Actualizar clase en Firestore
-        await userCollection.doc(instructorId).update({ [`clases.${classId}`]: classData });
-
-        // Obtener datos del cliente
-        const clientDoc = await userCollection.doc(userId).get();
-        const clientData = clientDoc.data();
+        await userCollection.doc(instructorId).update({ [`classes.${classId}`]: classData });
 
         // Enviar correo de confirmación
         const classInfo = {
@@ -169,7 +170,7 @@ exports.getUserReservations = async (userId) => {
         snapshot.forEach((doc) => {
             const instructorData = doc.data();
             const instructorName = `${instructorData.name} ${instructorData.lastname}`;
-            const clases = instructorData.clases || {};
+            const clases = instructorData.classes || {};
 
             Object.entries(clases).forEach(([classId, classData]) => {
                 const classReservations = classData.reservations || {};
@@ -207,7 +208,7 @@ exports.getInstructorClasses = async (instructorId) => {
         }
 
         const instructorData = instructorDoc.data();
-        const clases = instructorData.clases || {};
+        const clases = instructorData.classes || {};
 
         const formattedClasses = Object.entries(clases).map(([classId, classData]) => {
             const reservationCount = Object.keys(classData.reservations || {}).length;
@@ -231,52 +232,52 @@ exports.getInstructorClasses = async (instructorId) => {
 //Servicio para consultar el listado de alumnos de una clase
 exports.getClassWithReservations = async (instructorId, classId) => {
     try {
-      const instructorDoc = await userCollection.doc(instructorId).get();
-      if (!instructorDoc.exists) {
-        return { success: false, code: 404, message: "Instructor no encontrado" };
-      }
-  
-      const instructorData = instructorDoc.data();
-      const classData = instructorData.clases?.[classId];
-  
-      if (!classData) {
-        return { success: false, code: 404, message: "Clase no encontrada" };
-      }
-  
-      const reservations = classData.reservations || {};
-      const students = [];
-  
-      for (const res of Object.values(reservations)) {
-        const clientDoc = await userCollection.doc(res.client_id).get();
-        if (clientDoc.exists) {
-          const clientData = clientDoc.data();
-          students.push({
-            id: res.client_id,
-            name: `${clientData.name} ${clientData.lastname}`,
-            email: clientData.email,
-            status: res.status
-          });
+        const instructorDoc = await userCollection.doc(instructorId).get();
+        if (!instructorDoc.exists) {
+            return { success: false, code: 404, message: "Instructor no encontrado" };
         }
-      }
-  
-      return {
-        success: true,
-        class: {
-          id: classId,
-          title: classData.title,
-          date: classData.schedule?.date,
-          time: classData.schedule?.time,
-          capacity: classData.capacity,
-          available: classData.capacity - students.length,
-          instructor: `${instructorData.name} ${instructorData.lastname}`,
-          students
+
+        const instructorData = instructorDoc.data();
+        const classData = instructorData.classes?.[classId];
+
+        if (!classData) {
+            return { success: false, code: 404, message: "Clase no encontrada" };
         }
-      };
+
+        const reservations = classData.reservations || {};
+        const students = [];
+
+        for (const res of Object.values(reservations)) {
+            const clientDoc = await userCollection.doc(res.client_id).get();
+            if (clientDoc.exists) {
+                const clientData = clientDoc.data();
+                students.push({
+                    id: res.client_id,
+                    name: `${clientData.name} ${clientData.lastname}`,
+                    email: clientData.email,
+                    status: res.status
+                });
+            }
+        }
+
+        return {
+            success: true,
+            class: {
+                id: classId,
+                title: classData.title,
+                date: classData.schedule?.date,
+                time: classData.schedule?.time,
+                capacity: classData.capacity,
+                available: classData.capacity - students.length,
+                instructor: `${instructorData.name} ${instructorData.lastname}`,
+                students
+            }
+        };
     } catch (error) {
-      console.error("Error al obtener detalles de la clase:", error);
-      return { success: false, code: 500, message: "Error interno del servidor" };
+        console.error("Error al obtener detalles de la clase:", error);
+        return { success: false, code: 500, message: "Error interno del servidor" };
     }
-  };
+};
 
 //Servicio para obtener todo el historial de clases creadas
 exports.getAllClassesHistory = async () => {
@@ -289,8 +290,8 @@ exports.getAllClassesHistory = async () => {
             const instructor = doc.data();
             const instructorId = doc.id;
 
-            if (instructor.clases) {
-                Object.entries(instructor.clases).forEach(([classId, clase]) => {
+            if (instructor.classes) {
+                Object.entries(instructor.classes).forEach(([classId, clase]) => {
                     const reservations = clase.reservations
                         ? Object.entries(clase.reservations).map(([resId, res]) => ({
                             reservationId: resId,
