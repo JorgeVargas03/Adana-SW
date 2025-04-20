@@ -122,6 +122,7 @@ Y a los instructores y administradores:
     "reservations": {
       "res_1001": {
         "client_id": "user_1",
+        "client_name": "Alan Brito",
         "status": "confirmed"
       }
     }
