@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import icon from '../assets/images/icon.png';
 import { Link } from 'react-router-dom';
+import { registerWithGoogle } from "../services/googleRegister";
 
 const SignUp = () => {
   
@@ -30,6 +31,18 @@ const SignUp = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  //metodo para el registro de google 
+
+    const handleRegister = async () => {
+      try {
+        const user = await registerWithGoogle();
+        console.log("Registro exitoso:", user.name);
+        // Redirigir o mostrar mensaje de bienvenida
+      } catch (error) {
+        alert("Error al registrarse con Google.");
+      }
+    };
 
   
   return (
@@ -157,7 +170,9 @@ const SignUp = () => {
                               Acceder
                             </button>
 
-                            <button className='flex items-center justify-center gap-2 w-[150px] h-12 active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-4 rounded-xl text-[#FFFDEF] text-lg font-bold bg-red-500 cursor-pointer'>
+                            <button 
+                             onClick={handleRegister}
+                            className='flex items-center justify-center gap-2 w-[150px] h-12 active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-4 rounded-xl text-[#FFFDEF] text-lg font-bold bg-red-500 cursor-pointer'>
                               <svg width="30px" height="30px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M23.75,16A7.7446,7.7446,0,0,1,8.7177,18.6259L4.2849,22.1721A13.244,13.244,0,0,0,29.25,16" fill="#00ac47"/>
                                 <path d="M23.75,16a7.7387,7.7387,0,0,1-3.2516,6.2987l4.3824,3.5059A13.2042,13.2042,0,0,0,29.25,16" fill="#4285f4"/>
@@ -166,6 +181,8 @@ const SignUp = () => {
                                 <path d="M29.25,15v1L27,19.5H16.5V14H28.25A1,1,0,0,1,29.25,15Z" fill="#4285f4"/>
                               </svg>
                               Google
+
+                              
                             </button>
                         </div>
 
