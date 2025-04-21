@@ -32,11 +32,11 @@ exports.updateUserStatus = async (req, res) => {
 };
 
 // Controlador para actualizar el perfil de un usuario
-const userService = require("../services/userService");
-
 exports.updateUserProfile = async (req, res) => {
   const userId = req.params.userId;
-  const updateData = req.body;
+  const {name, lastname, profile_picture} = req.body;
+
+  const updateData = {name, lastname, profile_picture};
 
   const result = await userService.updateUserProfile(userId, updateData);
 
@@ -46,4 +46,8 @@ exports.updateUserProfile = async (req, res) => {
 
   return res.status(200).json({ message: result.message });
 };
+
+//Controlador para generar la URL de la imagen de perfil del usuario
+exports.getProfile
+
 

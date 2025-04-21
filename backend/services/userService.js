@@ -1,5 +1,6 @@
 // services/userService.js
 const { userCollection } = require("../models/users");
+const driveService = require('../utils/driveService');
 
 
 //Obtener todos los usuarios registrados
@@ -54,14 +55,39 @@ exports.updateUserProfile = async (userId, updateData) => {
     const allowedFields = ["name", "lastname", "profile_picture"];
     const fieldsToUpdate = {};
 
+    // Verificar y preparar los campos que se desean actualizar
     for (const key of allowedFields) {
-      if (updateData[key]) {
+      if (updateData[key] && key !== "profile_picture") {
         fieldsToUpdate[key] = updateData[key];
       }
     }
 
+    // Procesar imagen si viene incluida
+    if (updateData.profile_picture && updateData.profile_picture.base64) {
+      const b64 = updateData.profile_picture.base64;
+      const mimeType = updateData.profile_picture.mimeType || "image/jpeg";
+
+      const resPicture = await driveService.uploadImageToGoogleDrive(b64, userId, mimeType);
+
+      if (resPicture.success) {
+        fieldsToUpdate.profile_picture = resPicture.url; // Aquí guardamos la URL que regresa el Web App
+      } else {
+        return {
+          success: false,
+          status: 500,
+          message: "Error al subir la imagen de perfil",
+          error: resPicture.error
+        };
+      }
+    }
+
+    // Verifica si hay algo que actualizar
     if (Object.keys(fieldsToUpdate).length === 0) {
-      return { success: false, status: 400, message: "No se proporcionaron datos válidos para actualizar" };
+      return {
+        success: false,
+        status: 400,
+        message: "No se proporcionaron datos válidos para actualizar"
+      };
     }
 
     await userRef.update(fieldsToUpdate);
@@ -72,3 +98,4 @@ exports.updateUserProfile = async (userId, updateData) => {
     return { success: false, status: 500, message: "Error interno del servidor" };
   }
 };
+
