@@ -10,5 +10,6 @@ const userController = require('../controllers/userController');
 router.get('/', userController.getAllUsers);
 router.patch('/:userId/status', userController.updateUserStatus);
 router.patch('/profile/:userId/updateProfile', userController.updateUserProfile);
+router.put('/profile/:userId/updatePassword', userController.updatePassword);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 // services/userService.js
 const { userCollection } = require("../models/users");
 const driveService = require('../utils/driveService');
+const bcrypt = require("bcrypt");
 
 
 //Obtener todos los usuarios registrados
@@ -98,4 +99,32 @@ exports.updateUserProfile = async (userId, updateData) => {
     return { success: false, status: 500, message: "Error interno del servidor" };
   }
 };
+
+// Servicio para actualizar la contraseña del usuario
+exports.updateUserPassword = async (userId, currentPassword, newPassword) => {
+  try {
+    const userRef = userCollection.doc(userId);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return { success: false, status: 404, message: "Usuario no encontrado" };
+    }
+
+    const userData = userDoc.data();
+    const isMatch = await bcrypt.compare(currentPassword, userData.password);
+
+    if (!isMatch) {
+      return { success: false, status: 401, message: "La contraseña actual es incorrecta" };
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    await userRef.update({ password: hashedNewPassword });
+
+    return { success: true, message: "Contraseña actualizada correctamente" };
+  } catch (error) {
+    console.error("Error al actualizar contraseña:", error);
+    return { success: false, status: 500, message: "Error interno del servidor" };
+  }
+};
+
 
