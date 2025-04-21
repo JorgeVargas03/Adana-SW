@@ -127,4 +127,35 @@ exports.updateUserPassword = async (userId, currentPassword, newPassword) => {
   }
 };
 
+// Servicio para obtener usuario por ID
+exports.getUserById = async (userId) => {
+  try {
+    const userDoc = await userCollection.doc(userId).get();
+
+    if (!userDoc.exists) {
+      return { success: false, status: 404, message: "Usuario no encontrado" };
+    }
+
+    const userData = userDoc.data();
+    return {
+      success: true,
+      data: {
+        id: userDoc.id,
+        name: userData.name,
+        lastname: userData.lastname,
+        email: userData.email,
+        role: userData.role,
+        status: userData.status,
+        gender: userData.gender,
+        phone: userData.phone,
+        profile_picture: userData.profile_picture || null,
+        // Agrega otros campos si es necesario
+      }
+    };
+  } catch (error) {
+    console.error("Error al obtener el usuario por ID:", error);
+    return { success: false, status: 500, message: "Error interno del servidor" };
+  }
+};
+
 

@@ -60,5 +60,18 @@ exports.updatePassword = async (req, res) => {
   return res.status(result.status || 200).json({ message: result.message });
 };
 
+// Controlador para obtener usuario por ID
+exports.getUserById = async (req, res) => {
+  const { userId } = req.params;
+
+  const result = await userService.getUserById(userId);
+
+  if (!result.success) {
+    return res.status(result.status).json({ message: result.message });
+  }
+
+  res.status(200).json(result.data);
+};
+
 
 

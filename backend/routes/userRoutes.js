@@ -11,5 +11,6 @@ router.get('/', userController.getAllUsers);
 router.patch('/:userId/status', userController.updateUserStatus);
 router.patch('/profile/:userId/updateProfile', userController.updateUserProfile);
 router.put('/profile/:userId/updatePassword', userController.updatePassword);
+router.get('/:userId/info', userController.getUserById);
 
 module.exports = router;
