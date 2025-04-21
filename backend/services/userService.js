@@ -1,7 +1,7 @@
 // services/userService.js
 const { userCollection } = require("../models/users");
 const driveService = require('../utils/driveService');
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 
 //Obtener todos los usuarios registrados
