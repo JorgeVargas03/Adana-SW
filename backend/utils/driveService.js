@@ -1,21 +1,20 @@
-const fs = require("fs");
 const axios = require("axios");
 
+const appURL = process.env.WEB_APP_URL;
+
 // Servicio que permite subir una nueva imagen de perfil para un usuario
-// Regresa como resultado la URL de la imagen y el id de la imagen
-exports.uploadImageToGoogleDrive = async (file, filename) => {
-    const imagenBuffer = fs.readFileSync(file);
-    const base64Image = imagenBuffer.toString("base64");
+// Recibe base64, nombre de archivo y tipo MIME
+// Regresa la URL de la imagen y el ID del archivo en Drive
+exports.uploadImageToGoogleDrive = async (base64, filename, mimeType) => {
+  const payload = {
+    base64,
+    filename,
+    mimeType: mimeType || "image/jpeg" // fallback por si no lo mandan
+  };
 
-    const payload = {
-        base64: base64Image,
-        filename: filename,
-        mimeType: "image/jpeg"
-    };
+  const response = await axios.post(appURL, payload, {
+    headers: { "Content-Type": "application/json" }
+  });
 
-    const response = await axios.post("", payload, {
-        headers: { "Content-Type": "application/json" }
-    });
-
-    return response.data;
+  return response.data;
 };
