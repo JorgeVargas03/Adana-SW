@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import icon from '../assets/images/icon.png';
 import { Link } from 'react-router-dom';
-import { registerWithGoogle } from "../services/googleRegister";
+import { registerWithGoogle } from "../services/registerWithGoogle";
 
 const SignUp = () => {
   

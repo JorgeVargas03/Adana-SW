@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import icon from '../assets/images/icon.png';
-import { loginWithGoogle } from "../services/googleLogin";
+import { loginWithGoogle } from "../services/loginWithGoogle";
 
 const Signin = () => {
 
