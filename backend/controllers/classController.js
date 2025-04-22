@@ -38,6 +38,65 @@ exports.getCalendarAvailability = async (req, res) => {
   }
 };
 
+// Controlador para reservar clase
+exports.reserveClass = async (req, res) => {
+  //const userId = req.userId; // Asumimos que el middleware de auth inyecta el ID del usuario
+  const userId = req.params.userId;
+  const { classId, instructorId } = req.body;
+
+  if (!classId || !instructorId) {
+    return res.status(400).json({ message: "Faltan datos requeridos" });
+  }
+
+  const result = await classService.reserveClass(userId, classId, instructorId);
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+// Controlador para consultar las reservas de un usuario
+exports.getUserReservations = async (req, res) => {
+  const userId = req.params.userId;
+
+  const result = await classService.getUserReservations(userId);
+
+  if (result.success) {
+    res.status(200).json({ reservaciones: result.data });
+  } else {
+    res.status(result.status).json({ message: result.message });
+  }
+};
+
+// Controlador para consultar clases de un instructor
+exports.getInstructorClasses = async (req, res) => {
+  const instructorId = req.params.instructorId;
+
+  const result = await classService.getInstructorClasses(instructorId);
+
+  if (result.success) {
+    res.status(200).json({Clases: result.data});
+  } else {
+    res.status(result.status).json({ message: result.message });
+  }
+};
+
+// Controlador para consultar el listado de alumnos de una clase
+exports.getClassWithReservations = async (req, res) => {
+  const { instructorId, classId } = req.params;
+
+  const result = await classService.getClassWithReservations(instructorId, classId);
+
+  if (!result.success) {
+    return res.status(result.code).json({ message: result.message });
+  }
+
+  res.json(result.class);
+};
+
+
 
 
 //Obtener el historial de clases creadas
