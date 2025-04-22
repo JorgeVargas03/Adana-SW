@@ -9,6 +9,7 @@
   "author": "Jorge Vargas",
   "license": "ISC",
   "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.7",

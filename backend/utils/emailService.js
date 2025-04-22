@@ -35,6 +35,7 @@ exports.sendConfirmationEmail = async (destination, classData) => {
         <li><strong>Instructor:</strong> ${classData.instructor}</li>
         <li><strong>Fecha:</strong> ${formatedDate}</li>
         <li><strong>Hora:</strong> ${classData.time}</li>
+        <li><strong>Importe pagado:</strong>$${classData.totalPrice}</li>
       </ul>
       <p>Te esperamos con mucha energía ✨</p>
 

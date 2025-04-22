@@ -149,7 +149,8 @@ exports.reserveClass = async (userId, classId, instructorId) => {
             title: classData.title,
             instructor: `${instructorData.name} ${instructorData.lastname}`,
             date: classData.schedule.date,
-            time: classData.schedule.time
+            time: classData.schedule.time,
+            totalPrice: classData.price
         };
 
         await emailServive.sendConfirmationEmail(clientData.email, classInfo);
