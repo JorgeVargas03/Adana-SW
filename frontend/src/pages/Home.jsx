@@ -22,6 +22,7 @@ const Home = () => {
         </p>
       </section>
 
+      <div className="flex justify-center items-center">
       {/* ¿POR QUÉ ELEGIRNOS? */}
       <section className="py-16 px-4 bg-[#F0F1D2] max-w-[1200px] mx-auto">
         <h2 className="font-outfit font-normal text-center text-[4rem] mb-8 text-[#413324]">
@@ -94,6 +95,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 };
