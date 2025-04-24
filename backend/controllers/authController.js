@@ -2,6 +2,7 @@
 const { userCollection } = require("../models/users");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { admin } = require("../config/database.config");
 
 
 const SECRET_KEY = process.env.JWT_SECRET;
@@ -48,44 +49,27 @@ exports.register = async (req, res) => {
   }
 };
 
-//Función para registrar a un usuario con Google
+//Función para iniciar sesion con Google
 exports.loginWithGoogle = async (req, res) => {
   const { idToken } = req.body;
 
   try {
-    // 1. Verificar el ID token de Google con Firebase Admin
     const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { fullName, email, photoUrl } = decodedToken;
+    
 
-    const { uid, email, name } = decodedToken;
-
-    // 2. Buscar si ya existe ese usuario en Firestore
+    // Buscar el usuario en Firestore
     const userSnapshot = await userCollection.where("email", "==", email).get();
 
-    let userDoc;
-    let user;
-
-    if (!userSnapshot.empty) {
-      // Usuario ya existe → login
-      userDoc = userSnapshot.docs[0];
-      user = userDoc.data();
-    } else {
-      // Usuario no existe → registrar nuevo
-      const userData = {
-        name: name || "",
-        lastname: "",
-        email,
-        role: "cliente" || "instructor",
-        isVerified: true,
-        registeredAt: new Date().toISOString()
-      };
-
-      const newUserRef = await userCollection.add(userData);
-      userDoc = await newUserRef.get();
-      user = userData;
-      user.id = newUserRef.id;
+    if (userSnapshot.empty) {
+      return res.status(404).json({
+        message: "No existe una cuenta asociada a ese correo. Por favor, regístrate primero.",
+      });
     }
 
-    // 3. Generar token JWT
+    const userDoc = userSnapshot.docs[0];
+    const user = userDoc.data();
+
     const token = jwt.sign(
       {
         userId: userDoc.id,
@@ -173,51 +157,47 @@ exports.login = async (req, res) => {
   }
 };
 
-//Función para iniciar sesión con Google
-exports.signinWithGoogle = async (req, res) => {
-  const { idToken } = req.body;
+
+// Función para completar registro después del login con Google
+exports.completeGoogleRegistration = async (req, res) => {
+  const { name, lastname, email, password, gender, phone, profileImage } = req.body;
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const { email, name } = decodedToken;
+    // Verificar si el usuario ya existe
+    const existingUserSnapshot = await userCollection.where("email", "==", email).get();
 
-    // Buscar el usuario en Firestore
-    const userSnapshot = await userCollection.where("email", "==", email).get();
-
-    if (userSnapshot.empty) {
-      return res.status(404).json({
-        message: "No existe una cuenta asociada a ese correo. Por favor, regístrate primero."
-      });
+    if (!existingUserSnapshot.empty) {
+      return res.status(400).json({ message: "Este correo ya está registrado" });
     }
 
-    const userDoc = userSnapshot.docs[0];
-    const user = userDoc.data();
+    let hashedPassword = null;
 
-    const token = jwt.sign(
-      {
-        userId: userDoc.id,
-        name: user.name,
-        lastname: user.lastname || "",
-        email: user.email,
-        role: user.role
-      },
-      SECRET_KEY,
-      { expiresIn: "30m" }
-    );
+    // Si se proporciona contraseña, encriptarla
+    if (password && password.trim() !== "") {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
 
-    res.status(200).json({
-      message: "Inicio de sesión con Google exitoso",
-      token,
-      user: {
-        id: userDoc.id,
-        name: user.name,
-        lastname: user.lastname || "",
-        email: user.email,
-        role: user.role
-      }
+    const userData = {
+      name,
+      lastname,
+      email,
+      password: hashedPassword, // puede quedar como null o no enviado si no se puso
+      role: "cliente",
+      status: "active",
+      gender,
+      phone,
+      profileImage,
+      registeredAt: new Date().toISOString()
+    };
+
+    const newUserRef = await userCollection.add(userData);
+
+    res.status(201).json({
+      message: "Registro completado exitosamente",
+      id: newUserRef.id
     });
   } catch (error) {
-    console.error("Error al iniciar sesión con Google:", error);
-    res.status(500).json({ message: "Error al verificar token de Google" });
+    console.error("Error al completar registro con Google:", error);
+    res.status(500).json({ message: "Error del servidor" });
   }
 };

@@ -6,7 +6,7 @@ export const registerWithGoogle = async () => {
   const result = await signInWithPopup(auth, provider);
   const idToken = await result.user.getIdToken();
 
-  const response = await axios.post("http://localhost:3000/api/auth/google/register", {
+  const response = await axios.post("https://localhost:3001/api/auth/google/register", {
     idToken
   });
 
