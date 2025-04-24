@@ -1,6 +1,7 @@
 const { db } = require("../firebase");
 const userCollection = db.collection("users");
 const paymentsCollection = db.collection("payments");
+const classesCollection = db.collection("classes");
 
 exports.confirmarCompraPaquete = async (req, res) => {
   try {
@@ -10,23 +11,37 @@ exports.confirmarCompraPaquete = async (req, res) => {
       return res.status(400).json({ message: "Faltan datos obligatorios." });
     }
 
-    // 1. Validar cantidad de clases
-    const descuento = selectedClasses.length >= 3 ? 0.10 : 0;
-    const totalCalculado = selectedClasses.length * 300; // Suponiendo que cada clase cuesta $300
-    const totalConDescuento = totalCalculado * (1 - descuento);
+    // 1. Validar cantidad y calcular precio
+    const precioPorClase = 300;
+    const tieneDescuento = selectedClasses.length >= 3;
+    const totalCalculado = selectedClasses.length * precioPorClase;
+    const totalConDescuento = totalCalculado * (1 - (tieneDescuento ? 0.10 : 0));
 
-    // 2. Comparar con total enviado por frontend
     if (Math.abs(totalConDescuento - totalFromFrontend) > 1) {
       return res.status(400).json({ message: "El total no coincide con el esperado." });
     }
 
-    // 3. Obtener info del usuario
+    // 2. Validar existencia y disponibilidad de cada clase
+    for (const clase of selectedClasses) {
+      const claseRef = classesCollection.doc(clase.id);
+      const claseDoc = await claseRef.get();
+
+      if (!claseDoc.exists) {
+        return res.status(404).json({ message: `La clase '${clase.name}' no existe.` });
+      }
+
+      const data = claseDoc.data();
+      if (data.reserved >= data.capacity) {
+        return res.status(400).json({ message: `La clase '${clase.name}' ya no tiene cupos disponibles.` });
+      }
+    }
+
+    // 3. Obtener datos del usuario
     const userDoc = await userCollection.doc(userId).get();
     if (!userDoc.exists) return res.status(404).json({ message: "Usuario no encontrado." });
-
     const userData = userDoc.data();
 
-    // 4. Guardar en payments
+    // 4. Registrar en payments
     const paymentData = {
       userId,
       name: userData.name,
@@ -42,10 +57,17 @@ exports.confirmarCompraPaquete = async (req, res) => {
 
     await paymentsCollection.add(paymentData);
 
-    // 5. Actualizar clases del usuario
-    await userCollection.doc(userId).update({
-      classes: [...(userData.classes || []), ...selectedClasses]
-    });
+    // 5. Agregar clases al perfil del usuario
+    const nuevasClases = [...(userData.classes || []), ...selectedClasses];
+    await userCollection.doc(userId).update({ classes: nuevasClases });
+
+    // 6. Actualizar el contador de reservados en cada clase
+    for (const clase of selectedClasses) {
+      const claseRef = classesCollection.doc(clase.id);
+      await claseRef.update({
+        reserved: db.FieldValue.increment(1)
+      });
+    }
 
     return res.status(200).json({
       message: "Compra registrada con éxito",
