@@ -9,6 +9,8 @@ import Faq from './pages/FAQ';
 import Signin from './pages/Sign_in';
 import Reservation from './pages/Reservation';
 import SignUp from './pages/Sign_up';
+import Pagos from './pages/Pagos';
+import MyProfile from './pages/MyProfile';
 
 const App = () => {
   return (
@@ -26,6 +28,8 @@ const App = () => {
                 <Route path="/faq" element={<Faq/>} />
                 <Route path="/signin" element={<Signin/>} />
                 <Route path="/signup" element={<SignUp/>} />
+                <Route path= "/pagos" element={<Pagos/>}/>
+                <Route path= "/myprofile" element={<MyProfile/>}/>
               </Routes>
             </div>
           </main>

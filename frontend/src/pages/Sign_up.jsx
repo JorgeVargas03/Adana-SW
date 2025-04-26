@@ -134,7 +134,7 @@ const SignUp = () => {
                             <div className="w-full max-w-[1000px] transform translate-y-9">
                               <label className="block text-base sm:text-lg font-medium mb-2">Número de teléfono</label>
                               <input
-                                type="text"
+                                type="number"
                                 name="telefono"
                                 className="w-[250px] h-7 sm:h-9 px-4 text-sm sm:text-base md:text-lg rounded-xl bg-[#F0F1D2] focus:outline-none focus:ring-2 focus:ring-yellow-500"
                               />
