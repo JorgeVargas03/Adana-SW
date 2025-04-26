@@ -1,170 +1,84 @@
 import React from 'react';
-import { Box, Typography, Divider } from '@mui/material';
 
 const Wellness = () => {
   return (
-    <Box sx={{
-      maxWidth: '800px',
-      margin: '0 auto',
-      padding: '4rem 2rem',
-      fontFamily: 'Outfit, sans-serif'
-    }}>
+    <div className="max-w-3xl mx-auto px-8 py-16 font-outfit">
       {/* Artículo 1 - Bienestar mental */}
-      <Box sx={{
-        backgroundColor: '#FFFDEF',
-        borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        padding: '3rem',
-        marginBottom: '3rem'
-      }}>
+      <div className="bg-[#FFFDEF] rounded-lg shadow-lg p-12 mb-12">
         {/* Título principal */}
-        <Typography variant="h1" sx={{
-          fontWeight: 700,
-          fontSize: '2.5rem',
-          color: '#413324',
-          marginBottom: '1rem'
-        }}>
+        <h1 className="font-bold text-[2.5rem] text-[#413324] mb-4">
           Bienestar mental
-        </Typography>
+        </h1>
         
         {/* Subtítulo */}
-        <Typography variant="h2" sx={{
-          fontWeight: 400,
-          fontSize: '1.5rem',
-          color: '#7E7EC3',
-          marginBottom: '2rem',
-          fontStyle: 'italic'
-        }}>
+        <h2 className="font-normal italic text-xl text-[#7E7EC3] mb-8">
           El poder de la mente en tu práctica de pilates
-        </Typography>
+        </h2>
         
         {/* Autor y fecha */}
-        <Typography sx={{
-          color: '#888',
-          marginBottom: '2rem',
-          fontSize: '0.9rem'
-        }}>
+        <p className="text-gray-500 text-sm mb-8">
           Por la Dra. Rocío Rojas | 09 de abril del 2025
-        </Typography>
+        </p>
         
         {/* Párrafo introductorio */}
-        <Typography paragraph sx={{
-          fontSize: '1.1rem',
-          lineHeight: '1.8',
-          color: '#413324',
-          marginBottom: '2rem'
-        }}>
+        <p className="text-lg leading-relaxed text-[#413324] mb-8">
           El bienestar mental es esencial para tener una vida equilibrada, y juega un papel clave en tu práctica de Pilates. Una mente tranquila y enfocada puede transformar tu experiencia en clase, mejorando tu rendimiento físico y emocional. Aquí te contamos cómo:
-        </Typography>
+        </p>
         
         {/* Sección Beneficios */}
-        <Typography variant="h3" sx={{
-          fontWeight: 600,
-          fontSize: '1.8rem',
-          color: '#413324',
-          margin: '2rem 0 1.5rem 0'
-        }}>
+        <h3 className="font-semibold text-[1.8rem] text-[#413324] my-8">
           Beneficios del bienestar mental en pilates
-        </Typography>
+        </h3>
         
         {/* Lista de beneficios */}
-        <Box component="ol" sx={{ 
-          paddingLeft: '1.5rem',
-          '& li': {
-            marginBottom: '1.5rem'
-          }
-        }}>
+        <ol className="list-decimal pl-6 space-y-6">
           <li>
-            <Typography sx={{
-              fontWeight: 600,
-              color: '#7E7EC3',
-              fontSize: '1.2rem',
-              marginBottom: '0.5rem'
-            }}>
+            <div className="font-semibold text-lg text-[#7E7EC3] mb-2">
               Mejora tu concentración:
-            </Typography>
-            <Typography sx={{
-              lineHeight: '1.7',
-              color: '#413324'
-            }}>
+            </div>
+            <p className="leading-relaxed text-[#413324]">
               Pilates requiere estar presente en cada movimiento. Cuando tu mente está en calma, puedes concentrarte mejor y lograr una práctica más efectiva.
-            </Typography>
+            </p>
           </li>
           
           <li>
-            <Typography sx={{
-              fontWeight: 600,
-              color: '#7E7EC3',
-              fontSize: '1.2rem',
-              marginBottom: '0.5rem'
-            }}>
+            <div className="font-semibold text-lg text-[#7E7EC3] mb-2">
               Reduce el estrés:
-            </Typography>
-            <Typography sx={{
-              lineHeight: '1.7',
-              color: '#413324'
-            }}>
+            </div>
+            <p className="leading-relaxed text-[#413324]">
               La respiración profunda y el enfoque en el presente ayudan a disminuir el estrés y la ansiedad, dejándote sentir más relajado al final de cada clase.
-            </Typography>
+            </p>
           </li>
           
           <li>
-            <Typography sx={{
-              fontWeight: 600,
-              color: '#7E7EC3',
-              fontSize: '1.2rem',
-              marginBottom: '0.5rem'
-            }}>
+            <div className="font-semibold text-lg text-[#7E7EC3] mb-2">
               Aumenta tu energía:
-            </Typography>
-            <Typography sx={{
-              lineHeight: '1.7',
-              color: '#413324'
-            }}>
+            </div>
+            <p className="leading-relaxed text-[#413324]">
               Al cuidar tu bienestar mental, también te sientes más energético y con mejor disposición para afrontar tu día.
-            </Typography>
+            </p>
           </li>
-        </Box>
-      </Box>
+        </ol>
+      </div>
 
       {/* Divider entre artículos */}
-      <Divider sx={{ margin: '3rem 0', borderColor: '#EEE' }} />
+      <div className="my-12 border-t border-gray-200" />
 
-      {/* Artículo 2 - Puedes duplicar y modificar este bloque para más artículos */}
-      <Box sx={{
-        backgroundColor: '#FFFDEF',
-        borderRadius: '8px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        padding: '3rem',
-        marginBottom: '3rem'
-      }}>
-        {/* Estructura igual que el primer artículo */}
-        <Typography variant="h1" sx={{
-          fontWeight: 700,
-          fontSize: '2.5rem',
-          color: '#413324',
-          marginBottom: '1rem'
-        }}>
+      {/* Artículo 2 */}
+      <div className="bg-[#FFFDEF] rounded-lg shadow-lg p-12 mb-12">
+        <h1 className="font-bold text-[2.5rem] text-[#413324] mb-4">
           Conexión mente-cuerpo
-        </Typography>
+        </h1>
         
-        <Typography sx={{
-          color: '#888',
-          marginBottom: '2rem',
-          fontSize: '0.9rem'
-        }}>
+        <p className="text-gray-500 text-sm mb-8">
           Por el Dr. Carlos Méndez | 15 de abril del 2025
-        </Typography>
+        </p>
         
-        <Typography paragraph sx={{
-          fontSize: '1.1rem',
-          lineHeight: '1.8',
-          color: '#413324'
-        }}>
+        <p className="text-lg leading-relaxed text-[#413324]">
           La conexión entre mente y cuerpo es fundamental en Pilates. Te explicamos cómo fortalecer esta relación para una práctica más consciente y efectiva.
-        </Typography>
-      </Box>
-    </Box>
+        </p>
+      </div>
+    </div>
   );
 };
 

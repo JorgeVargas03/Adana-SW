@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
 
-/* PALETA DE COLORES */
+/* PALETA DE COLORES y FUENTES*/
 @theme {
+<<<<<<< HEAD
     --bg-color: #F0F1D2; /*verde claro*/
     --bar-color: #FFFDEF; /*ivory*/
     --accent-color: #C3C37E; /*verde */
@@ -166,3 +168,12 @@ body, html {
  /* wa a cambair los colores a ver que pedo */
 
   
+=======
+    --color-bgcolor: #F0F1D2;
+    --color-barcolor: #FFFDEF;
+    --color-accent1: #C3C37E;
+    --color-accent2: #7E7EC3;
+    --color-fontdef: #413324;
+    --font-Outfit: 'Outfit', sans-serif;
+}
+>>>>>>> origin/Java3
