@@ -13,10 +13,9 @@ import SignUp from './pages/Sign_up';
 const App = () => {
   return (
     <Router>
-      <div>
+      <div className="min-h-screen flex flex-col">
         <Navbar />
-        <div style={{ display: 'flex' }}>
-          <main style={{ flex: 1 }}>
+        <main className="flex-grow">
             <div>
               <Routes>
                 <Route path="/reservation" element={<Reservation/>} />
@@ -29,7 +28,6 @@ const App = () => {
               </Routes>
             </div>
           </main>
-        </div>
         <Footer />
       </div>
     </Router>
