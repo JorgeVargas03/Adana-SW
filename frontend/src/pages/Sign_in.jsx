@@ -35,16 +35,12 @@ return (
 
           <form className="mt-10 space-y-6">
             <div>
-              <label className="block text-sm font-medium text-fontdef">
-                Correo
+              <label class="block" className="block text-sm font-medium text-fontdef">
+              <span class="...">Correo</span>
               </label>
               <div className="mt-2">
-                <input
-                  type="text"
-                  name="correo"
-                  placeholder="Ingresa tu correo"
-                  className="block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                />
+              <input type="email" placeholder="Ingrese un correo" class="peer block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+              <p class="text-red-700 hidden peer-invalid:block">Por favor, proporciona un correo válido.</p>
               </div>
             </div>
 
@@ -54,7 +50,7 @@ return (
                   Contraseña
                 </label>
                 <div className="text-sm">
-                  <a href="#" className="font-semibold text-blue-700 hover:text-blue-600">
+                  <a href="#" className="font-semibold text-fontlink hover:text-linkselect">
                     Olvidé mi contraseña
                   </a>
                 </div>
@@ -101,7 +97,7 @@ return (
             <p>¿No tienes una cuenta?{' '}
               <Link 
                 to='/signup'
-                className='font-semibold text-blue-700 hover:text-blue-600'
+                className='font-semibold text-fontlink hover:text-linkselect'
               > 
                 Regístrate
               </Link>
