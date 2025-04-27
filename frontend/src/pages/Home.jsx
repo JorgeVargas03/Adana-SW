@@ -29,7 +29,7 @@ const Home = () => {
       {/* Main Content */}
       <div className="flex-1 bg-bgcolor/70 w-full py-16 items-center">
         <section className="h-full w-full max-w-[1800px] mx-auto px-4 items-center">
-          <h2 className="font-outfit text-center text-7xl mb-10 text-[#413324]">
+          <h2 className="font-Outfit text-center text-7xl mb-10 text-[#413324]">
             ¿Por qué elegirnos?
           </h2>
           

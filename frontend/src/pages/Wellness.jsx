@@ -1,85 +1,122 @@
-import React from 'react';
+import { useState } from 'react';
+import { Dialog } from '@headlessui/react';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import articles from '../assets/articles/Articles';
 
-const Wellness = () => {
+export default function Wellness() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState(null);
+
   return (
-    <div className="max-w-3xl mx-auto px-8 py-16 font-outfit">
-      {/* Artículo 1 - Bienestar mental */}
-      <div className="bg-[#FFFDEF] rounded-lg shadow-lg p-12 mb-12">
-        {/* Título principal */}
-        <h1 className="font-bold text-[2.5rem] text-[#413324] mb-4">
-          Bienestar mental
-        </h1>
-        
-        {/* Subtítulo */}
-        <h2 className="font-normal italic text-xl text-[#7E7EC3] mb-8">
-          El poder de la mente en tu práctica de pilates
-        </h2>
-        
-        {/* Autor y fecha */}
-        <p className="text-gray-500 text-sm mb-8">
-          Por la Dra. Rocío Rojas | 09 de abril del 2025
-        </p>
-        
-        {/* Párrafo introductorio */}
-        <p className="text-lg leading-relaxed text-[#413324] mb-8">
-          El bienestar mental es esencial para tener una vida equilibrada, y juega un papel clave en tu práctica de Pilates. Una mente tranquila y enfocada puede transformar tu experiencia en clase, mejorando tu rendimiento físico y emocional. Aquí te contamos cómo:
-        </p>
-        
-        {/* Sección Beneficios */}
-        <h3 className="font-semibold text-[1.8rem] text-[#413324] my-8">
-          Beneficios del bienestar mental en pilates
-        </h3>
-        
-        {/* Lista de beneficios */}
-        <ol className="list-decimal pl-6 space-y-6">
-          <li>
-            <div className="font-semibold text-lg text-[#7E7EC3] mb-2">
-              Mejora tu concentración:
-            </div>
-            <p className="leading-relaxed text-[#413324]">
-              Pilates requiere estar presente en cada movimiento. Cuando tu mente está en calma, puedes concentrarte mejor y lograr una práctica más efectiva.
-            </p>
-          </li>
-          
-          <li>
-            <div className="font-semibold text-lg text-[#7E7EC3] mb-2">
-              Reduce el estrés:
-            </div>
-            <p className="leading-relaxed text-[#413324]">
-              La respiración profunda y el enfoque en el presente ayudan a disminuir el estrés y la ansiedad, dejándote sentir más relajado al final de cada clase.
-            </p>
-          </li>
-          
-          <li>
-            <div className="font-semibold text-lg text-[#7E7EC3] mb-2">
-              Aumenta tu energía:
-            </div>
-            <p className="leading-relaxed text-[#413324]">
-              Al cuidar tu bienestar mental, también te sientes más energético y con mejor disposición para afrontar tu día.
-            </p>
-          </li>
-        </ol>
-      </div>
+  <div className="mx-auto px-4 sm:px-6 lg:px-8 py-12 font-Outfit pt-34 bg-accent1/70">
+    {/* Listado de Artículos */}
+    <div className="bg-barcolor rounded-lg shadow-sm">
+      {articles.map((article) => (
+        <div
+          key={article.id}
+          className="flex flex-col md:flex-row justify-between items-start md:items-center border-b last:border-0 rounded-lg border-gray-200 p-6 hover:bg-white/80 transition"
+        >
+          <div>
+            <h2 className="text-indigo-500 text-lg font-semibold mb-2">{article.title}</h2>
+            <p className="text-gray-500 text-sm">{article.subtitle}</p>
+          </div>
+          <div className="flex flex-col items-center mt-4 md:mt-0 space-y-2">
+            {/* Badge del tipo de artículo */}
+          <span
+            className="inline-flex items-center rounded-xl px-2 py-1 text-xs font-medium ring-inset"
+            style={{
+              backgroundColor: article.color + '2A',  // Fondo con opacidad
+              color: article.color,                    // Color de texto
+              boxShadow: `0 0 0 1px ${article.color}40`, // Anillo con color y opacidad (80 = 50% opacidad)
+            }}
+          >
+            {article.category}
+</span>
 
-      {/* Divider entre artículos */}
-      <div className="my-12 border-t border-gray-200" />
-
-      {/* Artículo 2 */}
-      <div className="bg-[#FFFDEF] rounded-lg shadow-lg p-12 mb-12">
-        <h1 className="font-bold text-[2.5rem] text-[#413324] mb-4">
-          Conexión mente-cuerpo
-        </h1>
-        
-        <p className="text-gray-500 text-sm mb-8">
-          Por el Dr. Carlos Méndez | 15 de abril del 2025
-        </p>
-        
-        <p className="text-lg leading-relaxed text-[#413324]">
-          La conexión entre mente y cuerpo es fundamental en Pilates. Te explicamos cómo fortalecer esta relación para una práctica más consciente y efectiva.
-        </p>
-      </div>
+            
+            {/* Botón para ver detalles */}
+            <a
+              onClick={(e) => {
+                e.preventDefault();
+                setSelectedArticle(article);
+                setIsModalOpen(true);
+              }}
+              className="text-indigo-500 text-sm hover:underline cursor-pointer"
+            >
+              Ver más
+            </a>
+          </div>
+        </div>
+      ))}
     </div>
-  );
-};
 
-export default Wellness;
+    <Dialog
+  open={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  className="relative z-50"
+>
+  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" aria-hidden="true" />
+  
+  <div className="fixed inset-0 flex items-center justify-center p-4">
+    <Dialog.Panel className="w-full max-w-3xl bg-[#FFFDEF] rounded-xl shadow-2xl p-8 max-h-[90vh] overflow-y-auto">
+      {selectedArticle && (
+        <>
+          <Dialog.Title className="font-bold text-3xl text-[#413324] mb-4">
+            {selectedArticle.title}
+          </Dialog.Title>
+          <p className="text-xl text-[#7E7EC3] italic mb-6">{selectedArticle.subtitle}</p>
+          
+          <div className="flex items-center text-sm text-gray-500 space-x-4 mb-8">
+            <span className="flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              {selectedArticle.author}
+            </span>
+            <span>•</span>
+            <time>{selectedArticle.date}</time>
+          </div>
+
+          <div className="prose max-w-none text-[#413324]">
+            {selectedArticle.content.split('\n').map((line, index) => (
+              <p key={index} className="mb-4">{line}</p>
+            ))}
+          </div>
+
+          <div className="bg-[#F0F1D2] rounded-lg p-6 mt-8">
+            <h3 className="font-semibold text-2xl text-[#413324] mb-6 flex items-center">
+              <svg className="w-6 h-6 mr-2 text-[#7E7EC3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Beneficios Clave
+            </h3>
+            <ul className="space-y-4">
+              {selectedArticle.benefits.map((benefit, index) => (
+                <li key={index} className="flex items-start">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-[#7E7EC3] flex items-center justify-center">
+                      <span className="text-white text-sm">{index + 1}</span>
+                    </div>
+                  </div>
+                  <span className="ml-4 text-[#413324]">{benefit}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <button
+            onClick={() => setIsModalOpen(false)}
+            className="mt-8 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-[#7E7EC3] hover:bg-[#6B6BAF] transition-colors"
+          >
+            Cerrar artículo
+            <ChevronLeftIcon className="w-4 h-4 ml-2" />
+          </button>
+        </>
+      )}
+    </Dialog.Panel>
+  </div>
+</Dialog>
+
+  </div>
+);
+};

@@ -5,7 +5,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Instructors from './pages/Instructors';
 import Wellness from './pages/Wellness';
-import Faq from './pages/FAQ';
+import Faq from './pages/Faq';
 import Signin from './pages/Sign_in';
 import Reservation from './pages/Reservation';
 import SignUp from './pages/Sign_up';
