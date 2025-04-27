@@ -7,7 +7,7 @@ import bgImage from '../assets/images/instructors-page.jpg';
 
 const Instructors = () => {
   return (
-    <div className="w-full overflow-x-hidden">
+    <div className="w-full overflow-x-hidden font-Outfit">
       {/* Sección título */}
       <section className="w-screen min-h-[120vh] bg-cover bg-center bg-no-repeat flex flex-col items-center text-center py-32 justify-start relative"
         style={{ backgroundImage: `url(${bgImage})` }}>
@@ -22,8 +22,8 @@ const Instructors = () => {
       </section>
 
       {/* Sección grid 2x2 */}
-<section className="py-16 px-8 bg-accent1 w-full flex justify-center">
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-[1200px] rounded-lg bg-accent1 p-8 relative w-full">
+<section className="py-16 px-8 bg-accent1/70 w-full flex justify-center">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-[1200px] rounded-lg p-8 relative w-full">
     
     {/* Líneas decorativas */}
     <div className="absolute inset-0 m-4 rounded-lg pointer-events-none"></div>

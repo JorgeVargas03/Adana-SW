@@ -67,7 +67,7 @@ export default function Navbar() {
                     ? 'text-barcolor' 
                     : 'text-fontdef'
                 }`}>
-                  Adana Pilates Studio
+                  Adana Pilates Estudio
                 </span>
               </div>
             </div>
