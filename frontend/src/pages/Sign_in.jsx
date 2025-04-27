@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import icon from '../assets/images/icon.png';
 import { loginWithGoogle } from "../services/loginWithGoogle";
+import { login } from '../services/authService';
 
 const Signin = () => {
- const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // Iniciar sesión con Google
   const handleLogin = async () => {
@@ -14,18 +15,18 @@ const Signin = () => {
       console.log("Bienvenido:", user.name);
       // Redirigir normalmente
       navigate('/');
-  
+
     } catch (error) {
       if (error.code === 'USER_NOT_FOUND') {
         console.log("Usuario no encontrado. Redirigiendo al formulario de registro...");
-  
+
         // Guarda el user temporalmente en localStorage
         localStorage.setItem("user", JSON.stringify({
           name: error.profile.displayName,
           email: error.profile.email,
           profileImage: error.profile.photoURL || ""
         }));
-  
+
         navigate('/register'); // O la ruta real: /complete-registration
       } else {
         console.error("Error desconocido:", error);
@@ -33,7 +34,33 @@ const Signin = () => {
       }
     }
   };
+  const handleNormalLogin = async () => {
+    try {
+      if (
+        !correo ||
+        !contraseña
+      ) {
+        alert("Por favor completa todos los campos.");
+        return;
+      }
 
+      const userData = {
+        email: correo,
+        password: contraseña,
+      };
+
+      const token = await login(userData);
+      alert("¡Inicio de sesion exitoso!");
+      console.log(token.token);
+      navigate('/');
+    } catch (error) {
+      console.error("Error al iniciar sesion usuario:", error);
+      alert("Error al iniciar sesion. Verifica los datos o intenta más tarde.");
+    }
+  };
+
+  const [correo, setCorreo] = useState('');
+  const [contraseña, setContraseña] = useState('');
 
   return (
 
@@ -64,6 +91,7 @@ const Signin = () => {
                 <input
                   type="text"
                   name="correo"
+                  onChange={(e) => setCorreo(e.target.value)}
                   placeholder="Ingresa tu correo"
                   className="w-full h-11 sm:h-12 px-4 text-sm sm:text-base md:text-lg rounded-2xl bg-[#F0F1D2] focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
@@ -76,6 +104,7 @@ const Signin = () => {
                 <input
                   type="password"
                   name="contraseña"
+                  onChange={(e) => setContraseña(e.target.value)}
                   placeholder="Ingresa tu contraseña"
                   className="w-full h-11 sm:h-12 px-4 text-sm sm:text-base md:text-lg rounded-2xl bg-[#F0F1D2] focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 />
@@ -88,7 +117,8 @@ const Signin = () => {
             <div
 
               className='mt-8 flex flex-col items-center gap-y-4  translate-y-20'>
-              <div> <button className='w-[200px] h-12 active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-4 rounded-xl text-[#FFFDEF] text-lg font-bold cursor-pointer'>
+              <div> <button onClick={handleNormalLogin}
+              className='w-[200px] h-12 active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-4 rounded-xl text-[#FFFDEF] text-lg font-bold cursor-pointer'>
                 Acceder </button> </div>
 
 
