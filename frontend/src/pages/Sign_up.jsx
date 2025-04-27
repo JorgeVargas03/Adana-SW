@@ -58,18 +58,18 @@ const SignUp = () => {
         </div>
 
         {/* FORMULARIO: contenido centrado horizontal entre barra y borde */}
-          <div className='flex-1 flex flex-col items-center justify-start pt-28 h-full ml-[-7.5px]'>
+          <div className='flex-1 flex flex-col items-center justify-start pt-5 h-full ml-[-7.5px]'>
           
-          <div className='transform translate-y-10'>
+          <div className=''>
 
-            <div className='mt-20"'>
-            <h1 className="text-center font-[700] font-[Outfit] text-4xl pt-40">
+            <div className=''>
+            <h1 className="text-center font-[700] font-[Outfit] text-4xl pb-1">
                   Registrate
               </h1>
             </div>
             
                         <div className="w-full flex justify-center px-4 sm:px-6 md:px-8">
-                            <div className="w-full max-w-[1000px] transform translate-y-3">
+                            <div className="w-full max-w-[1000px]">
                               <label className="block text-base sm:text-lg font-medium mb-2">Nombre</label>
                               <input
                                 type="text"
@@ -79,8 +79,8 @@ const SignUp = () => {
                             </div>
                           </div>
 
-                          <div className="w-full flex justify-center px-4 sm:px-6 md:px-8 mt-6">
-                            <div className="w-full max-w-[1000px] transform translate-y-6">
+                          <div className="w-full flex justify-center px-4 sm:px-6 md:px-8">
+                            <div className="w-full max-w-[1000px]">
                               <label className="block text-base sm:text-lg font-medium mb-2">Apellido</label>
                               <input
                                 type="text"
@@ -94,7 +94,7 @@ const SignUp = () => {
                          {/* DROPDOWN: ayuda me tronó y no se pq */}
                         <div
                               ref={dropdownRef}
-                              className="w-full flex justify-start px-4 sm:px-6 md:px-8 mt-6 max-w-[1000px] transform translate-y-9 select-none relative z-20"
+                              className="w-full flex justify-start px-4 sm:px-6 md:px-8 mt-3 max-w-[1000px] select-none relative z-20"
                             >
                               <div>
                                 <div
@@ -130,8 +130,8 @@ const SignUp = () => {
                           </div>
 
 
-                        <div className="w-full flex justify-center px-4 sm:px-6 md:px-8 mt-6">
-                            <div className="w-full max-w-[1000px] transform translate-y-9">
+                        <div className="w-full flex justify-center px-4 sm:px-6 md:px-8">
+                            <div className="w-full max-w-[1000px]">
                               <label className="block text-base sm:text-lg font-medium mb-2">Número de teléfono</label>
                               <input
                                 type="number"
@@ -141,8 +141,8 @@ const SignUp = () => {
                             </div>
                         </div>
 
-                        <div className="w-full flex justify-center px-4 sm:px-6 md:px-8 mt-6">
-                            <div className="w-full max-w-[1000px] transform translate-y-12">
+                        <div className="w-full flex justify-center px-4 sm:px-6 md:px-8">
+                            <div className="w-full max-w-[1000px]">
                               <label className="block text-base sm:text-lg font-medium mb-2">Correo</label>
                               <input
                                 type="text"
@@ -152,8 +152,8 @@ const SignUp = () => {
                             </div>
                         </div>
 
-                        <div className="w-full flex justify-center px-4 sm:px-6 md:px-8 mt-6">
-                            <div className="w-full max-w-[1000px] transform translate-y-15">
+                        <div className="w-full flex justify-center px-4 sm:px-6 md:px-8">
+                            <div className="w-full max-w-[1000px]">
                               <label className="block text-base sm:text-lg font-medium mb-2">Contraseña</label>
                               <input
                                 type="password"
@@ -165,7 +165,7 @@ const SignUp = () => {
 
 
                       
-                        <div className='mt-8 flex flex-row justify-center items-center gap-x-4 translate-y-18'>
+                        <div className='mt-8 flex flex-row justify-center items-center gap-x-4 '>
                             <button className='w-[150px] h-12 active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-4 rounded-xl text-[#FFFDEF] text-lg font-bold bg-blue-600 cursor-pointer'> 
                               Acceder
                             </button>
@@ -187,7 +187,7 @@ const SignUp = () => {
                         </div>
 
 
-                    <div className='mt-10 flex justify-center items-center gap-x-3 transform translate-y-21'>
+                    <div className='mt-5 flex justify-center items-center gap-x-3'>
                       <p>¿Ya tienes una cuenta?</p> <Link className='ml-2 font-medium text-blue-700 hover:underline hover:text-blue-900 transition-all duration-200' to= '/signin'> Inicia Sesión </Link>
                       </div>
                       
