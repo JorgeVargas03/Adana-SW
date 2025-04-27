@@ -7,7 +7,7 @@ const Pagos = () =>{
     return(
         <section className="w-full mx-auto py-16 font-outfit bg-[#FDF9EC]">
   {/* Fondo */}
-  <div className="flex flex-col h-screen w-full bg-[#F0F2B4]">
+  <div className="flex flex-col h-screen w-full bg-[#FDF9EC]">
 
     {/* Botón */}
     <div className="mt-6 w-[50x] px-7">
