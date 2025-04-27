@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Dialog } from '@headlessui/react';
-import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { ChevronLeftIcon, ChevronRightIcon} from '@heroicons/react/24/outline';
 import articles from '../assets/articles/Articles';
 
 export default function Wellness() {
@@ -43,7 +43,7 @@ export default function Wellness() {
               }}
               className="text-indigo-500 text-sm hover:underline cursor-pointer"
             >
-              Ver más
+              Ver más 
             </a>
           </div>
         </div>

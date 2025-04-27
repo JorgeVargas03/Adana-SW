@@ -127,12 +127,13 @@ const SignUp = () => {
                 </div>
     
                 <div>
-                  <label className="block text-sm font-medium text-gray-900">Correo</label>
-                  <input
-                    type="email"
-                    name="correo"
-                    className="mt-1 block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                  />
+                <label class="block" className="block text-sm font-medium text-fontdef">
+              <span class="...">Correo</span>
+              </label>
+              <div className="mt-2">
+              <input type="email" placeholder="Ingrese un correo" class="peer block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+              <p class="text-red-700 hidden peer-invalid:block">Por favor, proporciona un correo válido.</p>
+              </div>
                 </div>
     
                 <div>
@@ -173,7 +174,7 @@ const SignUp = () => {
                 ¿Ya tienes una cuenta?{' '}
                 <Link 
                   to="/signin"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
+                  className="font-semibold text-fontlink hover:text-linkselect"
                 >
                   Inicia Sesión
                 </Link>

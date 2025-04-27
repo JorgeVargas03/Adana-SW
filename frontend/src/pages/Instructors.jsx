@@ -42,10 +42,10 @@ const Instructors = () => {
         </div>
       </div>
       <div className="p-6 text-center">
-        <h3 className="font-outfit font-bold text-xl text-[#413324] mb-2">
+        <h3 className="font-outfit font-semibold text-xl text-[#413324] mb-2">
           Valeria Cortés
         </h3>
-        <p className="font-outfit font-semibold text-[#7E7EC3] text-sm">
+        <p className="font-outfit font-normal text-[#7E7EC3] text-md">
           Fundadora de Adana | Especialista en Pilates Terapéutico
         </p>
       </div>
@@ -68,7 +68,7 @@ const Instructors = () => {
         <h3 className="font-outfit font-bold text-xl text-[#413324] mb-2">
           Mónica Reyes
         </h3>
-        <p className="font-outfit font-semibold text-[#7E7EC3] text-sm">
+        <p className="font-outfit font-normal text-[#7E7EC3] text-md">
           Instructora certificada en Pilates Clásico y Danza Contemporánea
         </p>
       </div>
@@ -91,7 +91,7 @@ const Instructors = () => {
         <h3 className="font-outfit font-bold text-xl text-[#413324] mb-2">
           Alejandra Vazquez
         </h3>
-        <p className="font-outfit font-semibold text-[#7E7EC3] text-sm">
+        <p className="font-outfit font-normal text-[#7E7EC3] text-md">
           Pilates para embarazadas y recuperación postparto
         </p>
       </div>
@@ -114,7 +114,7 @@ const Instructors = () => {
         <h3 className="font-outfit font-bold text-xl text-[#413324] mb-2">
           Cecilia Ramírez
         </h3>
-        <p className="font-outfit font-semibold text-[#7E7EC3] text-sm">
+        <p className="font-outfit font-normal text-[#7E7EC3] text-md">
           Pilates funcional y respiración consciente
         </p>
       </div>
