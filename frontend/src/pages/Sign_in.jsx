@@ -8,38 +8,48 @@ import { login } from '../services/authService';
 const Signin = () => {
   const navigate = useNavigate();
 
+  // Verificar si el usuario ya está autenticado al cargar el componente
+  /*
+  useEffect(() => {
+    // Si el token existe en localStorage, redirigir a la home
+    if (localStorage.getItem('token')) {
+      console.log(localStorage.getItem('token'));
+      navigate('/');  // Redirige a la página principal si el token existe
+    }
+  }, [navigate]);  // Asegúrate de incluir `navigate` como dependencia
+*/
+  const [correo, setCorreo] = useState('');
+  const [contraseña, setContraseña] = useState('');
+
   // Iniciar sesión con Google
   const handleLogin = async () => {
     try {
       const user = await loginWithGoogle();
       console.log("Bienvenido:", user.name);
-      // Redirigir normalmente
+      // Redirigir después de un inicio de sesión exitoso
       navigate('/');
-
     } catch (error) {
       if (error.code === 'USER_NOT_FOUND') {
         console.log("Usuario no encontrado. Redirigiendo al formulario de registro...");
-
         // Guarda el user temporalmente en localStorage
         localStorage.setItem("user", JSON.stringify({
           name: error.profile.displayName,
           email: error.profile.email,
           profileImage: error.profile.photoURL || ""
         }));
-
-        navigate('/register'); // O la ruta real: /complete-registration
+        // Redirigir a la página de registro (o completar el registro)
+        navigate('/complete-registration');
       } else {
         console.error("Error desconocido:", error);
         alert("Error al iniciar sesión con Google.");
       }
     }
   };
+
+  // Manejar login normal
   const handleNormalLogin = async () => {
     try {
-      if (
-        !correo ||
-        !contraseña
-      ) {
+      if (!correo || !contraseña) {
         alert("Por favor completa todos los campos.");
         return;
       }
@@ -49,21 +59,22 @@ const Signin = () => {
         password: contraseña,
       };
 
-      const token = await login(userData);
-      alert("¡Inicio de sesion exitoso!");
-      console.log(token.token);
+      const sesion = await login(userData);
+      alert("¡Inicio de sesión exitoso!");
+      console.log(sesion.token);
+      
+      // Guarda el token en localStorage
+      localStorage.setItem('token', sesion.token);
+      
+      // Redirigir a la home
       navigate('/');
     } catch (error) {
-      console.error("Error al iniciar sesion usuario:", error);
-      alert("Error al iniciar sesion. Verifica los datos o intenta más tarde.");
+      console.error("Error al iniciar sesión usuario:", error);
+      alert("Error al iniciar sesión. Verifica los datos o intenta más tarde.");
     }
   };
 
-  const [correo, setCorreo] = useState('');
-  const [contraseña, setContraseña] = useState('');
-
   return (
-
     <div className=' flex justify-center items-center h-screen w-full bg-[#C3C37E]'>
 
       <div className='flex w-9/12 h-[600px] rounded-2xl bg-[#FDF9EC]'>
@@ -118,7 +129,7 @@ const Signin = () => {
 
               className='mt-8 flex flex-col items-center gap-y-4  translate-y-20'>
               <div> <button onClick={handleNormalLogin}
-              className='w-[200px] h-12 active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-4 rounded-xl text-[#FFFDEF] text-lg font-bold cursor-pointer'>
+                className='w-[200px] h-12 active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-4 rounded-xl text-[#FFFDEF] text-lg font-bold cursor-pointer'>
                 Acceder </button> </div>
 
 

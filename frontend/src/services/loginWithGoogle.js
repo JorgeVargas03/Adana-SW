@@ -14,6 +14,7 @@ export const loginWithGoogle = async () => {
     const { token, user } = response.data;
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
+    console.log(token);
     return user;
 
   } catch (error) {

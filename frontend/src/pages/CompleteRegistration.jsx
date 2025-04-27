@@ -40,11 +40,14 @@ const CompleteRegistration = () => {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:3001/auth/google/finishRegister", {
+      const response = await axios.post("http://localhost:3001/auth/google/finishRegister", {
         ...formData,
       });
-
-      alert("Registro completado exitosamente.");
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      alert(`Registro completado exitosamente. Bienvenido ${user.name}`);
+      console.log(token);
       navigate("/home");
     } catch (error) {
       alert("Error al completar el registro.");
@@ -64,13 +67,13 @@ const CompleteRegistration = () => {
           />
           <div className="hidden lg:flex h-full w-[15px] bg-gray-200 absolute right-0"></div>
         </div>
-  
+
         {/* FORMULARIO */}
         <div className="flex-1 flex flex-col items-center justify-start pt-16 h-full ml-[-7.5px] overflow-y-auto">
           <h2 className="text-4xl font-bold font-outfit text-[#413324] mb-8">
             Completa tu registro
           </h2>
-  
+
           <form onSubmit={handleSubmit} className="w-full px-8 space-y-6">
             {/* Nombre */}
             <div>
@@ -87,7 +90,7 @@ const CompleteRegistration = () => {
                 />
               </div>
             </div>
-  
+
             {/* Apellido */}
             <div>
               <label className="block text-lg font-medium mb-2 text-[#413324]">Apellido</label>
@@ -103,7 +106,7 @@ const CompleteRegistration = () => {
                 />
               </div>
             </div>
-  
+
             {/* Correo */}
             <div>
               <label className="block text-lg font-medium mb-2 text-[#413324]">Correo</label>
@@ -118,7 +121,7 @@ const CompleteRegistration = () => {
                 />
               </div>
             </div>
-  
+
             {/* Contraseña */}
             <div>
               <label className="block text-lg font-medium mb-2 text-[#413324]">
@@ -138,7 +141,7 @@ const CompleteRegistration = () => {
                 />
               </div>
             </div>
-  
+
             {/* Teléfono */}
             <div>
               <label className="block text-lg font-medium mb-2 text-[#413324]">Teléfono</label>
@@ -154,7 +157,7 @@ const CompleteRegistration = () => {
                 />
               </div>
             </div>
-  
+
             {/* Género */}
             <div>
               <label className="block text-lg font-medium mb-2 text-[#413324]">Género</label>
@@ -172,10 +175,10 @@ const CompleteRegistration = () => {
                 <option value="M">Mujer</option>
               </select>
             </div>
-  
+
             {/* Imagen (oculta) */}
             <input type="hidden" name="profileImage" value={formData.profileImage} />
-  
+
             {/* Botón de enviar */}
             <button
               type="submit"
@@ -188,8 +191,8 @@ const CompleteRegistration = () => {
       </div>
     </div>
   );
-  
-  
+
+
 };
 
 export default CompleteRegistration;

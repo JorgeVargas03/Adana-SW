@@ -8,6 +8,11 @@ import { registerUser } from '../services/authService';
 const SignUp = () => {
   const navigate = useNavigate();
 
+  //Verificar si el usuario ya inicio sesion, si es asi, lo lleva a home
+  if(localStorage.getItem('token')){
+    navigate("/");
+  }
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedGender, setSelectedGender] = useState('Género');
   const dropdownRef = useRef(null);
@@ -40,8 +45,9 @@ const SignUp = () => {
   const handleRegister = async () => {
     try {
       const user = await loginWithGoogle();
-      console.log("Registro exitoso:", user.name);
+      console.log("Registro exitoso. Bienvenid@ ", user.name);
       // Redirigir o mostrar mensaje de bienvenida
+      navigate('/');
     } catch (error) {
       alert("Error al registrarse con Google.");
     }
@@ -73,7 +79,7 @@ const SignUp = () => {
 
       await registerUser(userData);
       alert("¡Registro exitoso!");
-      navigate('/');
+      navigate('/signin');
     } catch (error) {
       console.error("Error al registrar usuario:", error);
       alert("Error al registrar. Verifica los datos o intenta más tarde.");

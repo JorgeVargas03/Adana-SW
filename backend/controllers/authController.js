@@ -56,7 +56,7 @@ exports.loginWithGoogle = async (req, res) => {
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const { fullName, email, photoUrl } = decodedToken;
-    
+
 
     // Buscar el usuario en Firestore
     const userSnapshot = await userCollection.where("email", "==", email).get();
@@ -70,17 +70,16 @@ exports.loginWithGoogle = async (req, res) => {
     const userDoc = userSnapshot.docs[0];
     const user = userDoc.data();
 
-    const token = jwt.sign(
-      {
-        userId: userDoc.id,
-        name: user.name,
-        lastname: user.lastname || "",
-        email: user.email,
-        role: user.role
-      },
-      SECRET_KEY,
-      { expiresIn: "30m" }
-    );
+    const userToken = {
+      userId: userDoc.id,
+      name: user.name,
+      lastname: user.lastname || "",
+      email: user.email,
+      role: user.role
+    }
+
+    //generar token
+    const token = generateToken(userToken);
 
     res.status(200).json({
       message: "Inicio de sesión con Google exitoso",
@@ -109,7 +108,7 @@ exports.login = async (req, res) => {
       .where("email", "==", email)
       .get();
     if (userSnapshot.empty) {
-      return res.status(400).json({ message: "Correo o ocntraseña incorrectos" });
+      return res.status(400).json({ message: "Correo o contraseña incorrectos" });
     }
 
     const userDoc = userSnapshot.docs[0];
@@ -126,25 +125,22 @@ exports.login = async (req, res) => {
     //  return res.status(403).json({ message: "Por favor, verifica tu correo electrónico para continuar." });
     //}
 
-    const time = "30m";
-    // Generar un token JWT
-    const token = jwt.sign(
-      {
-        userId: userDoc.id,
-        username: user.username,
-        userlastname: user.lastname,
-        useremail: user.email,
-        userrole: user.role
-      },
-      SECRET_KEY,
-      { expiresIn: time }
-    );
+    const dataUserToken = {
+      id: user.id,
+      name: user.name,
+      lastname: user.lastname,
+      email: user.email,
+      role: user.role
+    }
+
+    //Generar un token con JWT
+    const token = generateToken(dataUserToken);
 
     res.status(200).json({
-      message: `Inicio de sesión exitoso. Sesión válida durante: ${time}`,
+      message: `Inicio de sesión exitoso. Sesión válida durante: 30 minutos`,
       token,
       user: {
-        id: userDoc.id,
+        id: user.id,
         name: user.name,
         lastname: user.lastname,
         email: user.email,
@@ -153,9 +149,22 @@ exports.login = async (req, res) => {
     });
 
   } catch (error) {
-
+    console.error("Error al iniciar sesion", error);
+    res.status(500).json({ message: "Error del servidor" });
   }
 };
+
+function generateToken(userData) {
+  const time = "30m";
+  // Generar un token JWT
+  const token = jwt.sign(
+    userData,
+    SECRET_KEY,
+    { expiresIn: time }
+  );
+
+  return token;
+}
 
 
 // Función para completar registro después del login con Google
@@ -192,9 +201,20 @@ exports.completeGoogleRegistration = async (req, res) => {
 
     const newUserRef = await userCollection.add(userData);
 
+    const userDataToken = {
+      id: userDoc.id,
+      name: name,
+      lastname: lastname,
+      email: email,
+      role: newUserRef.role
+    }
+    //Generar token para el nuevo usuario
+    const token = generateToken(userDataToken);
+
     res.status(201).json({
       message: "Registro completado exitosamente",
-      id: newUserRef.id
+      data: newUserRef,
+      token: token
     });
   } catch (error) {
     console.error("Error al completar registro con Google:", error);
