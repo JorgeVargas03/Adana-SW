@@ -201,7 +201,7 @@ const SignUp = () => {
 
               <div className="grid grid-cols-2 gap-4 mt-6">
                 <button
-                  type="submit"
+                  type="button"
                   onClick={handleNormalRegister}
                   className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
