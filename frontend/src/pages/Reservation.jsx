@@ -2,7 +2,7 @@
 
 import React from 'react';
 import '../share/style/allPages.css'; // o './App.css', según cómo lo nombres
-import CalendarApp from '../components/Calendar'; 
+import { CalendarApp } from '../components/Calendar';
 
 import { useState } from 'react'
 import { addMonths, subMonths, startOfMonth } from 'date-fns'
