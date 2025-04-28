@@ -23,7 +23,8 @@ const MyProfile = () => {
 
         if (!user || !token) {
           removeToken();
-          navigate('/login');
+          navigate('/signin');
+          window.dispatchEvent(new Event('storage'));
           return;
         }
 
@@ -58,7 +59,8 @@ const MyProfile = () => {
       } catch (error) {
         console.error('Error cargando la información del perfil:', error);
         removeToken();
-        navigate('/login');
+        navigate('/signin');
+        window.dispatchEvent(new Event('storage'));
       }
     };
 
@@ -67,120 +69,82 @@ const MyProfile = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+    console.log(file);
 
+    const MAX_SIZE = 1 * 1024 * 1024; // 1MB
     if (file.size > MAX_SIZE) {
       alert('La imagen es demasiado grande. El tamaño máximo es 1MB.');
       return;
     }
 
+    setNewProfilePicture(file);
+
+    // Para mostrar vista previa
     const reader = new FileReader();
-
     reader.onloadend = () => {
-      // Crear un objeto de imagen para redimensionar
-      const img = new Image();
-      img.src = reader.result;
-
-      img.onload = () => {
-        // Redimensionar la imagen
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-
-        // Cambiar el tamaño de la imagen, por ejemplo, a un máximo de 500px de ancho
-        const MAX_WIDTH = 500;
-        const scale = MAX_WIDTH / img.width;
-        const newHeight = img.height * scale;
-        canvas.width = MAX_WIDTH;
-        canvas.height = newHeight;
-
-        // Dibujar la imagen redimensionada en el canvas
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        // Convertir a base64
-        const base64 = canvas.toDataURL(file.type); // Obtén base64 del canvas
-        const mimeType = file.type;
-
-        // Guardar la nueva imagen
-        setNewProfilePicture({
-          data: base64.split(',')[1], // Extraer solo el contenido de base64
-          mimeType: mimeType,
-        });
-
-        // Actualizar el estado de la imagen en el perfil
-        setProfileData((prev) => ({
-          ...prev,
-          profile_picture: base64,
-        }));
-      };
+      setProfileData((prev) => ({
+        ...prev,
+        profile_picture: reader.result, // Solo para previsualizar
+      }));
     };
-
-    reader.readAsDataURL(file); // Leer el archivo como base64
+    reader.readAsDataURL(file);
   };
-
 
 
   const handleSaveChanges = async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const token = localStorage.getItem('token');
-  
+
     if (!user || !token) {
       removeToken();
       navigate('/login');
       return;
     }
-  
-    const body = {}; // Creamos un objeto para enviar los datos
-  
-    let hasChanges = false; // Variable para verificar si hay cambios
-  
-    // Solo agregar campos que realmente han cambiado
+
+    const formData = new FormData(); // ← Nuevo: usamos FormData para enviar campos + archivos
+    let hasChanges = false;
+
+    // Solo agregamos los campos que cambiaron
     if (profileData.name !== originalData.name) {
-      body.name = profileData.name;
+      formData.append('name', profileData.name);
       hasChanges = true;
     }
-  
     if (profileData.lastname !== originalData.lastname) {
-      body.lastname = profileData.lastname;
+      formData.append('lastname', profileData.lastname);
       hasChanges = true;
     }
-  
     if (profileData.phone !== originalData.phone) {
-      body.phone = profileData.phone;
+      formData.append('phone', profileData.phone);
       hasChanges = true;
     }
-  
-    if (newProfilePicture && newProfilePicture.data !== originalData.profile_picture) {
-      // Agregar la imagen en formato base64 y su mimeType
-      body.profile_picture = newProfilePicture.data;
-      body.profile_picture_mime_type = newProfilePicture.mimeType;
+    if (newProfilePicture) {
+      formData.append('profile_picture', newProfilePicture); // ← El archivo como tal
       hasChanges = true;
     }
-    console.log(newProfilePicture)
-  
-    // Si no hay cambios, no hacer la solicitud
+
     if (!hasChanges) {
       alert('No hay cambios para guardar');
       return;
     }
-  
+
     try {
       const response = await fetch(`http://localhost:3001/adana-api/v1/users/profile/${user.id}/updateProfile`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json', // Enviamos el cuerpo como JSON
+          // ¡Ojo! NO ponemos 'Content-Type' aquí, el navegador la setea automáticamente a multipart/form-data
         },
-        body: JSON.stringify(body), // Usamos JSON.stringify para enviar los datos
+        body: formData,
       });
-  
+
       if (!response.ok) {
         throw new Error('Error actualizando el perfil');
       }
-  
+
       const updatedData = await response.json();
       console.log('Perfil actualizado:', updatedData);
-  
-      // Actualizar los datos en localStorage si la actualización fue exitosa
+
+      // Actualizamos localmente
       setOriginalData((prevData) => ({
         ...prevData,
         name: updatedData.name,
@@ -188,20 +152,18 @@ const MyProfile = () => {
         phone: updatedData.phone,
         profile_picture: updatedData.profile_picture,
       }));
-  
+
       setProfileData(updatedData);
-  
+
       alert('Cambios guardados exitosamente');
-      navigate(0); // Refresca la página para recargar la información
+      navigate(0); // Refrescamos la página
     } catch (error) {
       console.error('Error guardando cambios:', error);
       alert('Hubo un error guardando los cambios');
     }
   };
-  
-  
-  
-  
+
+
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-accent1/70 py-12 font-Outfit pt-30">
