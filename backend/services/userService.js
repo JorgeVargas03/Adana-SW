@@ -53,7 +53,7 @@ exports.updateUserProfile = async (userId, updateData) => {
       return { success: false, status: 404, message: "Usuario no encontrado" };
     }
 
-    const allowedFields = ["name", "lastname", "profile_picture"];
+    const allowedFields = ["name", "lastname", "profile_picture", "phone"];
     const fieldsToUpdate = {};
 
     // Verificar y preparar los campos que se desean actualizar

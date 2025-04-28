@@ -45,6 +45,7 @@ const CompleteRegistration = () => {
       });
       const { token, user } = response.data;
       localStorage.setItem("token", token);
+      window.dispatchEvent(new Event('storage'));
       localStorage.setItem("user", JSON.stringify(user));
       alert(`Registro completado exitosamente. Bienvenido ${user.name}`);
       console.log(token);

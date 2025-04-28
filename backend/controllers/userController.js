@@ -34,9 +34,9 @@ exports.updateUserStatus = async (req, res) => {
 // Controlador para actualizar el perfil de un usuario
 exports.updateUserProfile = async (req, res) => {
   const userId = req.params.userId;
-  const { name, lastname, profile_picture } = req.body;
+  const { name, lastname, profile_picture, phone } = req.body;
 
-  const updateData = { name, lastname, profile_picture };
+  const updateData = { name, lastname, profile_picture, phone };
 
   const result = await userService.updateUserProfile(userId, updateData);
 

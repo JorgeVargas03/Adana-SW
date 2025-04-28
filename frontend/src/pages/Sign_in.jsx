@@ -23,6 +23,7 @@ const Signin = () => {
   const handleLogin = async () => {
     try {
       const user = await loginWithGoogle();
+      window.dispatchEvent(new Event('storage'));
       console.log("Bienvenido:", user.name);
       // Redirigir después de un inicio de sesión exitoso
       navigate('/');
@@ -65,6 +66,7 @@ const Signin = () => {
       
       // Guarda el token en localStorage
       localStorage.setItem('token', sesion.token);
+      window.dispatchEvent(new Event('storage'));
       
       // Redirigir a la home
       navigate('/');
