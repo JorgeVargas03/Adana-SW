@@ -1,163 +1,231 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PaperClipIcon, CameraIcon } from '@heroicons/react/20/solid';
 import iconDefault from '../assets/images/mymelokuromi.jpg';
-import {useNavigate } from 'react-router-dom';
-import { getToken, removeToken } from '../utils/auth'; // Asegúrate de tener estas funciones
+import { useNavigate } from 'react-router-dom';
+import { isTokenValid, removeToken } from '../utils/auth';
 
 const MyProfile = () => {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState({
+  const [profileData, setProfileData] = useState({
     name: '',
-    lastName: '',
+    lastname: '',
     email: '',
     phone: '',
-    profile_picture: {
-        base64: '',
-        mimeType: ''
-      }
+    profile_picture: '',
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [previewImage, setPreviewImage] = useState(iconDefault);
-  
-  const fileInputRef = useRef(null);
-
+  const [originalData, setOriginalData] = useState({});
+  const [newProfilePicture, setNewProfilePicture] = useState(null); // Guardamos la nueva imagen si cambia
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserInfo = async () => {
       try {
-        const token = getToken();
-        if (!token) {
-          // Redirigir a login si no hay token
-          navigate("/signin");
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
+
+        if (!user || !token) {
+          removeToken();
+          navigate('/login');
           return;
         }
 
-        const userData = localStorage.getItem("user");
-        const user = JSON.parse(userData);
-
-        const userId = user.id;
-
-        const response = await fetch(`/adana-api/v1/users/${userId}/info`, {
-        //   headers: {
-        //     'Authorization': `Bearer ${token}`
-        //   }
+        const response = await fetch(`http://localhost:3001/adana-api/v1/users/${user.id}/info`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         });
 
-        if (!response.ok) throw new Error('Error al obtener datos del usuario');
+        if (!response.ok) {
+          throw new Error('Error al obtener la información del usuario');
+        }
 
         const data = await response.json();
-        
-        setUserData({
-          nombre: data.name || '',
-          apellido: data.lastName || '',
+
+        setProfileData({
+          name: data.name || '',
+          lastname: data.lastname || '',
           email: data.email || '',
           phone: data.phone || '',
-          profilePic: data.profile_picture || iconDefault
+          profile_picture: data.profile_picture || '',
         });
-        
+
+        setOriginalData({
+          name: data.name || '',
+          lastname: data.lastname || '',
+          phone: data.phone || '',
+          profile_picture: data.profile_picture || '',
+        });
       } catch (error) {
-        setError(error.message);
+        console.error('Error cargando la información del perfil:', error);
         removeToken();
-        // Redirigir a login si hay error
-        navigate("/signin");
-      } finally {
-        setIsLoading(false);
+        navigate('/login');
       }
     };
 
-    fetchUserData();
-  }, []);
+    fetchUserInfo();
+  }, [navigate]);
 
-  const handleFileChange = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    const MAX_SIZE = 1 * 1024 * 1024; // 1MB
 
-    // 1. Crear preview temporal (solo para visualización en el frontend)
-    const previewURL = URL.createObjectURL(file);
-    setPreviewImage(previewURL);
+    if (file.size > MAX_SIZE) {
+      alert('La imagen es demasiado grande. El tamaño máximo es 1MB.');
+      return;
+    }
+
     const reader = new FileReader();
+
     reader.onloadend = () => {
-      const base64String = reader.result.split(',')[1]; // Extrae solo el Base64 sin el prefijo
-      setUserData(prev => ({
-        ...prev,
-        profilePicture: {
-          base64: base64String,
-          mimeType: file.type
-        }
-      }));
+      // Crear un objeto de imagen para redimensionar
+      const img = new Image();
+      img.src = reader.result;
+
+      img.onload = () => {
+        // Redimensionar la imagen
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Cambiar el tamaño de la imagen, por ejemplo, a un máximo de 500px de ancho
+        const MAX_WIDTH = 500;
+        const scale = MAX_WIDTH / img.width;
+        const newHeight = img.height * scale;
+        canvas.width = MAX_WIDTH;
+        canvas.height = newHeight;
+
+        // Dibujar la imagen redimensionada en el canvas
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Convertir a base64
+        const base64 = canvas.toDataURL(file.type); // Obtén base64 del canvas
+        const mimeType = file.type;
+
+        // Guardar la nueva imagen
+        setNewProfilePicture({
+          data: base64.split(',')[1], // Extraer solo el contenido de base64
+          mimeType: mimeType,
+        });
+
+        // Actualizar el estado de la imagen en el perfil
+        setProfileData((prev) => ({
+          ...prev,
+          profile_picture: base64,
+        }));
+      };
     };
-    reader.readAsDataURL(file);
+
+    reader.readAsDataURL(file); // Leer el archivo como base64
   };
 
-  const handleButtonClick = () => {
-    fileInputRef.current.click();
-  };
 
+
+  const handleSaveChanges = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
   
-
-  const handleUpdate = async () => {
+    if (!user || !token) {
+      removeToken();
+      navigate('/login');
+      return;
+    }
+  
+    const body = {}; // Creamos un objeto para enviar los datos
+  
+    let hasChanges = false; // Variable para verificar si hay cambios
+  
+    // Solo agregar campos que realmente han cambiado
+    if (profileData.name !== originalData.name) {
+      body.name = profileData.name;
+      hasChanges = true;
+    }
+  
+    if (profileData.lastname !== originalData.lastname) {
+      body.lastname = profileData.lastname;
+      hasChanges = true;
+    }
+  
+    if (profileData.phone !== originalData.phone) {
+      body.phone = profileData.phone;
+      hasChanges = true;
+    }
+  
+    if (newProfilePicture && newProfilePicture.data !== originalData.profile_picture) {
+      // Agregar la imagen en formato base64 y su mimeType
+      body.profile_picture = newProfilePicture.data;
+      body.profile_picture_mime_type = newProfilePicture.mimeType;
+      hasChanges = true;
+    }
+    console.log(newProfilePicture)
+  
+    // Si no hay cambios, no hacer la solicitud
+    if (!hasChanges) {
+      alert('No hay cambios para guardar');
+      return;
+    }
+  
     try {
-      const token = getToken();
-      const userId = getUserIdFromToken(token);
-      
-      const response = await fetch(`/adana-api/v1/users/${userId}/info`, {
-        method: 'GET',
-        // headers: {
-        //   'Authorization': `Bearer ${token}`,
-        //   'Content-Type': 'application/json'
-        // },
-        body: JSON.stringify({
-          firstName: userData.name,
-          lastName: userData.lastName,
-          email: userData.email,
-          phone: userData.phone
-        })
+      const response = await fetch(`http://localhost:3001/adana-api/v1/users/profile/${user.id}/updateProfile`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json', // Enviamos el cuerpo como JSON
+        },
+        body: JSON.stringify(body), // Usamos JSON.stringify para enviar los datos
       });
-
-      if (!response.ok) throw new Error('Error al actualizar los datos');
-      
-      // Manejar respuesta exitosa
-      alert('Datos actualizados correctamente');
-      
+  
+      if (!response.ok) {
+        throw new Error('Error actualizando el perfil');
+      }
+  
+      const updatedData = await response.json();
+      console.log('Perfil actualizado:', updatedData);
+  
+      // Actualizar los datos en localStorage si la actualización fue exitosa
+      setOriginalData((prevData) => ({
+        ...prevData,
+        name: updatedData.name,
+        lastname: updatedData.lastname,
+        phone: updatedData.phone,
+        profile_picture: updatedData.profile_picture,
+      }));
+  
+      setProfileData(updatedData);
+  
+      alert('Cambios guardados exitosamente');
+      navigate(0); // Refresca la página para recargar la información
     } catch (error) {
-      setError(error.message);
+      console.error('Error guardando cambios:', error);
+      alert('Hubo un error guardando los cambios');
     }
   };
-
-  if (isLoading) return <div>Cargando...</div>;
-  if (error) return <div>Error: {error}</div>;
+  
+  
+  
+  
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-accent1/70 py-12 font-Outfit pt-30">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-md overflow-hidden">
         <div className="flex flex-col md:flex-row">
-          
+
           {/* Foto de perfil */}
           <div className="relative md:w-1/3 bg-[#F0F1D2] flex flex-col items-center justify-center py-10">
             <div className="relative">
               <img
-                src={userData.profilePic}
+                src={profileData.profile_picture || iconDefault}
                 alt="User Icon"
                 className="w-50 h-50 rounded-full object-cover border-4 border-white shadow-md"
               />
-
-              <button
-                type="button"
-                onClick={handleButtonClick}
-                className="cursor-pointer absolute bottom-1 right-1 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 border-2 border-white"
-              >
+              <label className="cursor-pointer absolute bottom-1 right-1 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 border-2 border-white">
                 <CameraIcon className="h-6 w-6" />
-              </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
             </div>
-
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-            />
-
             <h2 className="mt-6 text-xl font-bold text-gray-700">Foto de Perfil</h2>
           </div>
 
@@ -169,28 +237,50 @@ const MyProfile = () => {
             </div>
 
             <dl className="divide-y divide-gray-200">
-              {/* Campos del formulario */}
+              {/* Nombre */}
               <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                 <dt className="text-sm font-medium text-fontdef">Nombre</dt>
                 <dd className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
-                    value={userData.nombre}
-                    onChange={(e) => setUserData({...userData, nombre: e.target.value})}
+                    value={profileData.name}
+                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
                     className="w-full border border-gray-400 rounded-lg px-3 py-2 bg-gray-100 focus:outline-none focus:ring-1 focus:ring-black"
                   />
                 </dd>
               </div>
 
-              {/* Resto de campos similares con userData */}
-              
+              {/* Apellido */}
+              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt className="text-sm font-medium text-fontdef">Apellido</dt>
+                <dd className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    value={profileData.lastname}
+                    onChange={(e) => setProfileData({ ...profileData, lastname: e.target.value })}
+                    className="w-full border border-gray-400 rounded-lg px-3 py-2 bg-gray-100 focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </dd>
+              </div>
+
               {/* Correo */}
               <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                 <dt className="text-sm font-medium text-fontdef">Correo</dt>
                 <dd className="mt-1 sm:mt-0 sm:col-span-2">
                   <input
-                    value={userData.email}
                     readOnly
+                    value={profileData.email}
                     className="w-full border border-gray-400 rounded-lg px-3 py-2 bg-gray-100 text-gray-500 cursor-not-allowed"
+                  />
+                </dd>
+              </div>
+
+              {/* Teléfono */}
+              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt className="text-sm font-medium text-fontdef">Teléfono</dt>
+                <dd className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    value={profileData.phone}
+                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                    className="w-full border border-gray-400 rounded-lg px-3 py-2 bg-gray-100 focus:outline-none focus:ring-1 focus:ring-black"
                   />
                 </dd>
               </div>
@@ -198,18 +288,19 @@ const MyProfile = () => {
               {/* Botón guardar */}
               <div className="mt-8 flex justify-center">
                 <button
-                  onClick={handleUpdate}
+                  onClick={handleSaveChanges}
                   className="w-1/2 py-3 px-6 text-white bg-fontlink hover:bg-linkselect rounded-lg font-semibold transition duration-200"
                 >
                   Guardar cambios
                 </button>
               </div>
+
             </dl>
           </div>
         </div>
       </div>
     </section>
   );
-}
+};
 
 export default MyProfile;

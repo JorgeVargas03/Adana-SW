@@ -140,7 +140,7 @@ exports.login = async (req, res) => {
       message: `Inicio de sesión exitoso. Sesión válida durante: 30 minutos`,
       token,
       user: {
-        id: user.id,
+        id: userDoc.id,
         name: user.name,
         lastname: user.lastname,
         email: user.email,

@@ -41,7 +41,7 @@ exports.updateUserProfile = async (req, res) => {
   const result = await userService.updateUserProfile(userId, updateData);
 
   if (!result.success) {
-    return res.status(result.status).json({ message: result.message });
+    return res.status(result.status).json({ message: result.message, error: result.error });
   }
 
   return res.status(200).json({ message: result.message });

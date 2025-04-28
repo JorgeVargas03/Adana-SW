@@ -66,6 +66,7 @@ const Signin = () => {
       
       // Guarda el token en localStorage
       localStorage.setItem('token', sesion.token);
+      localStorage.setItem('user', sesion.user)
       window.dispatchEvent(new Event('storage'));
       
       // Redirigir a la home

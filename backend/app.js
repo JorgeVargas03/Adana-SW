@@ -30,6 +30,9 @@ app.use((req, res, next) => {
 
 const PORT = process.env.PORT || 3001;
 
+app.use(express.json({ limit: '2mb' })); // Limitar el tamaño del JSON a 2MB
+app.use(express.urlencoded({ limit: '2mb', extended: true }));
+
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
   console.log(`URL base: http://localhost:${PORT}/`);
