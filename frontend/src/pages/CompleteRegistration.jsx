@@ -48,7 +48,7 @@ const CompleteRegistration = () => {
       localStorage.setItem("user", JSON.stringify(user));
       alert(`Registro completado exitosamente. Bienvenido ${user.name}`);
       console.log(token);
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       alert("Error al completar el registro.");
       console.error(error);

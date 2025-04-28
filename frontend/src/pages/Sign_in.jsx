@@ -38,7 +38,7 @@ const Signin = () => {
           profileImage: error.profile.photoURL || ""
         }));
         // Redirigir a la página de registro (o completar el registro)
-        navigate('/complete-registration');
+        navigate('/register');
       } else {
         console.error("Error desconocido:", error);
         alert("Error al iniciar sesión con Google.");
@@ -92,12 +92,14 @@ return (
 
           <form className="mt-10 space-y-6">
             <div>
-              <label class="block" className="block text-sm font-medium text-fontdef">
-              <span class="...">Correo</span>
+              <label className="block text-sm font-medium text-fontdef">
+              <span className="...">Correo</span>
               </label>
               <div className="mt-2">
-              <input type="email" placeholder="Ingrese un correo" class="peer block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-              <p class="text-red-700 hidden peer-invalid:block">Por favor, proporciona un correo válido.</p>
+              <input type="email" 
+              onChange={(e) => setCorreo(e.target.value)}
+              placeholder="Ingrese un correo" className="peer block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+              <p className="text-red-700 hidden peer-invalid:block">Por favor, proporciona un correo válido.</p>
               </div>
             </div>
 
@@ -115,6 +117,7 @@ return (
               <div className="mt-2">
                 <input
                   type="password"
+                  onChange={(e) => setContraseña(e.target.value)}
                   name="contraseña"
                   placeholder="Ingresa tu contraseña"
                   className="block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
@@ -125,6 +128,7 @@ return (
             <div>
               <button
                 type="submit"
+                onClick={handleNormalLogin}
                 className="h-10 font-Outfit items-center flex w-full justify-center rounded-md bg-accent2 px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs hover:bg-accent2/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Acceder

@@ -115,6 +115,7 @@ const SignUp = () => {
                   <label className="block text-sm font-medium text-gray-900">Nombre</label>
                   <input
                     type="text"
+                    onChange={(e) => setNombre(e.target.value)}
                     name="nombre"
                     className="mt-1 block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                   />
@@ -124,6 +125,7 @@ const SignUp = () => {
                   <label className="block text-sm font-medium text-gray-900">Apellido</label>
                   <input
                     type="text"
+                    onChange={(e) => setApellido(e.target.value)}
                     name="apellido"
                     className="mt-1 block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                   />
@@ -169,6 +171,7 @@ const SignUp = () => {
                 <label className="block text-sm font-medium text-gray-900">Teléfono</label>
                 <input
                   type="tel"
+                  onChange={(e) => setTelefono(e.target.value)}
                   name="telefono"
                   className="mt-1 block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
@@ -179,7 +182,9 @@ const SignUp = () => {
                   <span class="...">Correo</span>
                 </label>
                 <div className="mt-2">
-                  <input type="email" placeholder="Ingrese un correo" class="peer block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                  <input type="email" 
+                   onChange={(e) => setCorreo(e.target.value)}
+                   placeholder="Ingrese un correo" class="peer block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                   <p class="text-red-700 hidden peer-invalid:block">Por favor, proporciona un correo válido.</p>
                 </div>
               </div>
@@ -188,6 +193,7 @@ const SignUp = () => {
                 <label className="block text-sm font-medium text-gray-900">Contraseña</label>
                 <input
                   type="password"
+                  onChange={(e) => setContraseña(e.target.value)}
                   name="contraseña"
                   className="mt-1 block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 />
@@ -196,6 +202,7 @@ const SignUp = () => {
               <div className="grid grid-cols-2 gap-4 mt-6">
                 <button
                   type="submit"
+                  onClick={handleNormalRegister}
                   className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Registrarse
