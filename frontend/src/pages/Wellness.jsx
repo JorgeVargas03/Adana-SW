@@ -53,7 +53,7 @@ export default function Wellness() {
     <Dialog
   open={isModalOpen}
   onClose={() => setIsModalOpen(false)}
-  className="relative z-50"
+  className="relative z-50 font-Outfit"
 >
   <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" aria-hidden="true" />
   
@@ -64,7 +64,7 @@ export default function Wellness() {
           <Dialog.Title className="font-bold text-3xl text-[#413324] mb-4">
             {selectedArticle.title}
           </Dialog.Title>
-          <p className="text-xl text-[#7E7EC3] italic mb-6">{selectedArticle.subtitle}</p>
+          <p className="text-xl text-[#7E7EC3] font-light mb-6">{selectedArticle.subtitle}</p>
           
           <div className="flex items-center text-sm text-gray-500 space-x-4 mb-8">
             <span className="flex items-center">
@@ -77,7 +77,7 @@ export default function Wellness() {
             <time>{selectedArticle.date}</time>
           </div>
 
-          <div className="prose max-w-none text-[#413324]">
+          <div className="prose max-w-none text-fontdef text-md text-justify">
             {selectedArticle.content.split('\n').map((line, index) => (
               <p key={index} className="mb-4">{line}</p>
             ))}
@@ -88,7 +88,7 @@ export default function Wellness() {
               <svg className="w-6 h-6 mr-2 text-[#7E7EC3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              Beneficios Clave
+              {selectedArticle.benefits_title}
             </h3>
             <ul className="space-y-4">
               {selectedArticle.benefits.map((benefit, index) => (

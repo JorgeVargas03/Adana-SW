@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PaperClipIcon, CameraIcon } from '@heroicons/react/20/solid';
-import iconDefault from '../assets/images/mymelokuromi.jpg';
+import iconDefault from '../assets/images/icon.png';
 import { useNavigate } from 'react-router-dom';
 import { isTokenValid, removeToken } from '../utils/auth';
 
