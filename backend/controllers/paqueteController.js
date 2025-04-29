@@ -1,4 +1,4 @@
-/*const { db } = require("../firebase");
+const { db } = require("../firebase");
 const userCollection = db.collection("users");
 const paymentsCollection = db.collection("payments");
 
@@ -59,4 +59,3 @@ exports.confirmarCompraPaquete = async (req, res) => {
   }
 };
 
-*/
