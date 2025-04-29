@@ -5,9 +5,9 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 
 
-router.post('/google', authController.loginWithGoogle);
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.post('/google/signin', authController.signinWithGoogle);
+router.post('/google/login', authController.loginWithGoogle);
+router.post('/google/finishRegister',authController.completeGoogleRegistration);
 
 module.exports = router;

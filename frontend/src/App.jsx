@@ -5,18 +5,20 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Instructors from './pages/Instructors';
 import Wellness from './pages/Wellness';
-import Faq from './pages/FAQ';
+import Faq from './pages/Faq';
 import Signin from './pages/Sign_in';
 import Reservation from './pages/Reservation';
 import SignUp from './pages/Sign_up';
+import CompleteRegister from './pages/CompleteRegistration';
+import Pagos from './pages/Pagos';
+import MyProfile from './pages/MyProfile';
 
 const App = () => {
   return (
     <Router>
-      <div>
+      <div className="min-h-screen flex flex-col">
         <Navbar />
-        <div style={{ display: 'flex' }}>
-          <main style={{ flex: 1 }}>
+        <main className="flex-grow">
             <div>
               <Routes>
                 <Route path="/reservation" element={<Reservation/>} />
@@ -26,10 +28,12 @@ const App = () => {
                 <Route path="/faq" element={<Faq/>} />
                 <Route path="/signin" element={<Signin/>} />
                 <Route path="/signup" element={<SignUp/>} />
+                <Route path="/register" element={<CompleteRegister/>} />
+                <Route path= "/pagos" element={<Pagos/>}/>
+                <Route path= "/myprofile" element={<MyProfile/>}/>
               </Routes>
             </div>
           </main>
-        </div>
         <Footer />
       </div>
     </Router>
