@@ -1,10 +1,12 @@
-// src/components/BotonFlotante.jsx
+
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon,ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
+import { useCarrito } from "../context/CarritoContext";
 
 export default function BotonFlotante() {
   const [open, setOpen] = useState(false);
+  const { eventosUnidos, quitarEvento } = useCarrito();
 
   return (
     <>
@@ -54,8 +56,28 @@ export default function BotonFlotante() {
                     </button>
                   </div>
                   <div className="p-6">
-                        Cuerpo de tu orden
-                    </div>
+                        {eventosUnidos.length === 0 ? (
+                          <p className="text-sm text-gray-500">Tu carrito está vacío.</p>
+                        ) : (
+                          <ul className="flex flex-col gap-4">
+                            {eventosUnidos.map((evento, index) => (
+                              <li key={index} className="border p-4 rounded-lg shadow-sm">
+                                <h3 className="text-lg font-semibold text-fontlink">{evento.title}</h3>
+                                <p className="text-sm text-gray-600">Instructor: {evento.instructorName}</p>
+                                <p className="text-sm text-gray-600">Fecha: {evento.formattedDate}</p>
+                                <p className="text-sm text-gray-600">{evento.description}</p>
+                                <button
+                                  className="mt-2 text-red-500 text-sm hover:underline"
+                                  onClick={() => quitarEvento(evento.id)}
+                                >
+                                  Quitar
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
                   <div className="mt-4">
                     {/* Contenido del carrito aquí */}
                   </div>

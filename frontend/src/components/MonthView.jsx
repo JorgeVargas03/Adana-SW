@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { isTokenValid } from '../utils/auth';
 import { useNavigate, Link } from 'react-router-dom';
-import { format, startOfMonth, endOfMonth, getDay, isSameDay, eachDayOfInterval,startOfDay } from 'date-fns';
+import { format, startOfMonth, endOfMonth, getDay, isSameDay, eachDayOfInterval,startOfDay, parseISO, } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { es } from 'date-fns/locale';
+import { useCarrito } from '../context/CarritoContext';
+
 
 function MonthView({ month }) {
   const [showModal, setShowModal] = useState(false);
@@ -12,6 +14,8 @@ function MonthView({ month }) {
   const [events, setEvents] = useState([]);
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
+  const { agregarEvento } = useCarrito();
+
 
   const days = eachDayOfInterval({
     start: startOfMonth(month),
@@ -34,15 +38,29 @@ function MonthView({ month }) {
     const fetchEvents = async () => {
       try {
         const response = await axios.get("http://localhost:3001/adana-api/v1/classes/availability");
-        const fetchedEvents = response.data.map(evento => ({
-          title: evento.title,
-          instructor: evento.instructor,
-          availableSpots: evento.availableSpots,
-          description: evento.description,
-          capacity: evento.capacity,
-          reserved: evento.reserved,
-          date: evento.date
-        }));
+        const fetchedEvents = response.data.map(clase => {
+          const [hour, minute] = clase.time.split(':');
+          const [year, month, day] = clase.date.split('-').map(Number);
+          
+          // fecha/hora como objeto local
+          const dateWithTime = new Date(year, month - 1, day, parseInt(hour), parseInt(minute));
+  
+          console.log('Evento generado:', {
+            fechaOriginal: clase.date,
+            horaOriginal: clase.time,
+            fechaFinal: dateWithTime.toString()
+          });
+  
+          return {
+            title: clase.title,
+            instructor: clase.instructorName,
+            availableSpots: clase.availableSpots,
+            description: clase.description,
+            capacity: clase.capacity,
+            date: dateWithTime
+          };
+        });
+  
         setEvents(fetchedEvents);
       } catch (error) {
         console.error("Error al cargar eventos:", error);
@@ -50,6 +68,7 @@ function MonthView({ month }) {
     };
     fetchEvents();
   }, []);
+  
 
   return (
     <div className="bg-[#F5F0FF] font-outfit rounded-3xl shadow-lg p-6 w-full h-full relative">
@@ -59,7 +78,7 @@ function MonthView({ month }) {
 
       <div className="grid grid-cols-7 gap-2 mb-4">
         {weekDays.map((day, idx) => (
-          <div key={idx} className="text-center text-[#A18CD1] font-semibold text-sm">
+          <div key={idx} className="text-center text-[#A18CD1] font-semibold text-sm"> 
             {day}
           </div>
         ))}
@@ -67,16 +86,20 @@ function MonthView({ month }) {
 
       <div className="grid grid-cols-7 gap-2">
         {Array.from({ length: firstDayIndex }).map((_, idx) => (
-          <div key={`empty-${idx}`} />
+          <div key={`empty-${idx}`}  /> 
         ))}
 
         <AnimatePresence>
           {days.map(day => {
             const isToday = isSameDay(day, new Date());
-            const dayEvents = events.filter(e => 
-              isSameDay(startOfDay(new Date(e.date)), startOfDay(day))
-            );
-
+            const dayEvents = events.filter(e =>
+              isSameDay(startOfDay(e.date), startOfDay(day))
+            );         
+            
+            if (format(day, 'yyyy-MM-dd') === '2025-04-30') {
+              console.log('Eventos del 30 de abril:', dayEvents);
+            }
+          
             return (
               <motion.div
                 key={day}
@@ -106,6 +129,7 @@ function MonthView({ month }) {
                         setShowModal(true);
                       }}
                     >
+                      
                       {event.title}
                     </div>
                   ))}
@@ -154,15 +178,23 @@ function MonthView({ month }) {
                       <p className="text-sm text-gray-700 mb-2"><strong>Capacidad:</strong> {selectedEvent.capacity}</p>
                       <p className="text-sm text-gray-700 mb-4"><strong>Reservados:</strong> {selectedEvent.reserved}</p>
                       <button
-                        className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer"
-                        onClick={() => {
-                          // Aquí puedes hacer lógica para "Unirse"
-                          setShowModal(false);
-                          setSelectedEvent(null);
-                        }}
-                      >
-                        Unirme
+                            className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer"
+                            onClick={() => {
+                              agregarEvento({
+                                id: selectedEvent.id,
+                                instructorId: selectedEvent.instructorId,
+                                title: selectedEvent.title,
+                                description: selectedEvent.description,
+                                instructorName: selectedEvent.instructor,
+                                formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
+                              });
+                              setShowModal(false);
+                              setSelectedEvent(null);
+                            }}
+                          >
+                            Unirme
                       </button>
+
                     </>
                   )
                 ) : (
