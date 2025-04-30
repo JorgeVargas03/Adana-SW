@@ -17,6 +17,8 @@ const getAccessToken = async () => {
   return res.data.access_token;
 };
 
+//Servicio para crear pago (1 clase)
+/*
 exports.createPayment = async (classData) => {
   try {
     const accessToken = await getAccessToken();
@@ -48,7 +50,9 @@ exports.createPayment = async (classData) => {
     return { success: false, message: "Error al iniciar pago con PayPal" };
   }
 };
+*/
 
+//Servicio para capturar y registrar pago (1 o mas clases)
 exports.captureAndRegisterPayment = async (orderId, userId, classData) => {
   try {
     const accessToken = await getAccessToken();
@@ -80,6 +84,38 @@ exports.captureAndRegisterPayment = async (orderId, userId, classData) => {
   } catch (error) {
     console.error("Error al capturar pago:", error?.response?.data || error);
     return { success: false, message: "Error al capturar el pago" };
+  }
+};
+
+
+exports.createPayment = async (classData) => {
+  try {
+    const accessToken = await getAccessToken();
+
+    const res = await axios.post(
+      `${PAYPAL_API}/v2/checkout/orders`,
+      {
+        intent: "CAPTURE",
+        purchase_units: [{
+          amount: {
+            currency_code: "MXN",
+            value: classData.price.toFixed(2),
+          },
+          description: classData.title, // Puede ser "Paquete de X clases"
+        }],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("Error al crear pago con PayPal:", error);
+    return { success: false, message: "Error al iniciar pago con PayPal" };
   }
 };
 

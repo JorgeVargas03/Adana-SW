@@ -136,7 +136,6 @@ exports.getAvailableClasses = async () => {
 };
 
 
-
 // Servicio para reservar una clase
 exports.reserveClass = async (userId, classId, instructorId) => {
     try {
@@ -188,6 +187,87 @@ exports.reserveClass = async (userId, classId, instructorId) => {
     } catch (error) {
         console.error("Error al reservar clase:", error);
         return { success: false, message: "Error interno del servidor" };
+    }
+};
+
+//Servicio para reservar multiples clases
+exports.reserveMultipleClasses = async (userId, selectedClasses) => {
+    const results = [];
+    const updatesByInstructor = {}; // Agrupar clases por instructor para actualizar en lote
+
+    try {
+        // 1. Obtener datos del cliente una sola vez
+        const clientDoc = await userCollection.doc(userId).get();
+        if (!clientDoc.exists) {
+            return { success: false, message: "Cliente no encontrado" };
+        }
+
+        const clientData = clientDoc.data();
+
+        // 2. Procesar cada clase seleccionada
+        for (const { instructorId, classId } of selectedClasses) {
+            try {
+                const instructorDoc = await userCollection.doc(instructorId).get();
+                if (!instructorDoc.exists) {
+                    results.push({ classId, success: false, message: "Instructor no encontrado" });
+                    continue;
+                }
+
+                const instructorData = instructorDoc.data();
+                const classData = instructorData.classes?.[classId];
+
+                if (!classData) {
+                    results.push({ classId, success: false, message: "Clase no encontrada" });
+                    continue;
+                }
+
+                const currentReservations = Object.keys(classData.reservations || {}).length;
+                if (currentReservations >= classData.capacity) {
+                    results.push({ classId, success: false, message: "Clase sin disponibilidad" });
+                    continue;
+                }
+
+                // Preparar reserva
+                const reservationId = `res_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+                classData.reservations = classData.reservations || {};
+                classData.reservations[reservationId] = {
+                    client_id: userId,
+                    client_name: `${clientData.name} ${clientData.lastname}`,
+                    status: "confirmed",
+                };
+
+                // Acumular la clase modificada por instructor
+                updatesByInstructor[instructorId] = updatesByInstructor[instructorId] || {};
+                updatesByInstructor[instructorId][`classes.${classId}`] = classData;
+
+                results.push({ classId, success: true });
+
+            } catch (error) {
+                console.error(`Error al procesar clase ${classId}:`, error);
+                results.push({ classId, success: false, message: "Error interno al reservar esta clase" });
+            }
+        }
+
+        // 3. Aplicar todas las actualizaciones en Firestore por instructor
+        const updatePromises = Object.entries(updatesByInstructor).map(([instructorId, updateData]) =>
+            userCollection.doc(instructorId).update(updateData)
+        );
+
+        await Promise.all(updatePromises);
+
+        return {
+            success: true,
+            message: "Procesamiento completo",
+            results,
+        };
+
+    } catch (error) {
+        console.error("Error al reservar múltiples clases:", error);
+        return {
+            success: false,
+            message: "Error general al procesar las reservas",
+            results: [],
+        };
     }
 };
 
