@@ -1,106 +1,268 @@
-import React from "react";
-import { useState } from "react";
-import icon from '../assets/images/mymelokuromi.jpg';
+import React, { useState, useEffect } from 'react';
+import { PaperClipIcon, CameraIcon } from '@heroicons/react/20/solid';
+import iconDefault from '../assets/images/icon.png';
+import { useNavigate } from 'react-router-dom';
+import { isTokenValid, removeToken } from '../utils/auth';
 
-const MyProfile = () =>{
-const [nombre, setNombre] = useState("nombreRandom");
-const [apellido, setApellido] = useState("apellidoRandom");
-const [password, setPassword] = useState("contraseñaRandom");
+const MyProfile = () => {
+  const navigate = useNavigate();
+  const [profileData, setProfileData] = useState({
+    name: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    profile_picture: '',
+  });
+  const [originalData, setOriginalData] = useState({});
+  const [newProfilePicture, setNewProfilePicture] = useState(null); // Guardamos la nueva imagen si cambia
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
 
-return(
-    <section>
-       <div className=' flex justify-center items-center h-screen w-full bg-[#C3C37E]'>
-            <div className='flex w-9/12 h-[500px] rounded-2xl bg-[#FDF9EC] overflow-hidden'>
-{/*este es el div que engloba el resto de divs que componen la página*/}
+        if (!user || !token) {
+          removeToken();
+          navigate('/signin');
+          window.dispatchEvent(new Event('storage'));
+          return;
+        }
 
-                            {/*foto*/}            
-                            <div className="w-1/3  flex  justify-center transform translate-y-32">
-                            <img src={icon} className='w-3/4 max-w-[200px] h-[200px]' alt='icon' />
-                            </div>
-                
-                <div className='flex-1 flex flex-col items-center justify-start pt-28 h-full ml-[-7.5px]'>
-{/*div para la separacion*/}
-                    <div className='transform translate-y-10'>
-                        
-                        {/*el margintop*/}
-                        <div className='mt=20 pl-4'>
-                            <div className=''>
-                                <h1 className="text-right font-[700] font-[Outfit] text-4xl pt-40">
-                                        Mi Perfil | tipo perfi variables
-                                </h1>
-                            </div>
-                        </div>                      
+        const response = await fetch(`http://localhost:3001/adana-api/v1/users/${user.id}/info`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
-{/*resto de datos*/}
-                              
-                            <div className="w-full flex flex-col md:flex-row px-4 sm:px-6 md:px-8 gap-3">
-                                    <div className="w-full md:w-1/2 transform translate-y-5 ">
-                                        <label className="block text-base font-semibold sm:text-lg mb-2">Nombre</label>
-                                    </div>
+        if (!response.ok) {
+          throw new Error('Error al obtener la información del usuario');
+        }
 
-                                    <div className="w-full flex flex-col md:flex-row items-center px-4 sm:px-6 md:px-8 gap-1.5 transform translate-y-5">
-                                        <input
-                                            value={nombre}
-                                            onChange={(e) => setNombre(e.target.value)}
-                                            className="w-[250px] h-7 sm:h-9 px-4 text-sm sm:text-base md:text-lg rounded-xl bg-[#F0F1D2] focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                        />
-                                        </div>
-                                </div>
+        const data = await response.json();
 
-                                <div className="w-full flex flex-col md:flex-row px-4 sm:px-6 md:px-8 gap-3">
-                                    <div className="w-full md:w-1/2 transform translate-y-10 ">
-                                        <label className="block text-base font-semibold sm:text-lg mb-2">Apellido</label>
-                                    </div>
+        setProfileData({
+          name: data.name || '',
+          lastname: data.lastname || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          profile_picture: data.profile_picture || '',
+        });
 
-                                    <div className="w-full flex flex-col md:flex-row items-center px-4 sm:px-6 md:px-8 gap-1.5 transform translate-y-10">
-                                        <input
-                                            value={apellido}
-                                            onChange={(e) => setApellido(e.target.value)}
-                                            className="w-[250px] h-7 sm:h-9 px-4 text-sm sm:text-base md:text-lg rounded-xl bg-[#F0F1D2] focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                        />
-                                        </div>
-                                </div>
+        setOriginalData({
+          name: data.name || '',
+          lastname: data.lastname || '',
+          phone: data.phone || '',
+          profile_picture: data.profile_picture || '',
+        });
+      } catch (error) {
+        console.error('Error cargando la información del perfil:', error);
+        removeToken();
+        navigate('/signin');
+        window.dispatchEvent(new Event('storage'));
+      }
+    };
 
-                                <div className="w-full flex flex-col md:flex-row px-4 sm:px-6 md:px-8 gap-3">
-                                    <div className="w-full md:w-1/2 transform translate-y-15 ">
-                                        <label className="block text-base font-semibold sm:text-lg mb-2">Correo</label>
-                                    </div>
+    fetchUserInfo();
+  }, [navigate]);
 
-                                    <div className="w-full flex flex-col md:flex-row items-center px-4 sm:px-6 md:px-8 gap-1.5 transform translate-y-15">
-                                        <input
-                                            value="CORREO RANDOM"
-                                            className="w-[250px] h-7 sm:h-9 px-4 text-sm sm:text-base md:text-lg rounded-xl bg-[#F0F1D2] focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                        />
-                                        </div>
-                                </div>
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    console.log(file);
 
-                                <div className="w-full flex flex-col md:flex-row px-4 sm:px-6 md:px-8 gap-3">
-                                    <div className="w-full md:w-1/2 transform translate-y-20 ">
-                                        <label className="block text-base font-semibold sm:text-lg mb-2">Contraseña</label>
-                                    </div>
+    const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+    if (file.size > MAX_SIZE) {
+      alert('La imagen es demasiado grande. El tamaño máximo es 1MB.');
+      return;
+    }
 
-                                    <div className="w-full flex flex-col md:flex-row items-center px-4 sm:px-6 md:px-8 gap-1.5 transform translate-y-20">
-                                        <input
-                                        type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            className="w-[250px] h-7 sm:h-9 px-4 text-sm sm:text-base md:text-lg rounded-xl bg-[#F0F1D2] focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                                        />
-                                        </div>
-                                </div>
+    setNewProfilePicture(file);
 
-                                <div className='mt-8 flex flex-row justify-center items-center gap-x-4 translate-y-25'>
-                                    <button className='w-[300px] h-18 active:scale-[.98] active:duration-75 hover:scale-[1.01] ease-in-out transition-all py-4 rounded-xl text-[#FFFDEF] text-lg font-bold bg-blue-600 cursor-pointer'>
-                                        Guardar contraseña
-                                    </button>
-                                </div>
-                    </div>
-                </div>
+    // Para mostrar vista previa
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileData((prev) => ({
+        ...prev,
+        profile_picture: reader.result, // Solo para previsualizar
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+
+  const handleSaveChanges = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+
+    if (!user || !token) {
+      removeToken();
+      navigate('/login');
+      return;
+    }
+
+    const formData = new FormData(); // ← Nuevo: usamos FormData para enviar campos + archivos
+    let hasChanges = false;
+
+    // Solo agregamos los campos que cambiaron
+    if (profileData.name !== originalData.name) {
+      formData.append('name', profileData.name);
+      hasChanges = true;
+    }
+    if (profileData.lastname !== originalData.lastname) {
+      formData.append('lastname', profileData.lastname);
+      hasChanges = true;
+    }
+    if (profileData.phone !== originalData.phone) {
+      formData.append('phone', profileData.phone);
+      hasChanges = true;
+    }
+    if (newProfilePicture) {
+      formData.append('profile_picture', newProfilePicture); // ← El archivo como tal
+      hasChanges = true;
+    }
+
+    if (!hasChanges) {
+      alert('No hay cambios para guardar');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3001/adana-api/v1/users/profile/${user.id}/updateProfile`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          // ¡Ojo! NO ponemos 'Content-Type' aquí, el navegador la setea automáticamente a multipart/form-data
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Error actualizando el perfil');
+      }
+
+      const updatedData = await response.json();
+      console.log('Perfil actualizado:', updatedData);
+
+      // Actualizamos localmente
+      setOriginalData((prevData) => ({
+        ...prevData,
+        name: updatedData.name,
+        lastname: updatedData.lastname,
+        phone: updatedData.phone,
+        profile_picture: updatedData.profile_picture,
+      }));
+
+      setProfileData(updatedData);
+
+      alert('Cambios guardados exitosamente');
+      navigate(0); // Refrescamos la página
+    } catch (error) {
+      console.error('Error guardando cambios:', error);
+      alert('Hubo un error guardando los cambios');
+    }
+  };
+
+
+
+  return (
+    <section className="min-h-screen flex items-center justify-center bg-accent1/70 py-12 font-Outfit pt-30">
+      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-md overflow-hidden">
+        <div className="flex flex-col md:flex-row">
+
+          {/* Foto de perfil */}
+          <div className="relative md:w-1/3 bg-[#F0F1D2] flex flex-col items-center justify-center py-10">
+            <div className="relative">
+              <img
+                src={profileData.profile_picture || iconDefault}
+                alt="User Icon"
+                className="w-50 h-50 rounded-full object-cover border-4 border-white shadow-md"
+              />
+              <label className="cursor-pointer absolute bottom-1 right-1 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 border-2 border-white">
+                <CameraIcon className="h-6 w-6" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
             </div>
-       </div>
-    </section>
-)
+            <h2 className="mt-6 text-xl font-bold text-gray-700">Foto de Perfil</h2>
+          </div>
 
-}
+          {/* Información de usuario */}
+          <div className="flex-1 p-8">
+            <div className="border-b pb-6 mb-6 border-gray-400">
+              <h3 className="text-2xl font-semibold text-fontdef">Perfil de usuario</h3>
+              <p className="mt-1 text-sm text-fontdef/50">Visualiza y edita tu información aquí.</p>
+            </div>
+
+            <dl className="divide-y divide-gray-200">
+              {/* Nombre */}
+              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt className="text-sm font-medium text-fontdef">Nombre</dt>
+                <dd className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    value={profileData.name}
+                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                    className="w-full border border-gray-400 rounded-lg px-3 py-2 bg-gray-100 focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </dd>
+              </div>
+
+              {/* Apellido */}
+              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt className="text-sm font-medium text-fontdef">Apellido</dt>
+                <dd className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    value={profileData.lastname}
+                    onChange={(e) => setProfileData({ ...profileData, lastname: e.target.value })}
+                    className="w-full border border-gray-400 rounded-lg px-3 py-2 bg-gray-100 focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </dd>
+              </div>
+
+              {/* Correo */}
+              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt className="text-sm font-medium text-fontdef">Correo</dt>
+                <dd className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    readOnly
+                    value={profileData.email}
+                    className="w-full border border-gray-400 rounded-lg px-3 py-2 bg-gray-100 text-gray-500 cursor-not-allowed"
+                  />
+                </dd>
+              </div>
+
+              {/* Teléfono */}
+              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                <dt className="text-sm font-medium text-fontdef">Teléfono</dt>
+                <dd className="mt-1 sm:mt-0 sm:col-span-2">
+                  <input
+                    value={profileData.phone}
+                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                    className="w-full border border-gray-400 rounded-lg px-3 py-2 bg-gray-100 focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </dd>
+              </div>
+
+              {/* Botón guardar */}
+              <div className="mt-8 flex justify-center">
+                <button
+                  onClick={handleSaveChanges}
+                  className="w-1/2 py-3 px-6 text-white bg-fontlink hover:bg-linkselect rounded-lg font-semibold transition duration-200"
+                >
+                  Guardar cambios
+                </button>
+              </div>
+
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 export default MyProfile;

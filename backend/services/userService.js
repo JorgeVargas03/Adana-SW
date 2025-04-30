@@ -53,7 +53,7 @@ exports.updateUserProfile = async (userId, updateData) => {
       return { success: false, status: 404, message: "Usuario no encontrado" };
     }
 
-    const allowedFields = ["name", "lastname", "profile_picture"];
+    const allowedFields = ["name", "lastname", "profile_picture", "phone"];
     const fieldsToUpdate = {};
 
     // Verificar y preparar los campos que se desean actualizar
@@ -64,20 +64,33 @@ exports.updateUserProfile = async (userId, updateData) => {
     }
 
     // Procesar imagen si viene incluida
-    if (updateData.profile_picture && updateData.profile_picture.base64) {
-      const b64 = updateData.profile_picture.base64;
-      const mimeType = updateData.profile_picture.mimeType || "image/jpeg";
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
-      const resPicture = await driveService.uploadImageToGoogleDrive(b64, userId, mimeType);
+    if (updateData.profile_picture) {
+      const fileBuffer = updateData.profile_picture.buffer;
+      const mimeType = updateData.profile_picture.mimetype;
+      const fileName = updateData.profile_picture.originalname;
+
+      if (!allowedMimeTypes.includes(mimeType)) {
+        return {
+          success: false,
+          status: 400,
+          message: "Tipo de imagen no permitido. Solo JPG, PNG o WEBP.",
+        };
+      }
+
+      const base64Image = fileBuffer.toString('base64');
+      const resPicture = await driveService.uploadImageToGoogleDrive(base64Image, fileName, mimeType);
+
 
       if (resPicture.success) {
-        fieldsToUpdate.profile_picture = resPicture.url; // Aquí guardamos la URL que regresa el Web App
+        fieldsToUpdate.profile_picture = resPicture.url;
       } else {
         return {
           success: false,
           status: 500,
           message: "Error al subir la imagen de perfil",
-          error: resPicture.error
+          error: resPicture.error,
         };
       }
     }

@@ -18,13 +18,12 @@ const Signin = () => {
     }
   }, [navigate]);  // Asegúrate de incluir `navigate` como dependencia
 */
-  const [correo, setCorreo] = useState('');
-  const [contraseña, setContraseña] = useState('');
 
   // Iniciar sesión con Google
   const handleLogin = async () => {
     try {
       const user = await loginWithGoogle();
+      window.dispatchEvent(new Event('storage'));
       console.log("Bienvenido:", user.name);
       // Redirigir después de un inicio de sesión exitoso
       navigate('/');
@@ -45,6 +44,8 @@ const Signin = () => {
       }
     }
   };
+  const [correo, setCorreo] = useState('');
+  const [contraseña, setContraseña] = useState('');
 
   // Manejar login normal
   const handleNormalLogin = async () => {
@@ -65,6 +66,8 @@ const Signin = () => {
       
       // Guarda el token en localStorage
       localStorage.setItem('token', sesion.token);
+      localStorage.setItem('user', sesion.user)
+      window.dispatchEvent(new Event('storage'));
       
       // Redirigir a la home
       navigate('/');
@@ -127,7 +130,7 @@ return (
 
             <div>
               <button
-                type="submit"
+              type= "button"
                 onClick={handleNormalLogin}
                 className="h-10 font-Outfit items-center flex w-full justify-center rounded-md bg-accent2 px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs hover:bg-accent2/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
