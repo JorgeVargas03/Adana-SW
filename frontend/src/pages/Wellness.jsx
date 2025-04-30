@@ -112,8 +112,8 @@ export default function Wellness() {
               <Dialog.Title className="font-bold text-3xl text-[#413324] mb-4">
                 {selectedArticle.title}
               </Dialog.Title>
-              <p className="text-xl text-[#7E7EC3] font-light mb-6">{selectedArticle.subtitle}</p>
-
+              <p className="text-xl text-[#7E7EC3] font-light mb-2">{selectedArticle.subtitle}</p>
+              <p className="text-md text-fontdef font-semibold mb-2">{selectedArticle.tags}</p>
               <div className="flex items-center text-sm text-gray-500 space-x-4 mb-8">
                 <span className="flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,31 +124,45 @@ export default function Wellness() {
                 <span>•</span>
                 <time>{selectedArticle.date}</time>
               </div>
-
+              {selectedArticle.image && (
+                <div className="my-6">
+                  <img
+                    src={selectedArticle.image}
+                    className="w-full rounded-lg shadow-md object-cover"
+                  />
+                </div>
+              )}
               <div className="prose max-w-none text-fontdef text-md text-justify">
                 {renderArticleContent(selectedArticle.content)}
               </div>
 
-              <div className="bg-[#F0F1D2] rounded-lg p-6 mt-8">
-                <h3 className="font-semibold text-2xl text-[#413324] mb-6 flex items-center">
-                  <svg className="w-6 h-6 mr-2 text-[#7E7EC3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                  </svg>
-                  {selectedArticle.benefits_title}
-                </h3>
-                <ul className="space-y-4">
-                  {selectedArticle.benefits.map((benefit, index) => (
-                    <li key={index} className="flex items-start">
-                      <div className="flex-shrink-0 mt-1">
-                        <div className="w-6 h-6 rounded-full bg-[#7E7EC3] flex items-center justify-center">
-                          <span className="text-white text-sm">{index + 1}</span>
-                        </div>
-                      </div>
-                      <span className="ml-4 text-[#413324]">{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
+              {(selectedArticle.benefits_title || selectedArticle.benefits?.length > 0) && (
+  <div className="bg-[#F0F1D2] rounded-lg p-6 mt-8">
+    {selectedArticle.benefits_title && (
+      <h3 className="font-semibold text-2xl text-[#413324] mb-6 flex items-center">
+        <svg className="w-6 h-6 mr-2 text-[#7E7EC3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {selectedArticle.benefits_title}
+      </h3>
+    )}
+    {selectedArticle.benefits?.length > 0 && (
+      <ul className="space-y-4">
+        {selectedArticle.benefits.map((benefit, index) => (
+          <li key={index} className="flex items-start">
+            <div className="flex-shrink-0 mt-1">
+              <div className="w-6 h-6 rounded-full bg-[#7E7EC3] flex items-center justify-center">
+                <span className="text-white text-sm">{index + 1}</span>
               </div>
+            </div>
+            <span className="ml-4 text-[#413324]">{benefit}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+)}
+
 
               <button
                 onClick={() => setIsModalOpen(false)}
