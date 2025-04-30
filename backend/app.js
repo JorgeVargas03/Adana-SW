@@ -12,6 +12,7 @@ app.use(cors({
   origin: "http://localhost:5173", // URL de tu frontend
   credentials: true,               // Solo si usas cookies o headers personalizados
 }));
+//const paqueteRoutes = require("./routes/paquete.routes");
 
 app.use(express.json());
 
@@ -19,6 +20,7 @@ app.use("/auth", authRoutes);
 app.use("/adana-api/v1/users", userRoutes);
 app.use("/adana-api/v1/classes", classRoutes);
 app.use("/adana-api/v1/payments", paymentsRoutes);
+//app.use("/api", paqueteRoutes);
 
 // Middleware para rutas no definidas (404 global)
 app.use((req, res, next) => {

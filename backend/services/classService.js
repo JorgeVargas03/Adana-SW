@@ -63,9 +63,22 @@ exports.getAvailableClasses = async () => {
         }
 
         const allClasses = [];
-        const today = new Date();
-        const maxDate = new Date();
-        maxDate.setMonth(maxDate.getMonth() + 2); // Hasta 2 meses desde hoy
+
+        // Obtener la fecha actual en zona horaria de Mazatlán
+        const now = new Date();
+        const localNowStr = new Intl.DateTimeFormat('en-US', {
+            timeZone: 'America/Mazatlan',
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            hour12: false
+        }).format(now);
+
+        const [month, day, year, hour, minute, second] = localNowStr.match(/\d+/g);
+        const today = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+
+        // Crear fecha máxima (2 meses después)
+        const maxDate = new Date(today);
+        maxDate.setMonth(maxDate.getMonth() + 2);
 
         usersSnapshot.forEach(doc => {
             const instructor = doc.data();
@@ -73,22 +86,37 @@ exports.getAvailableClasses = async () => {
 
             if (instructor.classes) {
                 Object.entries(instructor.classes).forEach(([classId, clase]) => {
-                    const classDate = new Date(clase.schedule?.date);
+                    const dateStr = clase.schedule?.date; // ejemplo: "2025-04-30"
+                    const timeStr = clase.schedule?.time || "00:00"; // ejemplo: "15:30"
+                    const classDate = new Date(`${dateStr}T${timeStr}:00`);
+
                     if (classDate >= today && classDate <= maxDate) {
                         const reservedCount = clase.reservations ? Object.keys(clase.reservations).length : 0;
                         const availableSpots = clase.capacity - reservedCount;
 
-                        let availability = "green"; // Alta disponibilidad
-                        if (availableSpots === 0) availability = "red"; // Sin disponibilidad
-                        else if (availableSpots <= 5) availability = "yellow"; // Media disponibilidad
+                        let availability = "green";
+                        if (availableSpots === 0) availability = "red";
+                        else if (availableSpots <= 5) availability = "yellow";
+
+                        // Formatear fecha en español mexicano y en zona Mazatlán
+                        const formattedDate = new Intl.DateTimeFormat('es-MX', {
+                            timeZone: 'America/Mazatlan',
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        }).format(classDate);
 
                         allClasses.push({
                             id: classId,
                             title: clase.title,
                             description: clase.description,
-                            //type: clase.type || "pilates",
                             date: clase.schedule?.date,
                             time: clase.schedule?.time,
+                            formattedDate,
                             capacity: clase.capacity,
                             availableSpots,
                             availability,
@@ -106,6 +134,7 @@ exports.getAvailableClasses = async () => {
         return { success: false, message: "Error del servidor." };
     }
 };
+
 
 
 // Servicio para reservar una clase
