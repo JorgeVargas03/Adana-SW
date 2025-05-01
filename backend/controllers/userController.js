@@ -41,7 +41,7 @@ exports.updateUserProfile = async (req, res) => {
 
   // Si viene imagen nueva
   if (profilePictureFile) {
-    updateData.profile_picture = profilePictureFile; // Mandamos el archivo a servicio
+    updateData.profileImage = profilePictureFile; // Mandamos el archivo a servicio
   }
 
   const result = await userService.updateUserProfile(userId, updateData);

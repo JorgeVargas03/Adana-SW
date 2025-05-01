@@ -169,7 +169,7 @@ function generateToken(userData) {
 
 // Función para completar registro después del login con Google
 exports.completeGoogleRegistration = async (req, res) => {
-  const { name, lastname, email, password, gender, phone, profile_picture } = req.body;
+  const { name, lastname, email, password, gender, phone, profileImage } = req.body;
 
   try {
     // Verificar si el usuario ya existe
@@ -195,7 +195,7 @@ exports.completeGoogleRegistration = async (req, res) => {
       status: "active",
       gender,
       phone,
-      profile_picture,
+      profileImage,
       registeredAt: new Date().toISOString()
     };
 

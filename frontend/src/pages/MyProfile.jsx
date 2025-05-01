@@ -11,7 +11,7 @@ const MyProfile = () => {
     lastname: '',
     email: '',
     phone: '',
-    profile_picture: '',
+    profileImage: '',
   });
   const [originalData, setOriginalData] = useState({});
   const [newProfilePicture, setNewProfilePicture] = useState(null); // Guardamos la nueva imagen si cambia
@@ -47,7 +47,7 @@ const MyProfile = () => {
           lastname: data.lastname || '',
           email: data.email || '',
           phone: data.phone || '',
-          profile_picture: data.profile_picture || '',
+          profileImage: data.profileImage || '',
         });
 
         setOriginalData({
