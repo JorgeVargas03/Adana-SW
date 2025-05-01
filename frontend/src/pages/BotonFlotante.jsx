@@ -67,19 +67,25 @@ export default function BotonFlotante() {
                                 <p className="text-sm text-gray-600">Fecha: {evento.formattedDate}</p>
                                 <p className="text-sm text-gray-600">{evento.description}</p>
                                 <button
-                                  className="mt-2 text-red-500 text-sm hover:underline"
+                                  className="mt-2 text-red-500 text-sm hover:underline cursor-pointer"
                                   onClick={() => quitarEvento(evento.id)}
                                 >
                                   Quitar
+                                </button>
+
+                                <button className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-4 justify-center">
+                                    Comprar
                                 </button>
                               </li>
                             ))}
                           </ul>
                         )}
+
+
                       </div>
 
                   <div className="mt-4">
-                    {/* Contenido del carrito aquí */}
+                        
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
