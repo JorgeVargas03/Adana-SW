@@ -34,7 +34,7 @@ const Signin = () => {
         localStorage.setItem("user", JSON.stringify({
           name: error.profile.displayName,
           email: error.profile.email,
-          profileImage: error.profile.photoURL || ""
+          profile_picture: error.profile.photoURL || ""
         }));
         // Redirigir a la página de registro (o completar el registro)
         navigate('/register');

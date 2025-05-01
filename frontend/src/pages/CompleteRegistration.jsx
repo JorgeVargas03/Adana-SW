@@ -11,7 +11,7 @@ const CompleteRegistration = () => {
     email: "",
     gender: "",
     phone: "",
-    profileImage: "",
+    profile_picture: "",
   });
 
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const CompleteRegistration = () => {
         ...prev,
         name: storedUser.name || "",
         email: storedUser.email || "",
-        profileImage: storedUser.profileImage || "",
+        profile_picture: storedUser.profile_picture || "",
       }));
     }
   }, []);
@@ -62,7 +62,7 @@ const CompleteRegistration = () => {
         {/* LOGO + BARRA */}
         <div className="flex-1 relative flex items-center justify-center">
           <img
-            src={formData.profileImage || '/default-profile.png'}
+            src={formData.profile_picture || '/default-profile.png'}
             alt="Perfil"
             className="w-3/4 max-w-[300px] h-auto rounded-full border-4 border-white shadow-md"
           />
@@ -178,7 +178,7 @@ const CompleteRegistration = () => {
             </div>
 
             {/* Imagen (oculta) */}
-            <input type="hidden" name="profileImage" value={formData.profileImage} />
+            <input type="hidden" name="profileImage" value={formData.profile_picture} />
 
             {/* Botón de enviar */}
             <button

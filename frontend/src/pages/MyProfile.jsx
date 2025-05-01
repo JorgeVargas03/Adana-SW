@@ -11,7 +11,7 @@ const MyProfile = () => {
     lastname: '',
     email: '',
     phone: '',
-    profileImage: '',
+    profile_picture: '',
   });
   const [originalData, setOriginalData] = useState({});
   const [newProfilePicture, setNewProfilePicture] = useState(null); // Guardamos la nueva imagen si cambia
@@ -47,14 +47,14 @@ const MyProfile = () => {
           lastname: data.lastname || '',
           email: data.email || '',
           phone: data.phone || '',
-          profileImage: data.profileImage || '',
+          profile_picture: data.profile_picture || '',
         });
 
         setOriginalData({
           name: data.name || '',
           lastname: data.lastname || '',
           phone: data.phone || '',
-          profileImage: data.profileImage || '',
+          profile_picture: data.profile_picture || '',
         });
       } catch (error) {
         console.error('Error cargando la información del perfil:', error);
@@ -84,7 +84,7 @@ const MyProfile = () => {
     reader.onloadend = () => {
       setProfileData((prev) => ({
         ...prev,
-        profileImage: reader.result, // Solo para previsualizar
+        profile_picture: reader.result, // Solo para previsualizar
       }));
     };
     reader.readAsDataURL(file);
@@ -118,7 +118,7 @@ const MyProfile = () => {
       hasChanges = true;
     }
     if (newProfilePicture) {
-      formData.append('profileImage', newProfilePicture); // ← El archivo como tal
+      formData.append('profile_picture', newProfilePicture); // ← El archivo como tal
       hasChanges = true;
     }
 
@@ -150,7 +150,7 @@ const MyProfile = () => {
         name: updatedData.name,
         lastname: updatedData.lastname,
         phone: updatedData.phone,
-        profileImage: updatedData.profileImage,
+        profile_picture: updatedData.profile_picture,
       }));
 
       setProfileData(updatedData);
@@ -174,7 +174,7 @@ const MyProfile = () => {
           <div className="relative md:w-1/3 bg-[#F0F1D2] flex flex-col items-center justify-center py-10">
             <div className="relative">
               <img
-                src={profileData.profileImage || iconDefault}
+                src={profileData.profile_picture || iconDefault}
                 alt="User Icon"
                 className="w-50 h-50 rounded-full object-cover border-4 border-white shadow-md"
               />
