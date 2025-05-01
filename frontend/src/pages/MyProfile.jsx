@@ -54,7 +54,7 @@ const MyProfile = () => {
           name: data.name || '',
           lastname: data.lastname || '',
           phone: data.phone || '',
-          profile_picture: data.profile_picture || '',
+          profileImage: data.profileImage || '',
         });
       } catch (error) {
         console.error('Error cargando la información del perfil:', error);
@@ -84,7 +84,7 @@ const MyProfile = () => {
     reader.onloadend = () => {
       setProfileData((prev) => ({
         ...prev,
-        profile_picture: reader.result, // Solo para previsualizar
+        profileImage: reader.result, // Solo para previsualizar
       }));
     };
     reader.readAsDataURL(file);
@@ -118,7 +118,7 @@ const MyProfile = () => {
       hasChanges = true;
     }
     if (newProfilePicture) {
-      formData.append('profile_picture', newProfilePicture); // ← El archivo como tal
+      formData.append('profileImage', newProfilePicture); // ← El archivo como tal
       hasChanges = true;
     }
 
@@ -150,7 +150,7 @@ const MyProfile = () => {
         name: updatedData.name,
         lastname: updatedData.lastname,
         phone: updatedData.phone,
-        profile_picture: updatedData.profile_picture,
+        profileImage: updatedData.profileImage,
       }));
 
       setProfileData(updatedData);
@@ -174,7 +174,7 @@ const MyProfile = () => {
           <div className="relative md:w-1/3 bg-[#F0F1D2] flex flex-col items-center justify-center py-10">
             <div className="relative">
               <img
-                src={profileData.profile_picture || iconDefault}
+                src={profileData.profileImage || iconDefault}
                 alt="User Icon"
                 className="w-50 h-50 rounded-full object-cover border-4 border-white shadow-md"
               />
