@@ -12,13 +12,16 @@ import SignUp from './pages/Sign_up';
 import CompleteRegister from './pages/CompleteRegistration';
 import Pagos from './pages/Pagos';
 import MyProfile from './pages/MyProfile';
+import { CarritoProvider } from './context/CarritoContext'; 
+
 
 const App = () => {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-grow">
+      <CarritoProvider>
+        <div className="min-h-screen flex flex-col">
+          <Navbar />
+          <main className="flex-grow">
             <div>
               <Routes>
                 <Route path="/reservation" element={<Reservation/>} />
@@ -34,10 +37,12 @@ const App = () => {
               </Routes>
             </div>
           </main>
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      </CarritoProvider>
     </Router>
   );
 };
+
 
 export default App;

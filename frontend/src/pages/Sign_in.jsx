@@ -78,7 +78,7 @@ const Signin = () => {
   };
 
 return (
-  <div className=' flex justify-center items-center h-screen w-full bg-accent1/70 mt-10 font-Outfit'>
+  <div className='flex justify-center items-center h-screen w-full bg-accent1/70 mt-10 font-Outfit'>
     <div className='flex w-9/12 h-[550px] rounded-2xl bg-[#FDF9EC]'> 
       {/* LOGO + BARRA */}
       <div className='flex-1 relative flex items-center justify-center'>
