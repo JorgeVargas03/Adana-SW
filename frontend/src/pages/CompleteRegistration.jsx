@@ -11,7 +11,7 @@ const CompleteRegistration = () => {
     email: "",
     gender: "",
     phone: "",
-    profileImage: "",
+    profile_picture: "",
   });
 
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const CompleteRegistration = () => {
         ...prev,
         name: storedUser.name || "",
         email: storedUser.email || "",
-        profileImage: storedUser.profileImage || "",
+        profile_picture: storedUser.profileImage || "",
       }));
     }
   }, []);
