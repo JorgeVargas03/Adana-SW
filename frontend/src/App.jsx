@@ -34,7 +34,7 @@ const App = () => {
                 <Route path="/signup" element={<SignUp/>} />
                 <Route path="/register" element={<CompleteRegister/>} />
                 <Route path= "/myprofile" element={<MyProfile/>}/>
-                <Route parth= "/client/myreservation" element={<ReserClient/>}/>
+                <Route parth= "/myreservation" element={<ReserClient/>}/>
               </Routes>
             </div>
           </main>

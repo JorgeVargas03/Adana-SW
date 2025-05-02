@@ -64,13 +64,6 @@ const Signin = () => {
       const sesion = await login(userData);
       alert("¡Inicio de sesión exitoso!, Bienvenido:", sesion.name);
       // Guarda el token en localStorage
-
-      // Guarda el token si es que también lo recibes
-      localStorage.setItem("token", sesion.token);
-
-      // Guarda el usuario completo
-      localStorage.setItem("usuario", JSON.stringify(sesion.user));
-
       // Notifica a otros componentes (opcional si ya lo usas)
       window.dispatchEvent(new Event('storage'));
 

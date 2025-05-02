@@ -14,6 +14,41 @@ export default function BotonFlotante() {
   const [loading, setLoading] = useState(false);
   const userId = JSON.parse(localStorage.getItem("usuario"))?.id;
 
+//Ahora si debe mandar la puta info carajo
+  const handleReservar = async () => {
+    try {
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      const userId = usuario.id;
+  
+      if (!userId || eventosUnidos.length === 0) {
+        console.warn("Faltan datos: usuario o eventos");
+        return;
+      }
+  
+      console.log("Reservando para usuario:", userId);
+      console.log("Eventos a reservar:", eventosUnidos);
+  
+      const reservas = eventosUnidos.map((evento) =>
+        axios.post(
+          `http://localhost:3001/adana-api/v1/classes/reserve/onlyOne/${userId}`,
+          {
+            classId: evento.classId,
+            instructorId: evento.instructorId
+          }
+        )
+      );
+  
+      await Promise.all(reservas);
+      console.log("Todas las reservas fueron exitosas");
+      alert("Reservas realizadas con éxito");
+    } catch (error) {
+      console.error("Error al enviar la reserva:", error);
+      alert("Hubo un problema al realizar la reserva. Inténtalo más tarde.");
+    }
+  };
+  
+
+
   return (
     <>
       {/* Botón flotante */}
@@ -23,7 +58,7 @@ export default function BotonFlotante() {
         aria-label="Carrito de compras"
       >
       
-        <ShoppingCartIcon className="size-7 text-white"/>
+        <ShoppingCartIcon className="size-7 text-white cursor-pointer"/>
       </button>
 
       {/* Panel con transición */}
@@ -86,39 +121,7 @@ export default function BotonFlotante() {
                                   {/*Botón para comprar, también hace el post para mandar las cosas al back*, se limpia sola la fakin shit tambien*/}
                                   {eventosUnidos.length > 0 && (
                                           <button
-                                          onClick={async () => {
-                                            const usuarioGuardado = JSON.parse(localStorage.getItem("usuario"));
-                                            const userId = usuarioGuardado?.id;
-
-
-                                            if (!userId) {
-                                              console.error("No se encontró el usuarioId en localStorage");
-                                              return;
-                                            }
-
-                                            const selectedClasses = eventosUnidos.map((evento) => ({
-                                              classId: evento.id,
-                                              instructorId: evento.instructorId,
-                                            }));
-
-                                            const payload = {
-                                              usuarioId: userId,
-                                              selectedClasses: selectedClasses,
-                                            };
-
-                                            try {
-                                              await axios.post(
-                                                `http://localhost:3001/reserve/onlyOne/${userId}`,
-                                                payload
-                                              );
-                                              console.log("Reserva enviada correctamente");
-
-                                              // Limpiar carrito si la reserva fue exitosa
-                                              eventosUnidos.forEach((evento) => quitarEvento(evento.id));
-                                            } catch (error) {
-                                              console.error("Error al enviar la reserva:", error);
-                                            }
-                                          }}
+                                          onClick={handleReservar}
                                           className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-4 justify-center"
                                         >
                                           Confirmar compra
