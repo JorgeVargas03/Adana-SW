@@ -21,7 +21,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [hasToken, setHasToken] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(null);
+  const [profilePicture, setProfilePicture] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -32,18 +32,17 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 100);
     };
-
+  
     const handleStorageChange = () => {
       validateToken();
-
+  
       const userData = localStorage.getItem('user');
-
+  
       if (!userData) {
-        // Si no hay datos de usuario, asegúrate de limpiar la imagen si es necesario
         setProfilePicture(null);
         return;
       }
-
+  
       try {
         const user = JSON.parse(userData);
         if (user && user.profile_picture) {
@@ -56,21 +55,24 @@ export default function Navbar() {
         setProfilePicture(null);
       }
     };
-
-
+  
     window.addEventListener('scroll', handleScroll);
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange); // para otras pestañas
+    window.addEventListener('profilePictureUpdated', handleStorageChange); // para esta pestaña
+  
     validateToken();
-    handleStorageChange(); // <-- Ejecuta al cargar
-
+    handleStorageChange();
+  
     document.addEventListener('mousedown', handleClickOutside);
-
+  
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('profilePictureUpdated', handleStorageChange);
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  
 
 
   const handleClickOutside = (event) => {
