@@ -8,7 +8,6 @@ import { es } from 'date-fns/locale';
 import { useCarrito } from '../context/CarritoContext';
 
 
-//Realiza el calendario, tiene los modales también
 function MonthView({ month }) {
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -26,7 +25,6 @@ function MonthView({ month }) {
   const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   const firstDayIndex = (getDay(startOfMonth(month)) + 6) % 7;
 
-  //para verificar se haya iniciado sesión
   useEffect(() => {
     const validateToken = () => setHasToken(isTokenValid());
     validateToken();
@@ -36,7 +34,6 @@ function MonthView({ month }) {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  //traer info de la disponibilidad de las clases
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -54,7 +51,6 @@ function MonthView({ month }) {
             fechaFinal: dateWithTime.toString()
           });
   
-          //info que retorna de las clases
           return {
             classId: clase.id,
             title: clase.title,
@@ -67,7 +63,6 @@ function MonthView({ month }) {
           };
         });
   
-        //pone los eventos
         setEvents(fetchedEvents);
       } catch (error) {
         console.error("Error al cargar eventos:", error);
@@ -76,7 +71,7 @@ function MonthView({ month }) {
     fetchEvents();
   }, []);
   
-  //creación del calendario con sus divs y así
+
   return (
     <div className="bg-[#F5F0FF] font-outfit rounded-3xl shadow-lg p-6 w-full h-full relative">
       <h2 className="text-3xl font-bold mb-6 text-center text-[#7E5EC3]">
@@ -96,7 +91,6 @@ function MonthView({ month }) {
           <div key={`empty-${idx}`}  /> 
         ))}
 
-        {/*Animación*/}
         <AnimatePresence>
           {days.map(day => {
             const isToday = isSameDay(day, new Date());
@@ -108,7 +102,6 @@ function MonthView({ month }) {
               console.log('Eventos del 30 de abril:', dayEvents);
             }
           
-            //Los cuadros de los días
             return (
               <motion.div
                 key={day}
@@ -121,7 +114,7 @@ function MonthView({ month }) {
                 transition={{ duration: 0.4 }}
                 onClick={() => {
                   setSelectedEvent(null); // reset si clic sin evento
-                  setShowModal(true); //modal para mostrar las clases
+                  setShowModal(true);
                 }}
               >
                 <div className="text-md font-medium text-[#7E5EC3] mb-1">
@@ -130,7 +123,7 @@ function MonthView({ month }) {
                 <div className="flex flex-col gap-1 w-full">
                   {dayEvents.map((event, idx) => (
                     <div
-                      key={idx} //color de la clase, nota para después cambiarlo para traer el color del back por el dato del color 
+                      key={idx} 
                       className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold ${getEventColor(event.availableSpots)}`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -181,7 +174,7 @@ function MonthView({ month }) {
                 
                 {hasToken ? ( 
                   selectedEvent && (
-                    <> {/*Si SI TIENE cuenta, aka ta registrado, muestra la info*/}
+                    <>
                       <h2 className="text-2xl font-bold text-[#C3C37E] mb-4">{selectedEvent.title}</h2>
                       <p className="text-sm text-gray-700 mb-2"><strong>Instructor:</strong> {selectedEvent.instructor}</p>
                       <p className="text-sm text-gray-700 mb-2"><strong>Descripción:</strong> {selectedEvent.description}</p>
@@ -191,7 +184,7 @@ function MonthView({ month }) {
                       <button
                             className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer"
                             onClick={() => {
-                              agregarEvento({ //hace clicl al botón y usa este método del carrito, estos son los datos que inserta
+                              agregarEvento({
                                 classId: selectedEvent.classId,
                                 id: selectedEvent.id, 
                                 instructorId: selectedEvent.instructorId,
@@ -200,8 +193,6 @@ function MonthView({ month }) {
                                 instructorName: selectedEvent.instructor,
                                 formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
                               });
-
-                              //para ver los datos insertados
                               console.log('Evento guardado:', {
                                 classId: selectedEvent.id,
                                 id: selectedEvent.id, 
@@ -221,7 +212,7 @@ function MonthView({ month }) {
                     </>
                   )
                 ) : (
-                  <> {/*Si NO ESTA REGISTRADO lo manda a registrarse*/}
+                  <>
                     <h2 className="text-2xl font-bold text-[#C3C37E] mb-4">¿Quieres reservar?</h2>
                     <Link to="/signup">
                       <button
@@ -245,7 +236,6 @@ function MonthView({ month }) {
   );
 }
 
-//función para poner los colores, cambiar después por el color del back
 function getEventColor(spots) {
   if (spots >= 5) return 'bg-green-200 text-green-800';
   if (spots >= 2) return 'bg-yellow-200 text-yellow-800';

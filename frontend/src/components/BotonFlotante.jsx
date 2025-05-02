@@ -4,6 +4,8 @@ import { XMarkIcon,ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { useCarrito } from "../context/CarritoContext";
 
+//Botón flotante para el carrito
+//Lee el fakin carrito a la verga
 export default function BotonFlotante() {
   const [open, setOpen] = useState(false);
   const { eventosUnidos, quitarEvento } = useCarrito();
@@ -16,7 +18,7 @@ export default function BotonFlotante() {
         onClick={() => setOpen(true)}
         aria-label="Carrito de compras"
       >
-        {/* Ícono SVG aquí o HeroIcon */}
+      
         <ShoppingCartIcon className="size-7 text-white"/>
       </button>
 
@@ -46,6 +48,8 @@ export default function BotonFlotante() {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
+
+                {/*Dialog del carrito, donde se ven las clases*/}
                 <Dialog.Panel className="w-screen max-w-md bg-white p-6 shadow-xl">
                   <div className="font-Outfit flex justify-between items-center border-b pb-4">
                     <Dialog.Title className="text-3xl font-semibold text-fontdef">
@@ -59,7 +63,7 @@ export default function BotonFlotante() {
                         {eventosUnidos.length === 0 ? (
                           <p className="text-sm text-gray-500">Tu carrito está vacío.</p>
                         ) : (
-                          <ul className="flex flex-col gap-4">
+                          <ul className="flex flex-col gap-4"> {/*Busca el evento en el array, donde se colocó en Monthview y lo lee*/}
                             {eventosUnidos.map((evento, index) => (
                               <li key={index} className="border p-4 rounded-lg shadow-sm">
                                 <h3 className="text-lg font-semibold text-fontlink">{evento.title}</h3>
