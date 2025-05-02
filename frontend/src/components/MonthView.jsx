@@ -7,8 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { es } from 'date-fns/locale';
 import { useCarrito } from '../context/CarritoContext';
 
-
-//Realiza el calendario, tiene los modales también
+//Realiza el calendario y sus modales
 function MonthView({ month }) {
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -16,6 +15,8 @@ function MonthView({ month }) {
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
   const { agregarEvento } = useCarrito();
+  //const userId = localStorage.getItem("userDoc.id");
+  const userId = JSON.parse(localStorage.getItem("usuario"))?.id;
 
 
   const days = eachDayOfInterval({
@@ -25,8 +26,10 @@ function MonthView({ month }) {
 
   const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   const firstDayIndex = (getDay(startOfMonth(month)) + 6) % 7;
+  //localStorage.setItem("usuarioId", userId);
 
-  //para verificar se haya iniciado sesión
+
+  //token de inicio de sesión
   useEffect(() => {
     const validateToken = () => setHasToken(isTokenValid());
     validateToken();
@@ -36,10 +39,10 @@ function MonthView({ month }) {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  //traer info de la disponibilidad de las clases
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        //petición para obtener la info al back
         const response = await axios.get("http://localhost:3001/adana-api/v1/classes/availability");
         const fetchedEvents = response.data.map(clase => {
           const [hour, minute] = clase.time.split(':');
@@ -53,12 +56,8 @@ function MonthView({ month }) {
             horaOriginal: clase.time,
             fechaFinal: dateWithTime.toString()
           });
-<<<<<<< HEAD
-  
-          //info que retorna de las clases
-=======
 
->>>>>>> origin/Jorge
+          //información de las clases que retorna
           return {
             classId: clase.id,
             title: clase.title,
@@ -70,12 +69,7 @@ function MonthView({ month }) {
             date: dateWithTime
           };
         });
-<<<<<<< HEAD
-  
-        //pone los eventos
-=======
 
->>>>>>> origin/Jorge
         setEvents(fetchedEvents);
       } catch (error) {
         console.error("Error al cargar eventos:", error);
@@ -83,13 +77,8 @@ function MonthView({ month }) {
     };
     fetchEvents();
   }, []);
-<<<<<<< HEAD
-  
-  //creación del calendario con sus divs y así
-=======
 
-
->>>>>>> origin/Jorge
+//dibujar el calendario
   return (
     <div className="bg-[#F5F0FF] font-outfit rounded-3xl shadow-lg p-6 w-full h-full relative">
       <h2 className="text-3xl font-bold mb-6 text-center text-[#7E5EC3]">
@@ -109,7 +98,6 @@ function MonthView({ month }) {
           <div key={`empty-${idx}`} />
         ))}
 
-        {/*Animación*/}
         <AnimatePresence>
           {days.map(day => {
             const isToday = isSameDay(day, new Date());
@@ -117,16 +105,13 @@ function MonthView({ month }) {
               isSameDay(startOfDay(e.date), startOfDay(day))
             );
 
+            //console log para calar el 30 de abril q no jalaba ajsjasjajs
             if (format(day, 'yyyy-MM-dd') === '2025-04-30') {
               console.log('Eventos del 30 de abril:', dayEvents);
             }
-<<<<<<< HEAD
-          
-            //Los cuadros de los días
-=======
 
->>>>>>> origin/Jorge
             return (
+              //cuadritos de cada uno de los días, si es el día de HOY se marca el cuadro
               <motion.div
                 key={day}
                 className={`bg-white border border-[#E9DFFB] p-3 rounded-2xl min-h-[150px] flex flex-col items-center cursor-pointer hover:bg-[#f2e9fc] ${isToday ? 'ring-2 ring-[#7E5EC3] bg-[#f6f0ff]' : ''
@@ -137,7 +122,7 @@ function MonthView({ month }) {
                 transition={{ duration: 0.4 }}
                 onClick={() => {
                   setSelectedEvent(null); // reset si clic sin evento
-                  setShowModal(true); //modal para mostrar las clases
+                  setShowModal(true);
                 }}
               >
                 <div className="text-md font-medium text-[#7E5EC3] mb-1">
@@ -146,11 +131,7 @@ function MonthView({ month }) {
                 <div className="flex flex-col gap-1 w-full">
                   {dayEvents.map((event, idx) => (
                     <div
-<<<<<<< HEAD
-                      key={idx} //color de la clase, nota para después cambiarlo para traer el color del back por el dato del color 
-=======
-                      key={idx}
->>>>>>> origin/Jorge
+                      key={idx} //trae el color de las clases, cambiar en el futuro para que se extraiga luego luego del back
                       className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold ${getEventColor(event.availableSpots)}`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -201,7 +182,7 @@ function MonthView({ month }) {
 
                 {hasToken ? (
                   selectedEvent && (
-                    <> {/*Si SI TIENE cuenta, aka ta registrado, muestra la info*/}
+                    <> {/*Si INICIO SESION al hacer click el modal muestra la info de la clase*/}
                       <h2 className="text-2xl font-bold text-[#C3C37E] mb-4">{selectedEvent.title}</h2>
                       <p className="text-sm text-gray-700 mb-2"><strong>Instructor:</strong> {selectedEvent.instructor}</p>
                       <p className="text-sm text-gray-700 mb-2"><strong>Descripción:</strong> {selectedEvent.description}</p>
@@ -209,38 +190,9 @@ function MonthView({ month }) {
                       <p className="text-sm text-gray-700 mb-4"><strong>Reservados:</strong> {selectedEvent.capacity - selectedEvent.availableSpots} / {selectedEvent.capacity}</p> {/*capacity-availablespots pa ver cuantos son*/}
                       {/*Boton para unirse*/}
                       <button
-<<<<<<< HEAD
-                            className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer"
-                            onClick={() => {
-                              agregarEvento({ //hace clicl al botón y usa este método del carrito, estos son los datos que inserta
-                                classId: selectedEvent.classId,
-                                id: selectedEvent.id, 
-                                instructorId: selectedEvent.instructorId,
-                                title: selectedEvent.title,
-                                description: selectedEvent.description,
-                                instructorName: selectedEvent.instructor,
-                                formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
-                              });
-
-                              //para ver los datos insertados
-                              console.log('Evento guardado:', {
-                                classId: selectedEvent.id,
-                                id: selectedEvent.id, 
-                                instructorId: selectedEvent.instructorId,
-                                title: selectedEvent.title,
-                                description: selectedEvent.description,
-                                instructorName: selectedEvent.instructor,
-                                formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
-                              });
-                              setShowModal(false);
-                              setSelectedEvent(null);
-                            }}
-                          >
-                            Unirme
-=======
                         className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer"
                         onClick={() => {
-                          agregarEvento({
+                          agregarEvento({ //agrega est ainformación de la clase al arreglo de agregarEvento
                             classId: selectedEvent.classId,
                             instructorId: selectedEvent.instructorId,
                             title: selectedEvent.title,
@@ -248,6 +200,8 @@ function MonthView({ month }) {
                             instructorName: selectedEvent.instructor,
                             formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
                           });
+
+                          //console pa ver que si se guarde
                           console.log('Evento guardado:', {
                             classId: selectedEvent.classId,
                             instructorId: selectedEvent.instructorId,
@@ -262,13 +216,12 @@ function MonthView({ month }) {
                         }}
                       >
                         Unirme
->>>>>>> origin/Jorge
                       </button>
 
                     </>
                   )
                 ) : (
-                  <> {/*Si NO ESTA REGISTRADO lo manda a registrarse*/}
+                  <> {/*Si NO INICIO SESION el modal le dice que se registre*/}
                     <h2 className="text-2xl font-bold text-[#C3C37E] mb-4">¿Quieres reservar?</h2>
                     <Link to="/signup">
                       <button
@@ -292,7 +245,7 @@ function MonthView({ month }) {
   );
 }
 
-//función para poner los colores, cambiar después por el color del back
+//metodo para los colores, actualizar
 function getEventColor(spots) {
   if (spots >= 5) return 'bg-green-200 text-green-800';
   if (spots >= 2) return 'bg-yellow-200 text-yellow-800';

@@ -23,6 +23,7 @@ const Signin = () => {
   const handleLogin = async () => {
     try {
       const user = await loginWithGoogle();
+      localStorage.setItem("usuario", JSON.stringify(user)); // pasa el user pa la compra
       window.dispatchEvent(new Event('storage'));
       console.log("Bienvenido:", user.name);
       // Redirigir después de un inicio de sesión exitoso
@@ -63,7 +64,16 @@ const Signin = () => {
       const sesion = await login(userData);
       alert("¡Inicio de sesión exitoso!, Bienvenido:", sesion.name);
       // Guarda el token en localStorage
+
+      // Guarda el token si es que también lo recibes
+      localStorage.setItem("token", sesion.token);
+
+      // Guarda el usuario completo
+      localStorage.setItem("usuario", JSON.stringify(sesion.user));
+
+      // Notifica a otros componentes (opcional si ya lo usas)
       window.dispatchEvent(new Event('storage'));
+
       // Redirigir después de un inicio de sesión exitoso
       navigate('/');
     } catch (error) {

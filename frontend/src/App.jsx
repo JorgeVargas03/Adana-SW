@@ -10,7 +10,7 @@ import Signin from './pages/Sign_in';
 import Reservation from './pages/Reservation';
 import SignUp from './pages/Sign_up';
 import CompleteRegister from './pages/CompleteRegistration';
-import Pagos from './pages/Pagos';
+
 import MyProfile from './pages/MyProfile';
 import { CarritoProvider } from './context/CarritoContext'; 
 import ReserClient from './pages/ReserClient';

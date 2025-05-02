@@ -3,12 +3,16 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon,ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { useCarrito } from "../context/CarritoContext";
+import axios from 'axios';
+
 
 //Botón flotante para el carrito
 //Lee el fakin carrito a la verga
 export default function BotonFlotante() {
   const [open, setOpen] = useState(false);
   const { eventosUnidos, quitarEvento } = useCarrito();
+  const [loading, setLoading] = useState(false);
+  const userId = JSON.parse(localStorage.getItem("usuario"))?.id;
 
   return (
     <>
@@ -73,23 +77,61 @@ export default function BotonFlotante() {
                                 <button
                                   className="mt-2 text-red-500 text-sm hover:underline cursor-pointer"
                                   onClick={() => quitarEvento(evento.id)}
+                                  //onClick={() => quitarEvento(evento.classId)}
+
                                 >
                                   Quitar
                                 </button>
+                                  
+                                  {/*Botón para comprar, también hace el post para mandar las cosas al back*, se limpia sola la fakin shit tambien*/}
+                                  {eventosUnidos.length > 0 && (
+                                          <button
+                                          onClick={async () => {
+                                            const usuarioGuardado = JSON.parse(localStorage.getItem("usuario"));
+                                            const userId = usuarioGuardado?.id;
 
-                                <button className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-4 justify-center">
-                                    Comprar
-                                </button>
+
+                                            if (!userId) {
+                                              console.error("No se encontró el usuarioId en localStorage");
+                                              return;
+                                            }
+
+                                            const selectedClasses = eventosUnidos.map((evento) => ({
+                                              classId: evento.id,
+                                              instructorId: evento.instructorId,
+                                            }));
+
+                                            const payload = {
+                                              usuarioId: userId,
+                                              selectedClasses: selectedClasses,
+                                            };
+
+                                            try {
+                                              await axios.post(
+                                                `http://localhost:3001/reserve/onlyOne/${userId}`,
+                                                payload
+                                              );
+                                              console.log("Reserva enviada correctamente");
+
+                                              // Limpiar carrito si la reserva fue exitosa
+                                              eventosUnidos.forEach((evento) => quitarEvento(evento.id));
+                                            } catch (error) {
+                                              console.error("Error al enviar la reserva:", error);
+                                            }
+                                          }}
+                                          className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-4 justify-center"
+                                        >
+                                          Confirmar compra
+                                        </button>
+
+                                        )}
+
                               </li>
                             ))}
                           </ul>
                         )}
-
-
                       </div>
-
-                  <div className="mt-4">
-                        
+                  <div className="mt-4">                       
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
