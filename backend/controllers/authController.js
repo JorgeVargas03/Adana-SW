@@ -89,7 +89,8 @@ exports.loginWithGoogle = async (req, res) => {
         name: user.name,
         lastname: user.lastname || "",
         email: user.email,
-        role: user.role
+        role: user.role,
+        profile_picture: user.profile_picture || ""
       }
     });
   } catch (error) {
@@ -144,7 +145,8 @@ exports.login = async (req, res) => {
         name: user.name,
         lastname: user.lastname,
         email: user.email,
-        role: user.role
+        role: user.role,
+        profile_picture: user.profile_picture || ""
       }
     });
 
