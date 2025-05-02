@@ -3,6 +3,7 @@ import { PaperClipIcon, CameraIcon } from '@heroicons/react/20/solid';
 import iconDefault from '../assets/images/icon.png';
 import { useNavigate } from 'react-router-dom';
 import { isTokenValid, removeToken } from '../utils/auth';
+import axios from 'axios';
 
 const MyProfile = () => {
   const navigate = useNavigate();
@@ -128,32 +129,46 @@ const MyProfile = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/adana-api/v1/users/profile/${user.id}/updateProfile`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          // ¡Ojo! NO ponemos 'Content-Type' aquí, el navegador la setea automáticamente a multipart/form-data
-        },
-        body: formData,
-      });
+      const response = await axios.patch(
+        `http://localhost:3001/adana-api/v1/users/profile/${user.id}/updateProfile`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error('Error actualizando el perfil');
       }
 
-      const updatedData = await response.json();
-      console.log('Perfil actualizado:', updatedData);
 
-      // Actualizamos localmente
-      setOriginalData((prevData) => ({
-        ...prevData,
+      const updatedData = response.data;
+      if (updatedData.profileP !== "") {
+        // Obtener y parsear el objeto del localStorage
+        let ND = JSON.parse(localStorage.getItem('user'));
+
+        // Actualizar el campo deseado
+        ND.profile_picture = updatedData.profileP; // Asegúrate del nombre correcto: ¿es `profile_picture` o `profileP`?
+
+        // Guardar de nuevo en localStorage como string
+        localStorage.setItem('user', JSON.stringify(ND));
+
+        // Notificar cambios
+        window.dispatchEvent(new Event('storage'));
+      }
+
+      setOriginalData({
         name: updatedData.name,
         lastname: updatedData.lastname,
         phone: updatedData.phone,
         profile_picture: updatedData.profile_picture,
-      }));
+      });
 
       setProfileData(updatedData);
+
 
       alert('Cambios guardados exitosamente');
       navigate(0); // Refrescamos la página

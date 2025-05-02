@@ -36,7 +36,7 @@ export default function Navbar() {
     const handleStorageChange = () => {
       validateToken();
   
-      const userData = localStorage.getItem('user');
+      let userData = localStorage.getItem('user');
   
       if (!userData) {
         setProfilePicture(null);

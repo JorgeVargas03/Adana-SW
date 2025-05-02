@@ -48,7 +48,12 @@ export default function Wellness() {
           className="flex flex-col md:flex-row justify-between items-start md:items-center border-b last:border-0 rounded-lg border-gray-200 p-6 hover:bg-white/80 transition"
         >
           <div>
-            <h2 className="text-indigo-500 text-lg font-semibold mb-2">{article.title}</h2>
+            <h2 onClick={(e) => {
+                e.preventDefault();
+                setSelectedArticle(article);
+                setIsModalOpen(true);
+              }}
+            className="text-indigo-500 text-lg font-semibold mb-2 cursor-pointer">{article.title}</h2>
             <p className="text-gray-500 text-sm">{article.subtitle}</p>
           </div>
           <div className="flex flex-col items-center mt-4 md:mt-0 space-y-2">

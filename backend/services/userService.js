@@ -46,6 +46,7 @@ exports.updateUserStatusService = async (userId, newStatus) => {
 // Servicio para actualizar el perfil de un usuario
 exports.updateUserProfile = async (userId, updateData) => {
   try {
+    let newP = "";
     const userRef = userCollection.doc(userId);
     const userDoc = await userRef.get();
 
@@ -81,6 +82,7 @@ exports.updateUserProfile = async (userId, updateData) => {
 
       const base64Image = fileBuffer.toString('base64');
       const resPicture = await cloudinaryService.uploadImageToCloudinary(base64Image, fileName, mimeType);
+      newP = resPicture;
       console.log(resPicture);
       if (resPicture) {
         fieldsToUpdate.profile_picture = resPicture;
@@ -104,8 +106,7 @@ exports.updateUserProfile = async (userId, updateData) => {
     }
 
     await userRef.update(fieldsToUpdate);
-
-    return { success: true, message: "Perfil actualizado correctamente" };
+    return { success: true, profileImage: newP, message: "Perfil actualizado correctamente" };
   } catch (error) {
     console.error("Error al actualizar perfil del usuario:", error);
     return { success: false, status: 500, message: "Error interno del servidor" };
