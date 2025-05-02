@@ -42,7 +42,7 @@ function MonthView({ month }) {
           const [hour, minute] = clase.time.split(':');
           const [year, month, day] = clase.date.split('-').map(Number);
           
-          // fecha/hora como objeto local
+          // Construimos fecha/hora como objeto local
           const dateWithTime = new Date(year, month - 1, day, parseInt(hour), parseInt(minute));
   
           console.log('Evento generado:', {
@@ -52,8 +52,10 @@ function MonthView({ month }) {
           });
   
           return {
+            classId: clase.id,
             title: clase.title,
             instructor: clase.instructorName,
+            instructorId: clase.instructorId,
             availableSpots: clase.availableSpots,
             description: clase.description,
             capacity: clase.capacity,
@@ -84,7 +86,7 @@ function MonthView({ month }) {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1 ">
         {Array.from({ length: firstDayIndex }).map((_, idx) => (
           <div key={`empty-${idx}`}  /> 
         ))}
@@ -103,7 +105,7 @@ function MonthView({ month }) {
             return (
               <motion.div
                 key={day}
-                className={`bg-white border border-[#E9DFFB] p-3 rounded-2xl min-h-[100px] flex flex-col items-center cursor-pointer hover:bg-[#f2e9fc] ${
+                className={`bg-white border border-[#E9DFFB] p-3 rounded-2xl min-h-[150px] flex flex-col items-center cursor-pointer hover:bg-[#f2e9fc] ${
                   isToday ? 'ring-2 ring-[#7E5EC3] bg-[#f6f0ff]' : ''
                 }`}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -121,8 +123,8 @@ function MonthView({ month }) {
                 <div className="flex flex-col gap-1 w-full">
                   {dayEvents.map((event, idx) => (
                     <div
-                      key={idx}
-                      className={`text-xs px-2 py-1 rounded-full text-center font-semibold ${getEventColor(event.availableSpots)}`}
+                      key={idx} 
+                      className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold ${getEventColor(event.availableSpots)}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedEvent(event);
@@ -169,19 +171,31 @@ function MonthView({ month }) {
                 className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm mx-auto"
                 onClick={(e) => e.stopPropagation()}
               >
-                {hasToken ? (
+                
+                {hasToken ? ( 
                   selectedEvent && (
                     <>
                       <h2 className="text-2xl font-bold text-[#C3C37E] mb-4">{selectedEvent.title}</h2>
                       <p className="text-sm text-gray-700 mb-2"><strong>Instructor:</strong> {selectedEvent.instructor}</p>
                       <p className="text-sm text-gray-700 mb-2"><strong>Descripción:</strong> {selectedEvent.description}</p>
                       <p className="text-sm text-gray-700 mb-2"><strong>Capacidad:</strong> {selectedEvent.capacity}</p>
-                      <p className="text-sm text-gray-700 mb-4"><strong>Reservados:</strong> {selectedEvent.reserved}</p>
+                      <p className="text-sm text-gray-700 mb-4"><strong>Reservados:</strong> {selectedEvent.capacity - selectedEvent.availableSpots} / {selectedEvent.capacity}</p> {/*capacity-availablespots pa ver cuantos son*/}
+                      {/*Boton para unirse*/}
                       <button
                             className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer"
                             onClick={() => {
                               agregarEvento({
-                                id: selectedEvent.id,
+                                classId: selectedEvent.classId,
+                                id: selectedEvent.id, 
+                                instructorId: selectedEvent.instructorId,
+                                title: selectedEvent.title,
+                                description: selectedEvent.description,
+                                instructorName: selectedEvent.instructor,
+                                formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
+                              });
+                              console.log('Evento guardado:', {
+                                classId: selectedEvent.id,
+                                id: selectedEvent.id, 
                                 instructorId: selectedEvent.instructorId,
                                 title: selectedEvent.title,
                                 description: selectedEvent.description,
