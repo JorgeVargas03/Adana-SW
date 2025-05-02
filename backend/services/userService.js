@@ -1,6 +1,6 @@
 // services/userService.js
 const { userCollection } = require("../models/users");
-const driveService = require('../utils/driveService');
+const cloudinaryService = require('../utils/cloudinaryService');
 const bcrypt = require("bcryptjs");
 
 
@@ -69,7 +69,7 @@ exports.updateUserProfile = async (userId, updateData) => {
     if (updateData.profile_picture) {
       const fileBuffer = updateData.profile_picture.buffer;
       const mimeType = updateData.profile_picture.mimetype;
-      const fileName = updateData.profile_picture.originalname;
+      const fileName = userId;
 
       if (!allowedMimeTypes.includes(mimeType)) {
         return {
@@ -80,17 +80,16 @@ exports.updateUserProfile = async (userId, updateData) => {
       }
 
       const base64Image = fileBuffer.toString('base64');
-      const resPicture = await driveService.uploadImageToGoogleDrive(base64Image, fileName, mimeType);
-
-
-      if (resPicture.success) {
-        fieldsToUpdate.profile_picture = resPicture.url;
+      const resPicture = await cloudinaryService.uploadImageToCloudinary(base64Image, fileName, mimeType);
+      console.log(resPicture);
+      if (resPicture) {
+        fieldsToUpdate.profile_picture = resPicture;
       } else {
         return {
           success: false,
           status: 500,
           message: "Error al subir la imagen de perfil",
-          error: resPicture.error,
+          error: resPicture,
         };
       }
     }

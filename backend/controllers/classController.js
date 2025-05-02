@@ -57,6 +57,102 @@ exports.reserveClass = async (req, res) => {
   }
 };
 
+// Controlador para reservar multiples clases
+exports.reserveMultipleClasses = async (req, res) => {
+  const { userId } = req.params;
+  const { selectedClasses } = req.body;
+
+  // Validación básica
+  if (!userId || !Array.isArray(selectedClasses) || selectedClasses.length === 0) {
+    return res.status(400).json({
+      success: false,
+      message: "Faltan datos requeridos: userId y selectedClasses[]",
+    });
+  }
+
+  try {
+    const result = await classService.reserveMultipleClasses(userId, selectedClasses);
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json(result);
+
+  } catch (error) {
+    console.error("Error al reservar múltiples clases:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error interno al intentar reservar múltiples clases",
+    });
+  }
+};
+
+
+// Controlador para consultar las reservas de un usuario
+exports.getUserReservations = async (req, res) => {
+  const userId = req.params.userId;
+
+  const result = await classService.getUserReservations(userId);
+
+  if (result.success) {
+    res.status(200).json({ reservaciones: result.data });
+  } else {
+    res.status(result.status).json({ message: result.message });
+  }
+};
+
+// Controlador para consultar clases de un instructor
+exports.getInstructorClasses = async (req, res) => {
+  const instructorId = req.params.instructorId;
+
+  const result = await classService.getInstructorClasses(instructorId);
+
+  if (result.success) {
+    res.status(200).json({ Clases: result.data });
+  } else {
+    res.status(result.status).json({ message: result.message });
+  }
+};
+
+// Controlador para consultar el listado de alumnos de una clase
+exports.getClassWithReservations = async (req, res) => {
+  const { instructorId, classId } = req.params;
+
+  const result = await classService.getClassWithReservations(instructorId, classId);
+
+  if (!result.success) {
+    return res.status(result.code).json({ message: result.message });
+  }
+
+  res.json(result.class);
+};
+
+
+//Obtener el historial de clases creadas
+exports.getAllClassesHistory = async (req, res) => {
+  try {
+    const result = await classService.getAllClassesHistory();
+
+    if (!result.success) {
+      return res.status(500).json({ message: result.message });
+    }
+
+    return res.status(200).json(result.data);
+  } catch (error) {
+    console.error("Error en controlador de historial de clases:", error);
+    return res.status(500).json({ message: "Error del servidor." });
+  }
+};
+
+
+
+
+
+
+
+
+/*
 // Controlador para reservar mas de una clase (paquete de clases)
 exports.confirmarCompraPaquete = async (req, res) => {
   try {
@@ -114,64 +210,4 @@ exports.confirmarCompraPaquete = async (req, res) => {
     res.status(500).json({ message: "Error interno al confirmar compra" });
   }
 };
-
-
-// Controlador para consultar las reservas de un usuario
-exports.getUserReservations = async (req, res) => {
-  const userId = req.params.userId;
-
-  const result = await classService.getUserReservations(userId);
-
-  if (result.success) {
-    res.status(200).json({ reservaciones: result.data });
-  } else {
-    res.status(result.status).json({ message: result.message });
-  }
-};
-
-// Controlador para consultar clases de un instructor
-exports.getInstructorClasses = async (req, res) => {
-  const instructorId = req.params.instructorId;
-
-  const result = await classService.getInstructorClasses(instructorId);
-
-  if (result.success) {
-    res.status(200).json({Clases: result.data});
-  } else {
-    res.status(result.status).json({ message: result.message });
-  }
-};
-
-// Controlador para consultar el listado de alumnos de una clase
-exports.getClassWithReservations = async (req, res) => {
-  const { instructorId, classId } = req.params;
-
-  const result = await classService.getClassWithReservations(instructorId, classId);
-
-  if (!result.success) {
-    return res.status(result.code).json({ message: result.message });
-  }
-
-  res.json(result.class);
-};
-
-
-
-
-//Obtener el historial de clases creadas
-exports.getAllClassesHistory = async (req, res) => {
-  try {
-    const result = await classService.getAllClassesHistory();
-
-    if (!result.success) {
-      return res.status(500).json({ message: result.message });
-    }
-
-    return res.status(200).json(result.data);
-  } catch (error) {
-    console.error("Error en controlador de historial de clases:", error);
-    return res.status(500).json({ message: "Error del servidor." });
-  }
-};
-
-
+*/

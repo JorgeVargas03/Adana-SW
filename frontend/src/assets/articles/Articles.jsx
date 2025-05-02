@@ -22,7 +22,7 @@ La nutrición es un pilar fundamental en el bienestar integral, ya que lo que co
 <subt>1. La conexión entre alimentación y energía<subt|>
 La energía que necesitamos para funcionar a lo largo del día proviene directamente de los alimentos que consumimos. Una dieta rica en nutrientes, como carbohidratos complejos, proteínas, grasas saludables y micronutrientes, puede ayudar a mantener nuestros niveles de energía estables. Los alimentos procesados, por otro lado, tienden a provocar picos de energía seguidos de caídas drásticas, lo que puede afectar nuestra productividad y bienestar general.
 Consejo práctico: Opta por alimentos frescos y naturales, como frutas, verduras, granos integrales y proteínas magras, para mantenerte energizado de manera constante.
-<subt>2. Impacto de la nutrición en la salud mental<subt>
+<subt>2. Impacto de la nutrición en la salud mental<subt|>
 Cada vez más estudios sugieren que lo que comemos también influye en nuestra salud mental. Una dieta deficiente puede aumentar el riesgo de trastornos como la depresión y la ansiedad. Nutrientes como los ácidos grasos omega-3, las vitaminas del complejo B y los antioxidantes son esenciales para mantener el cerebro funcionando de manera óptima.
 Consejo práctico: Incluye alimentos ricos en omega-3, como pescados grasos (salmón, sardinas) y frutos secos, que ayudan a reducir el riesgo de depresión y mejorar la memoria y concentración.
 <subt>3. Alimentación y manejo del estrés<subt|>

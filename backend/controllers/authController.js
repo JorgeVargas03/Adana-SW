@@ -89,7 +89,8 @@ exports.loginWithGoogle = async (req, res) => {
         name: user.name,
         lastname: user.lastname || "",
         email: user.email,
-        role: user.role
+        role: user.role,
+        profile_picture: user.profile_picture || ""
       }
     });
   } catch (error) {
@@ -144,7 +145,8 @@ exports.login = async (req, res) => {
         name: user.name,
         lastname: user.lastname,
         email: user.email,
-        role: user.role
+        role: user.role,
+        profile_picture: user.profile_picture || ""
       }
     });
 
@@ -169,7 +171,7 @@ function generateToken(userData) {
 
 // Función para completar registro después del login con Google
 exports.completeGoogleRegistration = async (req, res) => {
-  const { name, lastname, email, password, gender, phone, profileImage } = req.body;
+  const { name, lastname, email, password, gender, phone, profile_picture } = req.body;
 
   try {
     // Verificar si el usuario ya existe
@@ -195,14 +197,14 @@ exports.completeGoogleRegistration = async (req, res) => {
       status: "active",
       gender,
       phone,
-      profileImage,
+      profile_picture,
       registeredAt: new Date().toISOString()
     };
 
     const newUserRef = await userCollection.add(userData);
 
     const userDataToken = {
-      id: userDoc.id,
+      id: newUserRef.id,
       name: name,
       lastname: lastname,
       email: email,
@@ -213,7 +215,7 @@ exports.completeGoogleRegistration = async (req, res) => {
 
     res.status(201).json({
       message: "Registro completado exitosamente",
-      data: newUserRef,
+      user: userData,
       token: token
     });
   } catch (error) {
