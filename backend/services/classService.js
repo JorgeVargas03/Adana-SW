@@ -193,7 +193,8 @@ exports.reserveClass = async (userId, classId, instructorId) => {
 //Servicio para reservar multiples clases
 exports.reserveMultipleClasses = async (userId, selectedClasses) => {
     const results = [];
-    const updatesByInstructor = {}; // Agrupar clases por instructor para actualizar en lote
+    const updatesByInstructor = {};
+    const confirmedClasses = [];
 
     try {
         // 1. Obtener datos del cliente una sola vez
@@ -240,6 +241,15 @@ exports.reserveMultipleClasses = async (userId, selectedClasses) => {
                 updatesByInstructor[instructorId] = updatesByInstructor[instructorId] || {};
                 updatesByInstructor[instructorId][`classes.${classId}`] = classData;
 
+                // Acumular para el correo de confirmación
+                confirmedClasses.push({
+                    title: classData.title,
+                    instructor: `${instructorData.name} ${instructorData.lastname}`,
+                    date: classData.schedule.date,
+                    time: classData.schedule.time,
+                    totalPrice: classData.price,
+                });
+
                 results.push({ classId, success: true });
 
             } catch (error) {
@@ -254,6 +264,11 @@ exports.reserveMultipleClasses = async (userId, selectedClasses) => {
         );
 
         await Promise.all(updatePromises);
+
+        // 4. Enviar correo si hubo clases confirmadas
+        if (confirmedClasses.length > 0) {
+            await emailServive.sendMultipleConfirmationEmail(clientData.email, confirmedClasses);
+        }
 
         return {
             success: true,

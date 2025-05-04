@@ -60,6 +60,62 @@ exports.sendConfirmationEmail = async (destination, classData) => {
   }
 };
 
+// Envía un correo de confirmación de reserva a un cliente, acepta desde 1, hasta mas reservas
+exports.sendMultipleConfirmationEmail = async (destination, classesData = []) => {
+  if (!classesData.length) return;
+
+  // Generar bloques de HTML para cada clase
+  const classesHtml = classesData.map(classItem => {
+    const date = new Date(classItem.date);
+    const formattedDate = date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    return `
+      <li style="margin-bottom: 15px;">
+        <strong>${classItem.title}</strong><br>
+        Instructor: ${classItem.instructor}<br>
+        Fecha: ${formattedDate}<br>
+        Hora: ${classItem.time}<br>
+        Importe pagado: $${classItem.totalPrice}
+      </li>
+    `;
+  }).join('');
+
+  const mailOptions = {
+    from: `"Equipo Adana Pilates" <${process.env.EMAIL_SENDER}>`,
+    to: destination,
+    subject: "Confirmación de Paquete de Clases - Adana Pilates",
+    html: `
+    <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; border-radius: 10px;">
+      <h2 style="color: #4CAF50;">¡Reservas confirmadas! 🧘‍♀️</h2>
+      <p>Hola,</p>
+      <p>Has reservado exitosamente las siguientes clases:</p>
+      <ul style="list-style-type: none; padding: 0;">
+        ${classesHtml}
+      </ul>
+      <p>¡Te esperamos con mucha energía y entusiasmo! ✨</p>
+
+      <hr style="margin: 30px 0; border: none; border-top: 1px solid #ccc;">
+
+      <div style="font-size: 14px; color: #555;">
+        <p><strong>— El equipo de Adana</strong></p>
+        <p style="color: #388E3C; font-style: italic;">
+          "Move beyond your possibilities..."
+          <img src="https://cdn-icons-png.flaticon.com/512/427/427735.png" width="16" height="16" style="vertical-align: middle; margin-left: 5px;" alt="hoja ecológica"/>
+        </p>
+      </div>
+    </div>
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Correo de confirmación múltiple enviado a:", destination);
+  } catch (error) {
+    console.error("Error al enviar el correo múltiple:", error);
+  }
+};
+
+
 /**
  * Envía un correo de bienvenida al nuevo usuario
  * @param {string} destination - Correo electrónico del usuario
