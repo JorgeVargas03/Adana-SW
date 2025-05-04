@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { User, Mail, Lock, Phone, Venus, Mars } from "lucide-react";
+import { completeRegistration } from "../services/loginWithGoogle";
 
 const CompleteRegistration = () => {
   const [formData, setFormData] = useState({
@@ -40,16 +41,13 @@ const CompleteRegistration = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3001/auth/google/finishRegister", {
-        ...formData,
-      });
-      const { token, user } = response.data;
-      localStorage.setItem("token", token);
+      const response = await completeRegistration(formData);
+      console.log(response)
+      alert(`Registro completado exitosamente. Bienvenido ${response.name}`);
+      // Guarda el token en localStorage
       window.dispatchEvent(new Event('storage'));
-      localStorage.setItem("user", JSON.stringify(user));
-      alert(`Registro completado exitosamente. Bienvenido ${user.name}`);
-      console.log(token);
-      navigate("/");
+      // Redirigir después de un inicio de sesión exitoso
+      navigate('/');
     } catch (error) {
       alert("Error al completar el registro.");
       console.error(error);
@@ -172,8 +170,8 @@ const CompleteRegistration = () => {
                 <option value="" disabled>
                   Selecciona tu género
                 </option>
-                <option value="H">Hombre</option>
-                <option value="M">Mujer</option>
+                <option value="Hombre">Hombre</option>
+                <option value="Mujer">Mujer</option>
               </select>
             </div>
 

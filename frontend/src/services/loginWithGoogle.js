@@ -24,3 +24,18 @@ export const loginWithGoogle = async () => {
     }
   }
 };
+
+export const completeRegistration = async (userData) => {
+  try {
+    const response = await axios.post("http://localhost:3001/auth/google/finishRegister", userData);
+
+    const { token, user } = response.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    console.log(token);
+    return user;
+
+  } catch (error) {
+    console.error(error);
+  }
+};
