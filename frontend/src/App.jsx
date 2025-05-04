@@ -10,11 +10,12 @@ import Signin from './pages/Sign_in';
 import Reservation from './pages/Reservation';
 import SignUp from './pages/Sign_up';
 import CompleteRegister from './pages/CompleteRegistration';
-import Pagos from './pages/Pagos';
+
 import MyProfile from './pages/MyProfile';
 import { CarritoProvider } from './context/CarritoContext'; 
+import ReserClient from './pages/ReserClient';
 
-
+//envueltos con el carrito para que se puedan pasar la información sin problemas
 const App = () => {
   return (
     <Router>
@@ -32,8 +33,8 @@ const App = () => {
                 <Route path="/signin" element={<Signin/>} />
                 <Route path="/signup" element={<SignUp/>} />
                 <Route path="/register" element={<CompleteRegister/>} />
-                <Route path= "/pagos" element={<Pagos/>}/>
                 <Route path= "/myprofile" element={<MyProfile/>}/>
+                <Route parth= "/myreservation" element={<ReserClient/>}/>
               </Routes>
             </div>
           </main>

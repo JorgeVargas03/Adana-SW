@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'; // <--- AHORA INCLUYE useEffect
 import '../share/style/allPages.css';
 import { CalendarApp } from '../components/Calendar';
-import BotonFlotante from './BotonFlotante';
+import BotonFlotante from '../components/BotonFlotante';
 import { addMonths, subMonths, startOfMonth } from 'date-fns';
 import { isTokenValid } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,7 @@ export default function Reservation() {
   const handleNextMonth = () => setCurrentMonth(prev => addMonths(prev, 1));
   const handlePrevMonth = () => setCurrentMonth(prev => subMonths(prev, 1));
 
+  //Token de inicio de sesión para CLIENTES
   useEffect(() => {
     const validateToken = () => setHasToken(isTokenValid());
     validateToken();
@@ -103,7 +104,7 @@ export default function Reservation() {
         <CalendarApp month={currentMonth} />
       </div>
 
-      {/* Mostrar botón flotante solo si hay token */}
+      {/* Mostrar botón flotante solo si hay token de inicio de sesión*/}
       {hasToken && <BotonFlotante />}
     </section>
   );

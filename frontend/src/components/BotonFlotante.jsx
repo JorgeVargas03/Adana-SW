@@ -3,10 +3,51 @@ import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon,ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { useCarrito } from "../context/CarritoContext";
+import axios from 'axios';
 
+
+//Botón flotante para el carrito
+//Lee el fakin carrito a la verga
 export default function BotonFlotante() {
   const [open, setOpen] = useState(false);
   const { eventosUnidos, quitarEvento } = useCarrito();
+  const [loading, setLoading] = useState(false);
+  const userId = JSON.parse(localStorage.getItem("usuario"))?.id;
+
+//Ahora si debe mandar la puta info carajo
+  const handleReservar = async () => {
+    try {
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      const userId = usuario.id;
+  
+      if (!userId || eventosUnidos.length === 0) {
+        console.warn("Faltan datos: usuario o eventos");
+        return;
+      }
+  
+      console.log("Reservando para usuario:", userId);
+      console.log("Eventos a reservar:", eventosUnidos);
+  
+      const reservas = eventosUnidos.map((evento) =>
+        axios.post(
+          `http://localhost:3001/adana-api/v1/classes/reserve/onlyOne/${userId}`,
+          {
+            classId: evento.classId,
+            instructorId: evento.instructorId
+          }
+        )
+      );
+  
+      await Promise.all(reservas);
+      console.log("Todas las reservas fueron exitosas");
+      alert("Reservas realizadas con éxito");
+    } catch (error) {
+      console.error("Error al enviar la reserva:", error);
+      alert("Hubo un problema al realizar la reserva. Inténtalo más tarde.");
+    }
+  };
+  
+
 
   return (
     <>
@@ -16,8 +57,8 @@ export default function BotonFlotante() {
         onClick={() => setOpen(true)}
         aria-label="Carrito de compras"
       >
-        {/* Ícono SVG aquí o HeroIcon */}
-        <ShoppingCartIcon className="size-7 text-white"/>
+      
+        <ShoppingCartIcon className="size-7 text-white cursor-pointer"/>
       </button>
 
       {/* Panel con transición */}
@@ -46,6 +87,8 @@ export default function BotonFlotante() {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
+
+                {/*Dialog del carrito, donde se ven las clases*/}
                 <Dialog.Panel className="w-screen max-w-md bg-white p-6 shadow-xl">
                   <div className="font-Outfit flex justify-between items-center border-b pb-4">
                     <Dialog.Title className="text-3xl font-semibold text-fontdef">
@@ -59,7 +102,7 @@ export default function BotonFlotante() {
                         {eventosUnidos.length === 0 ? (
                           <p className="text-sm text-gray-500">Tu carrito está vacío.</p>
                         ) : (
-                          <ul className="flex flex-col gap-4">
+                          <ul className="flex flex-col gap-4"> {/*Busca el evento en el array, donde se colocó en Monthview y lo lee*/}
                             {eventosUnidos.map((evento, index) => (
                               <li key={index} className="border p-4 rounded-lg shadow-sm">
                                 <h3 className="text-lg font-semibold text-fontlink">{evento.title}</h3>
@@ -69,23 +112,29 @@ export default function BotonFlotante() {
                                 <button
                                   className="mt-2 text-red-500 text-sm hover:underline cursor-pointer"
                                   onClick={() => quitarEvento(evento.id)}
+                                  //onClick={() => quitarEvento(evento.classId)}
+
                                 >
                                   Quitar
                                 </button>
+                                  
+                                  {/*Botón para comprar, también hace el post para mandar las cosas al back*, se limpia sola la fakin shit tambien*/}
+                                  {eventosUnidos.length > 0 && (
+                                          <button
+                                          onClick={handleReservar}
+                                          className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-4 justify-center"
+                                        >
+                                          Confirmar compra
+                                        </button>
 
-                                <button className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-4 justify-center">
-                                    Comprar
-                                </button>
+                                        )}
+
                               </li>
                             ))}
                           </ul>
                         )}
-
-
                       </div>
-
-                  <div className="mt-4">
-                        
+                  <div className="mt-4">                       
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
