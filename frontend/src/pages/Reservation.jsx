@@ -88,7 +88,7 @@ export default function Reservation() {
         </button>
       </div>
 
-      <div className="w-full max-w-4xl flex flex-col items-center">
+      <div className="w-full max-w-6xl flex flex-col items-center">
         <CalendarApp month={currentMonth} />
       </div>
 
