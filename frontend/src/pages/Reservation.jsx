@@ -40,7 +40,7 @@ export default function Reservation() {
 </h2>
 </div>
 <div className="max-w-6xl mx-auto px-6 py-12">
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-bgcolor rounded-lg px-16 py-12">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-bgcolor rounded-xl px-16 py-12">
     
     {/* ¿Qué es este calendario? */}
     <div className="flex items-start space-x-4">

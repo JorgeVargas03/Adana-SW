@@ -53,7 +53,7 @@ export default function InstructorClasses() {
       </div>
 
       {/* Calendario */}
-      <div className="w-full max-w-4xl flex flex-col items-center">
+      <div className="w-full max-w-6xl flex flex-col items-center">
         <CalendarAppInstructor month={currentMonth} />
       </div>
 
