@@ -55,7 +55,7 @@ const Faq = () => {
 
         {/* Sección Clases */}
         <div className="mb-6">
-          <h3 className="font-semibold text-4xl text-accent2 mb-6 text-shadow-lg">Clases</h3>
+          <h3 className="font-semibold text-4xl text-accent2 mb-6 text-shadow-2xs">Clases</h3>
           <div className="space-y-4">
             <FaqItem
               question="¿Es necesario tener experiencia previa en Pilates para tomar las clases?"
@@ -78,7 +78,7 @@ const Faq = () => {
 
         {/* Sección Estudio y ambiente */}
         <div className="mb-6">
-          <h3 className="font-semibold text-4xl text-[#7E7EC3] mb-6">Estudio y ambiente</h3>
+          <h3 className="font-semibold text-4xl text-[#7E7EC3] mb-6 text-shadow-2xs">Estudio y ambiente</h3>
           <div className="space-y-4">
             <FaqItem
               question="¿Dónde está ubicado Adana?"
@@ -93,7 +93,7 @@ const Faq = () => {
 
         {/* Sección Pagos */}
         <div className="mb-6">
-          <h3 className="font-semibold text-4xl text-[#7E7EC3] mb-6">Pagos</h3>
+          <h3 className="font-semibold text-4xl text-[#7E7EC3] mb-6 text-shadow-2xs">Pagos</h3>
           <div className="space-y-4">
             <FaqItem
               question="¿Cuáles son las opciones de pago?"
