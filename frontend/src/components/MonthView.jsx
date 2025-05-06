@@ -16,7 +16,7 @@ function MonthView({ month }) {
   const navigate = useNavigate();
   const { agregarEvento } = useCarrito();
   //const userId = localStorage.getItem("userDoc.id");
-  const userId = JSON.parse(localStorage.getItem("usuario"))?.id;
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
 
   const days = eachDayOfInterval({

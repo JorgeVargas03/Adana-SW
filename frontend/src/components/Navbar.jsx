@@ -90,6 +90,7 @@ export default function Navbar() {
 
   const handleSignOut = () => {
     removeToken();
+    localStorage.removeItem('user');
     console.log("Token eliminado");
     setHasToken(false);
     setDropdownOpen(false);
