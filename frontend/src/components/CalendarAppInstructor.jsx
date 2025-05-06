@@ -18,7 +18,7 @@ const CalendarAppInstructor = ({ month, instructorId }) => {
 
         const res = await axios.get(`http://localhost:3001/adana-api/v1/classes/instructor/${instructorId}/myClasses`);
         
-        const res2 = await axios.get(`/instructor/${instructorId}/class/${instructorId}/details`);
+        const res2 = await axios.get(`http://localhost:3001/adana-api/v1/classes/instructor/${instructorId}/class/${instructorId}/details`);
         //PARTE PENDIENTE
         const data = res.data;
         console.log("Respuesta del backend:", data);
@@ -28,6 +28,7 @@ const CalendarAppInstructor = ({ month, instructorId }) => {
             date: clase.schedule.date,
             time: clase.schedule.time,
             availableSpots: clase.capacity,
+            students: clase.students,
           }));          
 
         setClasses(formattedClasses);
