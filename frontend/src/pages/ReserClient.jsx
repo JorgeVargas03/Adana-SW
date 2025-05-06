@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'; // <--- AHORA INCLUYE useEffect
 import '../share/style/allPages.css';
-
+import { CalendarAppReservas } from '../components/CalendarAppReservas';
 
 export default function Reservation() {
   
 
   return (
-    <section className="bg-[#FDF9EC] min-h-screen flex flex-col items-center p-6">
+    <section className="bg-accent1 min-h-screen flex flex-col items-center p-6">
 
 
         <div className='justify-between'>
@@ -14,7 +14,10 @@ export default function Reservation() {
           Mis clases reservadas
           </h2>
 
+          <div>
+          <CalendarAppReservas/>
 
+          </div>
 
         </div>
   

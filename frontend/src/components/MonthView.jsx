@@ -16,7 +16,7 @@ function MonthView({ month }) {
   const navigate = useNavigate();
   const { agregarEvento } = useCarrito();
   //const userId = localStorage.getItem("userDoc.id");
-  const userId = JSON.parse(localStorage.getItem("usuario"))?.id;
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
 
   const days = eachDayOfInterval({
@@ -66,6 +66,7 @@ function MonthView({ month }) {
             availableSpots: clase.availableSpots,
             description: clase.description,
             capacity: clase.capacity,
+            price: clase.price,
             date: dateWithTime
           };
         });
@@ -187,6 +188,7 @@ function MonthView({ month }) {
                       <p className="text-sm text-gray-700 mb-2"><strong>Instructor:</strong> {selectedEvent.instructor}</p>
                       <p className="text-sm text-gray-700 mb-2"><strong>Descripción:</strong> {selectedEvent.description}</p>
                       <p className="text-sm text-gray-700 mb-2"><strong>Capacidad:</strong> {selectedEvent.capacity}</p>
+                      <p className="text-sm text-gray-700 mb-2"><strong>Precio MXN:</strong> {selectedEvent.price}</p>
                       <p className="text-sm text-gray-700 mb-4"><strong>Reservados:</strong> {selectedEvent.capacity - selectedEvent.availableSpots} / {selectedEvent.capacity}</p> {/*capacity-availablespots pa ver cuantos son*/}
                       {/*Boton para unirse*/}
                       <button
@@ -198,6 +200,7 @@ function MonthView({ month }) {
                             title: selectedEvent.title,
                             description: selectedEvent.description,
                             instructorName: selectedEvent.instructor,
+                            price: selectedEvent.price,
                             formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
                           });
 
@@ -208,6 +211,7 @@ function MonthView({ month }) {
                             title: selectedEvent.title,
                             description: selectedEvent.description,
                             instructorName: selectedEvent.instructor,
+                            price: selectedEvent.price,
                             formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
                           });
 

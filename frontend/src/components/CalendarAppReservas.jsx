@@ -1,37 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { startOfMonth } from 'date-fns'
-import MonthView from './MonthView'
-import axios from 'axios'
+import MonthViewReservaClientes from './MonthViewReservaClientes'
 
-//Calendario para las clases reservadas
+// Calendario de Reservation, el que ve el CLIENTE para SUS RESERVAS
 // Componente debe ser función normal (NO async)
 export const CalendarAppReservas = ({ month }) => {
-  const [events, setEvents] = useState([])
+  // Eliminar el estado de los eventos y la llamada a la API
+  // Ya no necesitamos el useState ni el useEffect para los eventos
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get("http://localhost:3001/adana-api/v1/classes/availability");
-
-        const fetchedEvents = response.data.map(evento => ({
-          title: evento.title,
-          date: evento.date,
-          availableSpots: evento.availableSpots
-        }));
-
-        setEvents(fetchedEvents);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          console.error("No se encontraron eventos.")
-        } else {
-          console.error("Error al cargar eventos:", error);
-        }
-      }
-    }
-
-    fetchEvents();
-  }, []); // Se ejecuta solo una vez
-
+  // Obtener el primer día del mes y pasarlo al calendario
   const firstDayOfMonth = startOfMonth(month)
   const monthsToShow = [firstDayOfMonth] // Solo uno por ahora
 
@@ -39,7 +16,8 @@ export const CalendarAppReservas = ({ month }) => {
     <div className="w-full p-4 rounded-xl shadow">
       {monthsToShow.map((monthToShow, idx) => (
         <div key={idx} className="flex w-full h-full">
-          <MonthView month={monthToShow} events={events} />
+          {/* Solo pasar el mes al componente de vista mensual */}
+          <MonthViewReservaClientes month={monthToShow} />
         </div>
       ))}
     </div>

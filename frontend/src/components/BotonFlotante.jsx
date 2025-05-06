@@ -112,6 +112,7 @@ const handleReservar = async () => {
                                 <p className="text-sm text-gray-600">Instructor: {evento.instructorName}</p>
                                 <p className="text-sm text-gray-600">Fecha: {evento.formattedDate}</p>
                                 <p className="text-sm text-gray-600">{evento.description}</p>
+                                <p className="text-sm text-gray-600">Precio MXN: {evento.price}</p>
                                 <button
                                   className="mt-2 text-red-500 text-sm hover:underline cursor-pointer"
                                   onClick={() => quitarEvento(evento.classId)}
