@@ -16,7 +16,7 @@ function MonthView({ month }) {
   const navigate = useNavigate();
   const { agregarEvento } = useCarrito();
   //const userId = localStorage.getItem("userDoc.id");
-  const userId = JSON.parse(localStorage.getItem("usuario"))?.id;
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
 
   const days = eachDayOfInterval({
@@ -81,7 +81,7 @@ function MonthView({ month }) {
 //dibujar el calendario
   return (
     <div className="bg-[#F5F0FF] font-outfit rounded-3xl shadow-lg p-6 w-full h-full relative">
-      <h2 className="text-3xl font-bold mb-6 text-center text-[#7E5EC3]">
+      <h2 className="text-3xl font-bold mb-6 text-center text-[#7E5EC3] capitalize">
         {format(month, 'MMMM yyyy', { locale: es })}
       </h2>
 

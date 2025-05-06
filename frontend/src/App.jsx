@@ -12,6 +12,7 @@ import SignUp from './pages/Sign_up';
 import CompleteRegister from './pages/CompleteRegistration';
 
 import MyProfile from './pages/MyProfile';
+import InstructorMain from './pages/InstructorClasses';
 import { CarritoProvider } from './context/CarritoContext'; 
 import ReserClient from './pages/ReserClient';
 
@@ -35,6 +36,7 @@ const App = () => {
                 <Route path="/register" element={<CompleteRegister/>} />
                 <Route path= "/myprofile" element={<MyProfile/>}/>
                 <Route parth= "/myreservation" element={<ReserClient/>}/>
+                <Route path= "/instructorhome" element={<InstructorMain/>}/>
               </Routes>
             </div>
           </main>

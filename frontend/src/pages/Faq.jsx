@@ -25,9 +25,9 @@ const FaqItem = ({ question, answer }) => (
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.4, ease: 'easeInOut' }}
-              className="overflow-hidden"
+              className="overflow-hidden bg-bgcolor/70 rounded-lg"
             >
-              <div className="px-6 pt-4 pb-6 text-gray-700">{answer}</div>
+              <div className="px-6 pt-4 pb-6 text-fontdef">{answer}</div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -39,15 +39,23 @@ const FaqItem = ({ question, answer }) => (
 const Faq = () => {
   return (
     <section className="mx-auto px-6 py-16 font-Outfit bg-accent1/70 w-full pt-34">
-      <h2 className="font-bold text-5xl text-[#413324] text-center">
-        Preguntas frecuentes
-      </h2>
+      
+    <div className="text-center">
+    <h2 className="font-bold text-5xl text-center relative inline-block">
+  <span className="relative inline-block before:absolute before:-inset-4 before:block before:-skew-y-2 before:translate-y-1 before:bg-bgcolor">
+    <span className="relative text-fontdef">Preguntas Frecuentes</span>
+  </span>
+</h2>
+    </div>
+      
+
+
 
       <div className="max-w-5xl mx-auto px-6 py-16">
 
         {/* Sección Clases */}
         <div className="mb-6">
-          <h3 className="font-semibold text-4xl text-[#7E7EC3] mb-6">Clases</h3>
+          <h3 className="font-semibold text-4xl text-accent2 mb-6 text-shadow-lg">Clases</h3>
           <div className="space-y-4">
             <FaqItem
               question="¿Es necesario tener experiencia previa en Pilates para tomar las clases?"
