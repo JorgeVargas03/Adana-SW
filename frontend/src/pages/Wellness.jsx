@@ -40,6 +40,13 @@ export default function Wellness() {
 
   return (
   <div className="mx-auto px-4 sm:px-6 lg:px-8 py-12 font-Outfit pt-34 bg-accent1/70">
+    <div className="text-center pb-12">
+    <h2 className="font-bold text-5xl text-center relative inline-block">
+  <span className="relative inline-block before:absolute before:-inset-4 before:block before:-skew-y-2 before:translate-y-1 before:bg-bgcolor">
+    <span className="relative text-fontdef">Bienestar Personal</span>
+  </span>
+</h2>
+    </div>
     {/* Listado de Artículos */}
     <div className="bg-barcolor rounded-lg shadow-sm">
       {articles.map((article) => (

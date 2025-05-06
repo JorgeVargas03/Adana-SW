@@ -23,10 +23,17 @@ const Signin = () => {
   const handleLogin = async () => {
     try {
       const user = await loginWithGoogle();
+      const gRole = user.role;
       window.dispatchEvent(new Event('storage'));
       console.log("Bienvenido:", user.name);
       // Redirigir después de un inicio de sesión exitoso
-      navigate('/');
+      if(gRole == 'instructor'){
+      navigate('/instructorhome');
+      }else /*if(gRole === 'administrador'){
+        navigate('/admonhome');
+      }else*/{
+        navigate('/');
+      }
     } catch (error) {
       if (error.code === 'USER_NOT_FOUND') {
         console.log("Usuario no encontrado. Redirigiendo al formulario de registro...");
@@ -61,11 +68,18 @@ const Signin = () => {
       };
 
       const sesion = await login(userData);
+      const nRole = sesion.role;
       alert("¡Inicio de sesión exitoso!, Bienvenido:", sesion.name);
       // Guarda el token en localStorage
       window.dispatchEvent(new Event('storage'));
       // Redirigir después de un inicio de sesión exitoso
-      navigate('/');
+      if(nRole == 'instructor'){
+        navigate('/instructorhome');
+        }else /*if(nRole === 'administrador'){
+          navigate('/admonhome');
+        }else*/{
+          navigate('/');
+        }
     } catch (error) {
       console.error("Error al iniciar sesión usuario:", error);
       alert("Error al iniciar sesión. Verifica los datos o intenta más tarde.");

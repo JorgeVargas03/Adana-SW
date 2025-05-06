@@ -22,6 +22,8 @@ export default function Navbar() {
   const [hasToken, setHasToken] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profilePicture, setProfilePicture] = useState("");
+  const [userRole, setUserRole] = useState(null);
+
   const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -49,6 +51,11 @@ export default function Navbar() {
           setProfilePicture(user.profile_picture);
         } else {
           setProfilePicture(null);
+        }
+        if (user && user.role) {
+          setUserRole(user.role); // 👈 Aquí establecemos el rol
+        } else {
+          setUserRole(null);
         }
       } catch (error) {
         console.error('Error al parsear los datos del usuario:', error);
@@ -86,7 +93,8 @@ export default function Navbar() {
     console.log("Token eliminado");
     setHasToken(false);
     setDropdownOpen(false);
-    navigate('/');
+    setUserRole(null);
+    navigate('/signin');
   };
 
   const validateToken = () => {
@@ -98,7 +106,204 @@ export default function Navbar() {
   const toProfile = () => {
     navigate('/myprofile');
   }
+  
+  //Return para instructores
+  if(userRole === 'instructor'){
+    return(
+      <Disclosure as="nav" className={`fixed top-0 left-0 w-full z-50 transition-colors duration-400 ${(isTransparentRoute && !isScrolled)
+        ? 'bg-transparent bg-gradient-to-b from-black/80 to-black/0'
+        : 'bg-barcolor backdrop-blur-sm'
+        }`}>
+        {({ open }) => (
+          <>
+            <div className="relative flex h-24 items-center justify-between px-10">
+              {/* Mobile menu button */}
+              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                <Disclosure.Button className={`inline-flex items-center justify-center rounded-md p-2 ${(isTransparentRoute && !isScrolled)
+                  ? 'text-white hover:bg-white/20'
+                  : 'text-gray-600 hover:bg-gray-100'
+                  }`}>
+                  <span className="sr-only">Open main menu</span>
+                  {open ? (
+                    <XMarkIcon className="h-6 w-6" />
+                  ) : (
+                    <Bars3Icon className="h-6 w-6" />
+                  )}
+                </Disclosure.Button>
+              </div>
+  
+              {/* Logo */}
+              <div className="flex flex-1 items-center sm:items-stretch justify-start">
+                <div className="flex shrink-0 items-center justify-start">
+                  <img src={logo} alt="Adana Logo" className="h-8 w-auto" />
+                  <span className={`font-Outfit font-bold text-3xl ml-2 transition-colors duration-300 ${(isTransparentRoute && !isScrolled)
+                    ? 'text-barcolor'
+                    : 'text-fontdef'
+                    }`}>
+                    Adana Pilates Estudio - Instructor
+                  </span>
+                </div>
+              </div>
 
+              <div className="relative ml-3" ref={dropdownRef}>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        className={`relative flex rounded-full text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none cursor-pointer ${(isTransparentRoute && !isScrolled)
+                          ? 'focus:ring-white focus:ring-offset-gray-800'
+                          : 'focus:ring-gray-800 focus:ring-offset-gray-100'
+                          }`}
+                        id="user-menu-button"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                      >
+
+                        <span className="absolute -inset-1.5"></span>
+                        <span className="sr-only">Open user menu</span>
+                        <img
+                          className="size-8 rounded-full cursor-pointer"
+                          src={profilePicture || logo}
+                          alt="User profile"
+                        />
+                      </button>
+                    </div>
+
+                    {/* Dropdown */}
+                    {dropdownOpen && (
+                      <div
+                        onMouseLeave={() => setDropdownOpen(false)}
+                        className="font-Outfit absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-barcolor py-1 shadow-lg ring-1 ring-black/5 transform transition ease-out duration-200 scale-95 opacity-0 animate-fadeIn"
+                        role="menu"
+                        aria-orientation="vertical"
+                        aria-labelledby="user-menu-button"
+                        tabIndex="-1"
+                      >
+                        <a
+                          onClick={toProfile}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                          role="menuitem"
+                          tabIndex="-1"
+                        >
+                          Tu Perfil
+                        </a>
+
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                          role="menuitem"
+                          tabIndex="-1"
+                        >
+                          Cerrar sesión
+                        </button>
+                      </div>
+                    )}
+                  </div>
+              </div>
+              </>
+              )}
+    </Disclosure>
+    );
+  }
+  //Return para administradores
+  if(userRole === 'administrador'){
+    return(
+      <Disclosure as="nav" className={`fixed top-0 left-0 w-full z-50 transition-colors duration-400 ${(isTransparentRoute && !isScrolled)
+        ? 'bg-transparent bg-gradient-to-b from-black/80 to-black/0'
+        : 'bg-barcolor backdrop-blur-sm'
+        }`}>
+        {({ open }) => (
+          <>
+            <div className="relative flex h-24 items-center justify-between px-10">
+              {/* Mobile menu button */}
+              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                <Disclosure.Button className={`inline-flex items-center justify-center rounded-md p-2 ${(isTransparentRoute && !isScrolled)
+                  ? 'text-white hover:bg-white/20'
+                  : 'text-gray-600 hover:bg-gray-100'
+                  }`}>
+                  <span className="sr-only">Open main menu</span>
+                  {open ? (
+                    <XMarkIcon className="h-6 w-6" />
+                  ) : (
+                    <Bars3Icon className="h-6 w-6" />
+                  )}
+                </Disclosure.Button>
+              </div>
+  
+              {/* Logo */}
+              <div className="flex flex-1 items-center sm:items-stretch justify-start">
+                <div className="flex shrink-0 items-center justify-start">
+                  <img src={logo} alt="Adana Logo" className="h-8 w-auto" />
+                  <span className={`font-Outfit font-bold text-3xl ml-2 transition-colors duration-300 ${(isTransparentRoute && !isScrolled)
+                    ? 'text-barcolor'
+                    : 'text-fontdef'
+                    }`}>
+                    Adana Pilates Estudio - Administrador
+                  </span>
+                </div>
+              </div>
+
+              <div className="relative ml-3" ref={dropdownRef}>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        className={`relative flex rounded-full text-sm focus:ring-2 focus:ring-offset-2 focus:outline-none cursor-pointer ${(isTransparentRoute && !isScrolled)
+                          ? 'focus:ring-white focus:ring-offset-gray-800'
+                          : 'focus:ring-gray-800 focus:ring-offset-gray-100'
+                          }`}
+                        id="user-menu-button"
+                        aria-expanded="false"
+                        aria-haspopup="true"
+                      >
+
+                        <span className="absolute -inset-1.5"></span>
+                        <span className="sr-only">Open user menu</span>
+                        <img
+                          className="size-8 rounded-full cursor-pointer"
+                          src={profilePicture || logo}
+                          alt="User profile"
+                        />
+                      </button>
+                    </div>
+
+                    {/* Dropdown */}
+                    {dropdownOpen && (
+                      <div
+                        onMouseLeave={() => setDropdownOpen(false)}
+                        className="font-Outfit absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-barcolor py-1 shadow-lg ring-1 ring-black/5 transform transition ease-out duration-200 scale-95 opacity-0 animate-fadeIn"
+                        role="menu"
+                        aria-orientation="vertical"
+                        aria-labelledby="user-menu-button"
+                        tabIndex="-1"
+                      >
+                        <a
+                          onClick={toProfile}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                          role="menuitem"
+                          tabIndex="-1"
+                        >
+                          Tu Perfil
+                        </a>
+
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                          role="menuitem"
+                          tabIndex="-1"
+                        >
+                          Cerrar sesión
+                        </button>
+                      </div>
+                    )}
+                  </div>
+              </div>
+              </>
+              )}
+    </Disclosure>
+    );
+  }
+  //Return por defecto para Clientes
   return (
     <Disclosure as="nav" className={`fixed top-0 left-0 w-full z-50 transition-colors duration-400 ${(isTransparentRoute && !isScrolled)
       ? 'bg-transparent bg-gradient-to-b from-black/80 to-black/0'
