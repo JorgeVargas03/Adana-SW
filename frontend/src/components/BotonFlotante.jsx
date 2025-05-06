@@ -36,25 +36,23 @@ export default function BotonFlotante() {
       };
 
       //Sin pago
-      /*
       const response = await axios.post(
         `http://localhost:3001/adana-api/v1/classes/reserve/${userId}`,
         payload
       );
-      */
 
       //Con pago
-      const response = await axios.post(
-        `http://localhost:3001/adana-api/v1/payments/paypal/create-order`,
-        payload
-      );
+      // const response = await axios.post(
+      //   `http://localhost:3001/adana-api/v1/payments/paypal/create-order`,
+      //   payload
+      // );
 
-      const { approvalLink } = response.data;
-      window.location.href = approvalLink;
+      // const { approvalLink } = response.data;
+      // window.location.href = approvalLink;
 
-      //console.log("Reserva múltiple exitosa:", response.data);
-      //alert("Te uniste a todas las clases seleccionadas con éxito 🎉");
-      //limpiarCarrito();
+      console.log("Reserva múltiple exitosa:", response.data);
+      alert("Te uniste a todas las clases seleccionadas con éxito 🎉");
+      limpiarCarrito();
     } catch (error) {
       console.error("Error al enviar la reserva múltiple:", error);
       alert("Hubo un problema al unirte a las clases. Revisa consola.");

@@ -1,7 +1,7 @@
 // CalendarAppInstructor.jsx
 import React, { useEffect, useState } from 'react';
 import { startOfMonth } from 'date-fns';
-import MonthView from './MonthView';
+import MonthViewInstructor from './MonthViewInstructor';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,7 +28,6 @@ const CalendarAppInstructor = ({ month, instructorId }) => {
             date: clase.schedule.date,
             time: clase.schedule.time,
             availableSpots: clase.capacity,
-            students: clase.students,
           }));          
 
         setClasses(formattedClasses);
@@ -55,7 +54,7 @@ const CalendarAppInstructor = ({ month, instructorId }) => {
         Crear Clase
       </button>
 
-      <MonthView month={firstDayOfMonth} events={classes} />
+      <MonthViewInstructor month={firstDayOfMonth} events={classes} />
     </div>
   );
 };
