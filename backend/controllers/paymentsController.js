@@ -1,6 +1,6 @@
 const paymentService = require("../services/paymentService");
 const classService = require("../services/classService");
-
+const { userCollection } = require("../models/users");
 
 /* INICIO - CONTROLADORES PARA CREAR Y CAPTURAR ORDEN DE PAGO - EXCLUSIVO PARA 1 CLASE     */
 
