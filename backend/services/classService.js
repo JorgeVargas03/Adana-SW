@@ -379,8 +379,8 @@ exports.getClassWithReservations = async (instructorId, classId) => {
                 students.push({
                     id: res.client_id,
                     name: `${clientData.name} ${clientData.lastname}`,
-                    email: clientData.email,
-                    status: res.status
+                    phone: clientData.phone,
+                    profile_picture: clientData.profile_picture
                 });
             }
         }
