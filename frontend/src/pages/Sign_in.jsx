@@ -23,18 +23,20 @@ const Signin = () => {
   const handleLogin = async () => {
     try {
       const user = await loginWithGoogle();
-      localStorage.setItem("usuario", JSON.stringify(user)); // pasa el user pa la compra
+      localStorage.setItem("user", JSON.stringify(user)); // pasa el user pa la compra
       const gRole = user.role;
-      window.dispatchEvent(new Event('storage'));
-      console.log("Bienvenido:", user.name);
+      console.log(gRole);
       // Redirigir después de un inicio de sesión exitoso
       if(gRole == 'instructor'){
       navigate('/instructorhome');
-      }else /*if(gRole === 'administrador'){
-        navigate('/admonhome');
-      }else*/{
+      }else if(gRole === 'administrador'){
+        navigate('/myprofile');
+      }else{
         navigate('/');
       }
+      window.dispatchEvent(new Event('storage'));
+      console.log("Bienvenido:", user.name);
+
     } catch (error) {
       if (error.code === 'USER_NOT_FOUND') {
         console.log("Usuario no encontrado. Redirigiendo al formulario de registro...");
@@ -73,14 +75,15 @@ const Signin = () => {
       alert("¡Inicio de sesión exitoso!, Bienvenido:", sesion.name);
       // Guarda el token en localStorage
       // Notifica a otros componentes (opcional si ya lo usas)
+      localStorage.setItem('user', JSON.stringify(sesion));
       window.dispatchEvent(new Event('storage'));
 
       // Redirigir después de un inicio de sesión exitoso
       if(nRole == 'instructor'){
         navigate('/instructorhome');
-        }else /*if(nRole === 'administrador'){
-          navigate('/admonhome');
-        }else*/{
+        }else if(nRole === 'administrador'){
+          navigate('/myprofile');
+        }else{
           navigate('/');
         }
     } catch (error) {

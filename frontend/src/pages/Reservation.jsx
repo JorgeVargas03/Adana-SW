@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'; // <--- AHORA INCLUYE useEff
 import '../share/style/allPages.css';
 import { CalendarApp } from '../components/Calendar';
 import BotonFlotante from '../components/BotonFlotante';
+import { CalendarDaysIcon, SwatchIcon } from '@heroicons/react/24/outline';
 import { addMonths, subMonths, startOfMonth } from 'date-fns';
 import { isTokenValid } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
@@ -27,63 +28,50 @@ export default function Reservation() {
   }, []);
 
   return (
-    <section className="bg-[#FDF9EC] min-h-screen flex flex-col items-center p-6">
+    <section className="bg-accent1/50 min-h-screen flex flex-col items-center p-6 font-Outfit">
 
 
         <div className='justify-between'>
-        <h2 className="font-outfit font-bold text-7xl text-[#413324] mb-8 text-right mt-16">
-        Reserva con nosotros
-      </h2>
-                {/*Calendario*/}
-          <div className="max-w-5xl mx-auto px-6 py-5">
-            <div className="space-y-4">
-                  <Disclosure>
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button
-                          className="flex justify-between w-full px-6 py-4 text-left bg-barcolor rounded-lg shadow-md hover:bg-[#7E7EC3] hover:text-white transition-colors duration-300"
-                        >
-                          <span className="font-medium">¿Qué es este calendario?</span>
-                          <ChevronDownIcon className={`${open ? 'transform rotate-180' : ''} w-6 h-6 text-[#7E7EC3] transition-transform`} />
-                        </Disclosure.Button>
-                        <Disclosure.Panel
-                          className={`px-6 pt-4 pb-6 text-gray-700 overflow-hidden transition-all duration-500 ease-in-out
-                          ${open ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
-                        >
-                          Dentro de este calenderio encontrará las diferentes clases impartidas en Adana Studio
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
-            </div>
-          </div>
-          
-                     {/*Codigo de colores*/}
-          <div className="max-w-5xl mx-auto px-5 py-5">
-            <div className="space-y-4">
-                  <Disclosure>
-                    {({ open }) => (
-                      <>
-                        <Disclosure.Button
-                          className="flex justify-between w-full px-6 py-4 text-left bg-barcolor rounded-lg shadow-md hover:bg-[#7E7EC3] hover:text-white transition-colors duration-300"
-                        >
-                          <span className="font-medium">¿Por qué las clases están de colores?</span>
-                          <ChevronDownIcon className={`${open ? 'transform rotate-180' : ''} w-6 h-6 text-[#7E7EC3] transition-transform`} />
-                        </Disclosure.Button>
-                        <Disclosure.Panel
-                          className={`px-6 pt-4 pb-6 text-gray-700 overflow-hidden transition-all duration-500 ease-in-out
-                          ${open ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
-                        >
-                          El color de una clase indica el número de espacios disponibles.
-                          <p className='font-bold text-green-400'>Verde</p> Significa que hay bastantes espacios
-                          <p className='font-bold text-red-500'>Rojo</p> Significa que no hay espacios
-                          <p className='font-bold text-yellow-500'>Amarillo</p> Significa que hay una cantidad moderada de espacios
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
-                </div>
-            </div>
+          <div className="text-center">
+    <h2 className="font-bold text-5xl text-center relative inline-block pt-28 pb-8">
+  <span className="relative inline-block before:absolute before:-inset-4 before:block before:-skew-y-2 before:translate-y-1 before:bg-bgcolor">
+    <span className="relative text-fontdef">Reserva con Nosotros</span>
+  </span>
+</h2>
+</div>
+<div className="max-w-6xl mx-auto px-6 py-12">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-bgcolor rounded-lg px-16 py-12">
+    
+    {/* ¿Qué es este calendario? */}
+    <div className="flex items-start space-x-4">
+      <CalendarDaysIcon className="h-8 w-8 text-fontdef flex-shrink-0" />
+      <div>
+        <h3 className="text-xl font-semibold text-gray-900">¿Qué es este calendario?</h3>
+        <p className="mt-2 text-gray-700 text-justify">
+          Dentro de este calendario encontrará las diferentes clases impartidas en Adana Studio, organizadas por fecha y hora.
+        </p>
+      </div>
+    </div>
+
+    {/* ¿Por qué las clases están de colores? */}
+    <div className="flex items-start space-x-4">
+      <SwatchIcon className="h-8 w-8 text-fontdef flex-shrink-0" />
+      <div>
+        <h3 className="text-xl font-semibold text-gray-900">¿Por qué las clases están de colores?</h3>
+        <p className="mt-2 text-gray-700 text-justify mb-1">
+          El color indica el número de espacios disponibles:
+        </p>
+        <ul className="text-gray-700 list-disc list-inside text-justify">
+          <li><span className="font-bold text-green-500">Verde:</span> Muchos espacios disponibles</li>
+          <li><span className="font-bold text-yellow-500">Amarillo:</span> Espacios moderados</li>
+          <li><span className="font-bold text-red-500">Rojo:</span> Sin espacios disponibles</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
         </div>
   
       <div className="flex gap-5 mb-6">
