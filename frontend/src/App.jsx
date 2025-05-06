@@ -10,13 +10,10 @@ import Signin from './pages/Sign_in';
 import Reservation from './pages/Reservation';
 import SignUp from './pages/Sign_up';
 import CompleteRegister from './pages/CompleteRegistration';
-<<<<<<< HEAD
-=======
 
 import MyProfile from './pages/MyProfile';
 import InstructorMain from './pages/InstructorClasses';
 import { CarritoProvider } from './context/CarritoContext'; 
->>>>>>> origin/Java3
 import ReserClient from './pages/ReserClient';
 import MyProfile from './pages/MyProfile';
 import UsuariosRegistrados from './pages/UsuariosRegistrados';
@@ -42,13 +39,9 @@ const App = () => {
                 <Route path="/signup" element={<SignUp/>} />
                 <Route path="/register" element={<CompleteRegister/>} />
                 <Route path= "/myprofile" element={<MyProfile/>}/>
-<<<<<<< HEAD
-                <Route path= "/client/myreservation" element={<ReserClient/>}/> 
-                <Route path= "/admin/usermanage" element={<UsuariosRegistrados/>}/> 
-=======
                 <Route parth= "/myreservation" element={<ReserClient/>}/>
                 <Route path= "/instructorhome" element={<InstructorMain/>}/>
->>>>>>> origin/Java3
+                <Route path= "/admin/usermanage" element={<UsuariosRegistrados/>}/>
               </Routes>
             </div>
           </main>
