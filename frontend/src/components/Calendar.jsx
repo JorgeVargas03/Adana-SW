@@ -39,7 +39,7 @@ export const CalendarApp = ({ month }) => {
   const monthsToShow = [firstDayOfMonth] // Solo uno por ahora
 
   return (
-    <div className="w-full p-4 rounded-xl shadow">
+    <div className="w-full p-4 rounded-xl">
       {monthsToShow.map((monthToShow, idx) => (
         <div key={idx} className="flex w-full h-full">
           <MonthView month={monthToShow} events={events} />
