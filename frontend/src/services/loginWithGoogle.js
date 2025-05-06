@@ -13,8 +13,9 @@ export const loginWithGoogle = async () => {
 
     const { token, user } = response.data;
     localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("usuario", JSON.stringify(user)); //user
     console.log(token);
+    console.log("Usuario recibido:", user);
     return user;
 
   } catch (error) {
@@ -22,5 +23,20 @@ export const loginWithGoogle = async () => {
       // Lanza un error personalizado
       throw { code: 'USER_NOT_FOUND', message: 'Usuario no registrado', profile: result.user };
     }
+  }
+};
+
+export const completeRegistration = async (userData) => {
+  try {
+    const response = await axios.post("http://localhost:3001/auth/google/finishRegister", userData);
+
+    const { token, user } = response.data;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    console.log(token);
+    return user;
+
+  } catch (error) {
+    console.error(error);
   }
 };

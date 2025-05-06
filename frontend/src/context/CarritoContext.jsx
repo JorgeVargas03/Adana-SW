@@ -13,21 +13,29 @@ export const CarritoProvider = ({ children }) => {
 
   const agregarEvento = (evento) => {
     const yaExiste = eventosUnidos.some(
-      (e) => e.id === evento.id && e.instructorId === evento.instructorId
+      (e) => e.classId === evento.classId && e.instructorId === evento.instructorId
     );
     if (!yaExiste) {
       setEventosUnidos((prev) => [...prev, evento]);
+    }else{
+        alert("Ya te has unido a esta clase.");
+        return;
+      
     }
   };
 
+  const limpiarCarrito = () => setEventosUnidos([]);
+
+
+  //quitar?
   const quitarEvento = (eventoId) => {
     setEventosUnidos((prev) =>
-      prev.filter((e) => e.id !== eventoId)
+      prev.filter((e) => e.classId !== eventoId)
     );
   };
 
   return (
-    <CarritoContext.Provider value={{ eventosUnidos, agregarEvento, quitarEvento }}>
+    <CarritoContext.Provider value={{ eventosUnidos, agregarEvento, quitarEvento, limpiarCarrito }}>
       {children}
     </CarritoContext.Provider>
   );

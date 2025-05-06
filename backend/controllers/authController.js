@@ -3,6 +3,7 @@ const { userCollection } = require("../models/users");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { admin } = require("../config/database.config");
+const { sendWelcomeEmail } = require('../utils/emailService');
 
 
 const SECRET_KEY = process.env.JWT_SECRET;
@@ -43,6 +44,10 @@ exports.register = async (req, res) => {
     // Guardar en Firestore
     const newUserRef = await userCollection.add(userData);
     res.status(201).json({ message: "Usuario registrado exitosamente", id: newUserRef.id });
+
+    //Enviar correo de bienvenida al usuario
+    await sendWelcomeEmail(email, name, lastname);
+
   } catch (error) {
     console.error("Error al registrar usuario:", error);
     res.status(500).json({ message: "Error del servidor" });
@@ -215,9 +220,20 @@ exports.completeGoogleRegistration = async (req, res) => {
 
     res.status(201).json({
       message: "Registro completado exitosamente",
-      user: userData,
-      token: token
+      token: token,
+      user: {
+        id:newUserRef.id,
+        name,
+        lastname,
+        email,
+        role: newUserRef.role,
+        profile_picture
+      }
     });
+
+    //Enviar correo de bienvenida al usuario
+    await sendWelcomeEmail(email, name, lastname);
+
   } catch (error) {
     console.error("Error al completar registro con Google:", error);
     res.status(500).json({ message: "Error del servidor" });

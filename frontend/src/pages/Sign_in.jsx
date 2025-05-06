@@ -23,6 +23,7 @@ const Signin = () => {
   const handleLogin = async () => {
     try {
       const user = await loginWithGoogle();
+      localStorage.setItem("usuario", JSON.stringify(user)); // pasa el user pa la compra
       const gRole = user.role;
       window.dispatchEvent(new Event('storage'));
       console.log("Bienvenido:", user.name);
@@ -71,7 +72,9 @@ const Signin = () => {
       const nRole = sesion.role;
       alert("¡Inicio de sesión exitoso!, Bienvenido:", sesion.name);
       // Guarda el token en localStorage
+      // Notifica a otros componentes (opcional si ya lo usas)
       window.dispatchEvent(new Event('storage'));
+
       // Redirigir después de un inicio de sesión exitoso
       if(nRole == 'instructor'){
         navigate('/instructorhome');

@@ -3,15 +3,18 @@ import { startOfMonth } from 'date-fns'
 import MonthView from './MonthView'
 import axios from 'axios'
 
+//Calendario de Reservation, el que ve el CLIENTE para reservar clases
 // Componente debe ser función normal (NO async)
 export const CalendarApp = ({ month }) => {
   const [events, setEvents] = useState([])
 
   useEffect(() => {
+    //traer la información de la base de datos con un get
     const fetchEvents = async () => {
       try {
         const response = await axios.get("http://localhost:3001/adana-api/v1/classes/availability");
 
+        //info de los eventos que trae al calendario para lo basico que es titulo, la fecha pa ver donde ponerlo y los lugares para poner el color
         const fetchedEvents = response.data.map(evento => ({
           title: evento.title,
           date: evento.date,
@@ -31,6 +34,7 @@ export const CalendarApp = ({ month }) => {
     fetchEvents();
   }, []); // Se ejecuta solo una vez
 
+  //pal calendario en sí ahora sí
   const firstDayOfMonth = startOfMonth(month)
   const monthsToShow = [firstDayOfMonth] // Solo uno por ahora
 
