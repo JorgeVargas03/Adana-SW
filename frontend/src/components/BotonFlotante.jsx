@@ -12,12 +12,12 @@ export default function BotonFlotante() {
   const [open, setOpen] = useState(false);
   const { eventosUnidos, quitarEvento, limpiarCarrito } = useCarrito();
   const [loading, setLoading] = useState(false);
-  const userId = JSON.parse(localStorage.getItem("usuario"))?.id;
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
   //Ahora si debe mandar la puta info carajo
   const handleReservar = async () => {
     try {
-      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      const usuario = JSON.parse(localStorage.getItem("user"));
       const userId = usuario.id;
 
       if (!userId || eventosUnidos.length === 0) {

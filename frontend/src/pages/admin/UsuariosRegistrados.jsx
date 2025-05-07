@@ -42,24 +42,41 @@ const UsuariosRegistrados = () => {
         </div>
 
         {/* Tarjetas */}
-        <div className="space-y-4">
+        <ul role="list" className="divide-y divide-gray-100">
           {usuarios
             .filter((u) =>
               u.nombre.toLowerCase().includes(search.toLowerCase())
             )
             .map((usuario) => (
-              <div
-                key={usuario.id}
-                className="bg-barcolor rounded-xl shadow-sm px-4 py-3 grid grid-cols-4 items-center text-sm cursor-pointer hover:ring-2 hover:ring-blue-200  hover:bg-accent2/80 transition"
-                onClick={() => setSelectedUser(usuario)}
-              >
-                <div className="text-fontdef">{usuario.id}</div>
-                <div className="text-fontdef">{usuario.nombre}</div>
-                <div className="text-fontdef">{usuario.correo}</div>
-                <div className="text-fontdef">{usuario.tipo}</div>
+              <li key={usuario.email} className="flex justify-between gap-x-6 py-5">
+          <div className="flex min-w-0 gap-x-4">
+            <img alt="" src={usuario.imageUrl} className="size-12 flex-none rounded-full bg-gray-50" />
+            <div className="min-w-0 flex-auto">
+              <p className="text-sm/6 font-semibold text-gray-900">{usuario.name}</p>
+              <p className="mt-1 truncate text-xs/5 text-gray-500">{usuario.email}</p>
+            </div>
+          </div>
+          <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+            <p className="text-sm/6 text-gray-900">{usuario.role}</p>
+            {usuario.lastSeen ? (
+              <p className="mt-1 text-xs/5 text-gray-500">
+                Last seen <time dateTime={usuario.lastSeenDateTime}>{usuario.lastSeen}</time>
+              </p>
+            ) : (
+              <div className="mt-1 flex items-center gap-x-1.5">
+                <div className="flex-none rounded-full bg-emerald-500/20 p-1">
+                  <div className="size-1.5 rounded-full bg-emerald-500" />
+                </div>
+                <p className="text-xs/5 text-gray-500">Online</p>
               </div>
+            )}
+          </div>
+        </li>
+              onClick={() => setSelectedUser(usuario)}
+              
+                
             ))}
-        </div>
+        </ul>
       </div>
 
       {/* Panel lateral animado */}
