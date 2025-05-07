@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import CalendarAppInstructor from '../components/CalendarAppInstructor';
+import CalendarAppInstructor from '../../components/CalendarAppInstructor';
 import { addMonths, subMonths, startOfMonth } from 'date-fns';
-import { isTokenValid } from '../utils/auth';
+import { isTokenValid } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
