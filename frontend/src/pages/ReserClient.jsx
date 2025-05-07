@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'; // <--- AHORA INCLUYE useEffect
 import '../share/style/allPages.css';
 
-
 export default function Reservation() {
   
 
   return (
-    <section className="bg-[#FDF9EC] min-h-screen flex flex-col items-center p-6">
+    <section className="bg-accent1 min-h-screen flex flex-col items-center p-6">
 
 
         <div className='text-center'>
