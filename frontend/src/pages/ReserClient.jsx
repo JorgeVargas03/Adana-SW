@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'; // <--- AHORA INCLUYE useEffect
 import '../share/style/allPages.css';
-import { CalendarAppReservas } from '../components/CalendarAppReservas';
 
 export default function Reservation() {
   
@@ -16,10 +15,7 @@ export default function Reservation() {
   </span>
 </h2>
 
-          <div>
-          <CalendarAppReservas/>
 
-          </div>
 
         </div>
   

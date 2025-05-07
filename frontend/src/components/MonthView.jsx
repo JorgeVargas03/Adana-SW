@@ -115,7 +115,7 @@ function MonthView({ month }) {
               //cuadritos de cada uno de los días, si es el día de HOY se marca el cuadro
               <motion.div
                 key={day}
-                className={`bg-white border border-[#E9DFFB] p-3 rounded-2xl min-h-[150px] flex flex-col items-center cursor-pointer hover:bg-[#f2e9fc] ${isToday ? 'ring-2 ring-[#7E5EC3] bg-[#f6f0ff]' : ''
+                className={`bg-white border border-[#E9DFFB] p-3 rounded-2xl min-h-[150px] flex flex-col items-center  hover:bg-[#f2e9fc] ${isToday ? 'ring-2 ring-[#7E5EC3] bg-[#f6f0ff]' : ''
                   }`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -123,7 +123,7 @@ function MonthView({ month }) {
                 transition={{ duration: 0.4 }}
                 onClick={() => {
                   setSelectedEvent(null); // reset si clic sin evento
-                  setShowModal(true);
+                  setShowModal(false);
                 }}
               >
                 <div className="text-md font-medium text-[#7E5EC3] mb-1">
@@ -133,7 +133,7 @@ function MonthView({ month }) {
                   {dayEvents.map((event, idx) => (
                     <div
                       key={idx} //trae el color de las clases, cambiar en el futuro para que se extraiga luego luego del back
-                      className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold ${getEventColor(event.availableSpots)}`}
+                      className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold cursor-pointer ${getEventColor(event.availableSpots)}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedEvent(event);
@@ -176,7 +176,9 @@ function MonthView({ month }) {
                 setSelectedEvent(null);
               }}
             >
+              
               <div
+              //Creo que va a ser aquí dodne le tengo que cambiar
                 className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm mx-auto"
                 onClick={(e) => e.stopPropagation()}
               >
