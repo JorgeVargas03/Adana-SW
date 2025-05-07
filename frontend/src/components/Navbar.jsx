@@ -100,6 +100,9 @@ export default function Navbar() {
 
   const validateToken = () => {
     setHasToken(isTokenValid());
+    if (isTokenValid() == false){
+      setUserRole(null);
+    }
   };
 
   const getNavigation = () => [...baseNavigation];

@@ -28,7 +28,7 @@ const Signin = () => {
       console.log(gRole);
       // Redirigir después de un inicio de sesión exitoso
       if(gRole == 'instructor'){
-      navigate('/instructorhome');
+      navigate('/home2');
       }else if(gRole === 'administrador'){
         navigate('/myprofile');
       }else{
@@ -80,7 +80,7 @@ const Signin = () => {
 
       // Redirigir después de un inicio de sesión exitoso
       if(nRole == 'instructor'){
-        navigate('/instructorhome');
+        navigate('/home2');
         }else if(nRole === 'administrador'){
           navigate('/myprofile');
         }else{
