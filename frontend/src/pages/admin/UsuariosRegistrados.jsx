@@ -1,18 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import iconDefault from '../../assets/images/icon.png';
 
+// ... [importaciones arriba]
+
 const UsuariosRegistrados = () => {
   const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("Todos");
+  const [genderFilter, setGenderFilter] = useState("Todos");
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
 
-  const usuarios = [
-    { id: 1, nombre: "Juan Pérez", correo: "juan@example.com", tipo: "Admin" },
-    { id: 2, nombre: "Ana Gómez", correo: "ana@example.com", tipo: "Usuario" },
-    { id: 3, nombre: "Carlos Ruiz", correo: "carlos@example.com", tipo: "Usuario" },
-  ];
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (panelRef.current && !panelRef.current.contains(event.target)) {
+        setSelectedUser(null);
+      }
+    }
+
+    if (selectedUser) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [selectedUser]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -28,6 +44,7 @@ const UsuariosRegistrados = () => {
           status: user.status,
           profile_picture: user.profile_picture,
           phone: user.phone,
+          gender: user.gender,
         }));
 
         setUsers(formattedUsers);
@@ -38,94 +55,115 @@ const UsuariosRegistrados = () => {
 
     fetchUsers();
   }, []);
+
+  const filteredUsers = users.filter(user => {
+    const matchesName = user.name.toLowerCase().includes(search.toLowerCase());
+    const matchesRole = roleFilter === "Todos" || user.role.toLowerCase() === roleFilter.toLowerCase();
+    const matchesGender = genderFilter === "Todos" || user.gender?.toLowerCase() === genderFilter.toLowerCase();
+    return matchesName && matchesRole && matchesGender;
+  });
+
   return (
-  <section className="bg-bgcolor min-h-screen">
-    <div className="p-6 flex relative bg-bgcolor">
-      {/* Vista principal */}
-      <div className="flex-1 font-Outfit">
-      <div className="mb-30"></div>
-        <div className="flex items-center mb-10">
-          <h1 className="text-2xl font-semibold mr-4 text-fontdef">Usuarios Registrados</h1>
-          <input
-            type="text"
-            placeholder="Buscar usuario..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="border-2 border-fontdef/50 rounded-lg p-2 mr-4 text-fontdef bg-barcolor"
-          />
-
-        <div>
-          
-        </div>
-
-        </div>
-
-        {/* Encabezados */}
-        <div className="grid grid-cols-4 gap-4 text-sm font-medium text-fontdef mb-2 px-2">
-          <div>ID</div>
-          <div>Nombre</div>
-          <div>Correo</div>
-          <div>Tipo</div>
-        </div>
-
-        {/* Tarjetas */}
-        <ul role="list" className="divide-y divide-gray-100 bg-barcolor px-6 rounded-2xl">
-        {users
-  .filter((u) =>
-    u.name.toLowerCase().includes(search.toLowerCase())
-  )
-  .map((usuario) => (
-    <li key={usuario.email} className="flex justify-between gap-x-6 py-5">
-      <div className="flex min-w-0 gap-x-4">
-        <img
-          alt=""
-          src={usuario.profile_picture || iconDefault} // opcional si no tienes imagen
-          className="size-12 flex-none rounded-full bg-gray-50"
-        />
-        <div className="min-w-0 flex-auto">
-          <p className="text-sm/6 font-semibold text-gray-900">{usuario.name}</p>
-          <p className="mt-1 truncate text-xs/5 text-gray-500">{usuario.email}</p>
-        </div>
-      </div>
-      <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-        <p className="text-sm/6 text-gray-900 capitalize">{usuario.role}</p>
-        <p className="mt-1 text-xs/5 text-gray-500 uppercase">{usuario.status}</p>
-      </div>
-    </li>
-  ))}
-
-        </ul>
-      </div>
-
-      {/* Panel lateral animado */}
-      <AnimatePresence>
-        {selectedUser && (
-          <motion.div
-            key="sidepanel"
-            initial={{ x: 100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 100, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="w-80 absolute right-0 top-0 bottom-0 bg-white shadow-xl rounded-l-xl p-6 border-l mt-30 border-gray-200 z-10"
-          >
-            <button
-              onClick={() => setSelectedUser(null)}
-              className="absolute top-2 right-3 text-fontdef hover:text-accent2 text-xl cursor-pointer"
+    <section className="bg-bgcolor min-h-screen">
+      <div className="p-6 flex relative bg-bgcolor">
+        <div className="flex-1 font-Outfit">
+          <div className="mb-30" />
+          <div className="flex items-center mb-10 gap-4 flex-wrap">
+            <h1 className="text-2xl font-semibold text-fontdef">Usuarios Registrados</h1>
+            <input
+              type="text"
+              placeholder="Buscar usuario..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="border-2 border-fontdef/50 rounded-lg p-2 text-fontdef bg-barcolor"
+            />
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="border-2 border-fontdef/50 rounded-lg p-2 text-fontdef bg-barcolor cursor-pointer"
             >
-              ×
-            </button>
-            <h2 className="text-lg font-semibold mb-4 text-fontdef">Detalles del Usuario</h2>
-            <div className="space-y-2 text-sm">
-              <p><span className="font-medium">ID:</span> {selectedUser.id}</p>
-              <p><span className="font-medium">Nombre:</span> {selectedUser.nombre}</p>
-              <p><span className="font-medium">Correo:</span> {selectedUser.correo}</p>
-              <p><span className="font-medium">Tipo:</span> {selectedUser.tipo}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  </section>
+              <option value="Todos">Todos los roles</option>
+              <option value="administrador">Administrador</option>
+              <option value="instructor">Instructor</option>
+              <option value="cliente">Cliente</option>
+            </select>
+            <select
+              value={genderFilter}
+              onChange={(e) => setGenderFilter(e.target.value)}
+              className="border-2 border-fontdef/50 rounded-lg p-2 text-fontdef bg-barcolor cursor-pointer"
+            >
+              <option value="Todos">Todos los géneros</option>
+              <option value="Hombre">Hombre</option>
+              <option value="Mujer">Mujer</option>
+            </select>
+          </div>
+
+          <ul role="list" className="divide-y divide-gray-100 bg-barcolor px-6 rounded-2xl">
+            {filteredUsers.map((usuario) => (
+              <li
+                key={usuario.email}
+                onClick={() => setSelectedUser(usuario)}
+                className="flex justify-between gap-x-6 py-5 cursor-pointer hover:bg-gray-100 rounded-xl transition"
+              >
+                <div className="flex min-w-0 gap-x-4">
+                  <img
+                    alt=""
+                    src={usuario.profile_picture || iconDefault}
+                    className="size-12 flex-none rounded-full bg-gray-50"
+                  />
+                  <div className="min-w-0 flex-auto">
+                    <p className="text-sm/6 font-semibold text-gray-900">{usuario.name}</p>
+                    <p className="mt-1 truncate text-xs/5 text-gray-500">{usuario.email}</p>
+                  </div>
+                </div>
+                <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+                  <p className="text-sm/6 text-gray-900 capitalize">{usuario.role}</p>
+                  <p className="mt-1 text-xs/5 text-gray-500 uppercase">{usuario.status}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Panel lateral con diseño mejorado */}
+        <AnimatePresence>
+          {selectedUser && (
+            <motion.div
+              key="sidepanel"
+              initial={{ x: 100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 100, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              ref={panelRef}
+              className="w-96 absolute right-0 top-0 bottom-0 bg-white shadow-2xl rounded-l-3xl p-6 mt-12 z-10 border-l-2 border-gray-200"
+            >
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold"
+              >
+                ×
+              </button>
+              <div className="text-center mt-10 font-Outfit">
+                <img
+                  src={selectedUser.profile_picture || iconDefault}
+                  alt="Foto de perfil"
+                  className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-accent2"
+                />
+                <h2 className="text-xl font-bold text-fontdef">{selectedUser.name}</h2>
+                <p className="text-sm text-gray-600 mb-6">{selectedUser.email}</p>
+                <div className="text-left text-fontdef space-y-2 text-sm">
+                  <p><strong>ID:</strong> {selectedUser.id}</p>
+                  <p><strong>Rol:</strong> {selectedUser.role}</p>
+                  <p><strong>Estado:</strong> {selectedUser.status}</p>
+                  <p><strong>Género:</strong> {selectedUser.gender || "No especificado"}</p>
+                  <p><strong>Teléfono:</strong> {selectedUser.phone || "No disponible"}</p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
   );
 };
 
