@@ -3,7 +3,7 @@ const axios = require("axios");
 const { paymentsCollection } = require("../models/payments");
 
 const CLIENT = process.env.PAYPAL_CLIENT_ID;
-const SECRET = process.env.PAYPAL_SECRET;
+const SECRET = process.env.PAYPAL_CLIENT_SECRET;
 const PAYPAL_API = "https://api-m.sandbox.paypal.com"; // cambiar a live en producción
 
 const getAccessToken = async () => {

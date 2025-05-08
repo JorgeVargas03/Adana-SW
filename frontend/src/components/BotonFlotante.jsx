@@ -1,6 +1,6 @@
 
 import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon,ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import axios from 'axios';
@@ -12,44 +12,54 @@ export default function BotonFlotante() {
   const [open, setOpen] = useState(false);
   const { eventosUnidos, quitarEvento, limpiarCarrito } = useCarrito();
   const [loading, setLoading] = useState(false);
-  const userId = JSON.parse(localStorage.getItem("usuario"))?.id;
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
-//Ahora si debe mandar la puta info carajo
-const handleReservar = async () => {
-  try {
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    const userId = usuario.id;
+  //Ahora si debe mandar la puta info carajo
+  const handleReservar = async () => {
+    try {
+      const usuario = JSON.parse(localStorage.getItem("user"));
+      const userId = usuario.id;
 
-    if (!userId || eventosUnidos.length === 0) {
-      console.warn("Faltan datos: usuario o eventos");
-      return;
+      if (!userId || eventosUnidos.length === 0) {
+        console.warn("Faltan datos: usuario o eventos");
+        return;
+      }
+
+      const selectedClasses = eventosUnidos.map(evento => ({
+        classId: evento.classId,
+        instructorId: evento.instructorId
+      }));
+
+      const payload = {
+        userId: userId,
+        selectedClasses
+      };
+
+      //Sin pago
+      const response = await axios.post(
+        `http://localhost:3001/adana-api/v1/classes/reserve/${userId}`,
+        payload
+      );
+
+      //Con pago
+      // const response = await axios.post(
+      //   `http://localhost:3001/adana-api/v1/payments/paypal/create-order`,
+      //   payload
+      // );
+
+      // const { approvalLink } = response.data;
+      // window.location.href = approvalLink;
+
+      console.log("Reserva múltiple exitosa:", response.data);
+      alert("Te uniste a todas las clases seleccionadas con éxito 🎉");
+      limpiarCarrito();
+    } catch (error) {
+      console.error("Error al enviar la reserva múltiple:", error);
+      alert("Hubo un problema al unirte a las clases. Revisa consola.");
     }
+  };
 
-    const selectedClasses = eventosUnidos.map(evento => ({
-      classId: evento.classId,
-      instructorId: evento.instructorId
-    }));
 
-    const payload = {
-      usuarioId: userId,
-      selectedClasses
-    };
-
-    const response = await axios.post(
-      `http://localhost:3001/adana-api/v1/classes/reserve/${userId}`,
-      payload
-    );
-
-    console.log("Reserva múltiple exitosa:", response.data);
-    alert("Te uniste a todas las clases seleccionadas con éxito 🎉");
-    limpiarCarrito();
-  } catch (error) {
-    console.error("Error al enviar la reserva múltiple:", error);
-    alert("Hubo un problema al unirte a las clases. Revisa consola.");
-  }
-};
-
-  
 
 
   return (
@@ -60,8 +70,8 @@ const handleReservar = async () => {
         onClick={() => setOpen(true)}
         aria-label="Carrito de compras"
       >
-      
-        <ShoppingCartIcon className="size-7 text-white cursor-pointer"/>
+
+        <ShoppingCartIcon className="size-7 text-white cursor-pointer" />
       </button>
 
       {/* Panel con transición */}
@@ -102,45 +112,44 @@ const handleReservar = async () => {
                     </button>
                   </div>
                   <div className="p-6">
-                        {eventosUnidos.length === 0 ? (
-                          <p className="text-sm text-gray-500">Tu carrito está vacío.</p>
-                        ) : (
-                          <ul className="flex flex-col gap-4"> {/*Busca el evento en el array, donde se colocó en Monthview y lo lee*/}
-                            {eventosUnidos.map((evento, index) => (
-                              <li key={`${evento.classId}-${evento.instructorId}`} className="border p-4 rounded-lg shadow-sm">
-                                <h3 className="text-lg font-semibold text-fontlink">{evento.title}</h3>
-                                <p className="text-sm text-gray-600">Instructor: {evento.instructorName}</p>
-                                <p className="text-sm text-gray-600">Fecha: {evento.formattedDate}</p>
-                                <p className="text-sm text-gray-600">{evento.description}</p>
-                                <p className="text-sm text-gray-600">Precio MXN: {evento.price}</p>
-                                <button
-                                  className="mt-2 text-red-500 text-sm hover:underline cursor-pointer"
-                                  onClick={() => quitarEvento(evento.classId)}
-                                  //onClick={() => quitarEvento(evento.classId)}
+                    {eventosUnidos.length === 0 ? (
+                      <p className="text-sm text-gray-500">Tu carrito está vacío.</p>
+                    ) : (
+                      <ul className="flex flex-col gap-4"> {/*Busca el evento en el array, donde se colocó en Monthview y lo lee*/}
+                        {eventosUnidos.map((evento, index) => (
+                          <li key={`${evento.classId}-${evento.instructorId}`} className="border p-4 rounded-lg shadow-sm">
+                            <h3 className="text-lg font-semibold text-fontlink">{evento.title}</h3>
+                            <p className="text-sm text-gray-600">Instructor: {evento.instructorName}</p>
+                            <p className="text-sm text-gray-600">Fecha: {evento.formattedDate}</p>
+                            <p className="text-sm text-gray-600">{evento.description}</p>
+                            <button
+                              className="mt-2 text-red-500 text-sm hover:underline cursor-pointer"
+                              onClick={() => quitarEvento(evento.classId)}
+                            //onClick={() => quitarEvento(evento.classId)}
 
-                                >
-                                  Quitar
-                                </button>
-                                 
-                              </li>
-                              
-                            ))}
-                          </ul>
-                          
-                        )}{/*Botón para comprar, también hace el post para mandar las cosas al back*, se limpia sola la fakin shit tambien*/}
-                        {eventosUnidos.length > 0 && (
-                                <button
-                                onClick={handleReservar}
-                                className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-4 justify-center"
-                              >
-                                Confirmar compra
-                              </button>
+                            >
+                              Quitar
+                            </button>
 
-                              )}
+                          </li>
 
-                          
-                      </div>
-                  <div className="mt-4">                       
+                        ))}
+                      </ul>
+
+                    )}{/*Botón para comprar, también hace el post para mandar las cosas al back*, se limpia sola la fakin shit tambien*/}
+                    {eventosUnidos.length > 0 && (
+                      <button
+                        onClick={handleReservar}
+                        className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-4 justify-center"
+                      >
+                        Confirmar compra
+                      </button>
+
+                    )}
+
+
+                  </div>
+                  <div className="mt-4">
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

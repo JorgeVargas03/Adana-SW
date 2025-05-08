@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import iconDefault from '../../assets/images/icon.png';
 
 const UsuariosRegistrados = () => {
   const [search, setSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
+  const [users, setUsers] = useState([]);
 
   const usuarios = [
     { id: 1, nombre: "Juan Pérez", correo: "juan@example.com", tipo: "Admin" },
@@ -11,6 +14,30 @@ const UsuariosRegistrados = () => {
     { id: 3, nombre: "Carlos Ruiz", correo: "carlos@example.com", tipo: "Usuario" },
   ];
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/adana-api/v1/users`);
+        const data = response.data;
+
+        const formattedUsers = data.map(user => ({
+          id: user.id,
+          name: `${user.name} ${user.lastname}`,
+          email: user.email,
+          role: user.role,
+          status: user.status,
+          profile_picture: user.profile_picture,
+          phone: user.phone,
+        }));
+
+        setUsers(formattedUsers);
+      } catch (error) {
+        console.error("Error al cargar usuarios:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
   return (
   <section className="bg-bgcolor min-h-screen">
     <div className="p-6 flex relative bg-bgcolor">
@@ -24,7 +51,7 @@ const UsuariosRegistrados = () => {
             placeholder="Buscar usuario..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border rounded-md p-2 mr-4 text-fontdef"
+            className="border-2 border-fontdef/50 rounded-lg p-2 mr-4 text-fontdef bg-barcolor"
           />
 
         <div>
@@ -42,24 +69,32 @@ const UsuariosRegistrados = () => {
         </div>
 
         {/* Tarjetas */}
-        <div className="space-y-4">
-          {usuarios
-            .filter((u) =>
-              u.nombre.toLowerCase().includes(search.toLowerCase())
-            )
-            .map((usuario) => (
-              <div
-                key={usuario.id}
-                className="bg-barcolor rounded-xl shadow-sm px-4 py-3 grid grid-cols-4 items-center text-sm cursor-pointer hover:ring-2 hover:ring-blue-200  hover:bg-accent2/80 transition"
-                onClick={() => setSelectedUser(usuario)}
-              >
-                <div className="text-fontdef">{usuario.id}</div>
-                <div className="text-fontdef">{usuario.nombre}</div>
-                <div className="text-fontdef">{usuario.correo}</div>
-                <div className="text-fontdef">{usuario.tipo}</div>
-              </div>
-            ))}
+        <ul role="list" className="divide-y divide-gray-100 bg-barcolor px-6 rounded-2xl">
+        {users
+  .filter((u) =>
+    u.name.toLowerCase().includes(search.toLowerCase())
+  )
+  .map((usuario) => (
+    <li key={usuario.email} className="flex justify-between gap-x-6 py-5">
+      <div className="flex min-w-0 gap-x-4">
+        <img
+          alt=""
+          src={usuario.profile_picture || iconDefault} // opcional si no tienes imagen
+          className="size-12 flex-none rounded-full bg-gray-50"
+        />
+        <div className="min-w-0 flex-auto">
+          <p className="text-sm/6 font-semibold text-gray-900">{usuario.name}</p>
+          <p className="mt-1 truncate text-xs/5 text-gray-500">{usuario.email}</p>
         </div>
+      </div>
+      <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+        <p className="text-sm/6 text-gray-900 capitalize">{usuario.role}</p>
+        <p className="mt-1 text-xs/5 text-gray-500 uppercase">{usuario.status}</p>
+      </div>
+    </li>
+  ))}
+
+        </ul>
       </div>
 
       {/* Panel lateral animado */}

@@ -10,11 +10,11 @@ import Signin from './pages/Sign_in';
 import Reservation from './pages/Reservation';
 import SignUp from './pages/Sign_up';
 import CompleteRegister from './pages/CompleteRegistration';
-import InstructorMain from './pages/InstructorClasses';
+import InstructorMain from './pages/instructor/InstructorClasses';
 import { CarritoProvider } from './context/CarritoContext'; 
 import ReserClient from './pages/ReserClient';
 import MyProfile from './pages/MyProfile';
-import UsuariosRegistrados from './pages/UsuariosRegistrados';
+import UsuariosRegistrados from './pages/admin/UsuariosRegistrados';
 
 //envueltos con el carrito para que se puedan pasar la información sin problemas
 const App = () => {
@@ -38,6 +38,7 @@ const App = () => {
                 <Route path= "/client/myreservation" element={<ReserClient/>}/>
                 <Route path= "/instructorhome" element={<InstructorMain/>}/>
                 <Route path= "/admin/usermanage" element={<UsuariosRegistrados/>}/>
+                <Route path= "/home2" element={<InstructorMain/>}/>
               </Routes>
             </div>
           </main>

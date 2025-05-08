@@ -28,7 +28,7 @@ const Signin = () => {
       console.log(gRole);
       // Redirigir después de un inicio de sesión exitoso
       if(gRole == 'instructor'){
-      navigate('/instructorhome');
+      navigate('/home2');
       }else if(gRole === 'administrador'){
         navigate('/myprofile');
       }else{
@@ -80,7 +80,7 @@ const Signin = () => {
 
       // Redirigir después de un inicio de sesión exitoso
       if(nRole == 'instructor'){
-        navigate('/instructorhome');
+        navigate('/home2');
         }else if(nRole === 'administrador'){
           navigate('/myprofile');
         }else{
@@ -94,7 +94,7 @@ const Signin = () => {
 
   return (
     <div className='flex justify-center items-center h-screen w-full bg-accent1/70 mt-10 font-Outfit'>
-      <div className='flex w-9/12 h-[550px] rounded-2xl bg-[#FDF9EC]'>
+      <div className='flex flex-col lg:flex-row w-full md:w-11/12 lg:w-9/12 h-auto lg:h-[550px] rounded-2xl bg-[#FDF9EC]'>
         {/* LOGO + BARRA */}
         <div className='flex-1 relative flex items-center justify-center'>
           <img src={icon} className='w-3/4 max-w-[300px] h-auto' alt='icon' />
@@ -103,7 +103,7 @@ const Signin = () => {
 
         {/* FORMULARIO */}
         <div className='flex-1 flex flex-col items-center justify-start h-full ml-[-7.5px]'>
-          <div className="w-full max-w-[400px]">
+          <div className="w-full px-4 sm:px-8 max-w-[400px]">
             <h1 className="text-center text-4xl font-bold leading-9 tracking-tight text-fontdef mt-16">
               Iniciar Sesión
             </h1>
@@ -113,7 +113,7 @@ const Signin = () => {
                 <label className="block text-sm font-medium text-fontdef">
                   <span className="...">Correo</span>
                 </label>
-                <div className="mt-2">
+                <div className="mt-2 flex md:flex mx-auto min-h-1">
                   <input type="email"
                     onChange={(e) => setCorreo(e.target.value)}
                     placeholder="Ingrese un correo" className="peer block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
