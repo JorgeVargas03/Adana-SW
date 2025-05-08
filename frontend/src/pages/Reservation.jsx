@@ -5,7 +5,7 @@ import BotonFlotante from '../components/BotonFlotante';
 import { CalendarDaysIcon, SwatchIcon } from '@heroicons/react/24/outline';
 import { addMonths, subMonths, startOfMonth } from 'date-fns';
 import { isTokenValid } from '../utils/auth';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
@@ -68,6 +68,15 @@ export default function Reservation() {
         </ul>
       </div>
     </div>
+
+  </div>
+  <div> {/*Boton pa sus reservas*/}
+      <Link
+      to="/client/myreservation"
+      className="flex w-full justify-center font-Outfit items-center gap-2 rounded-md bg-accent2 px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs hover:bg-accent2/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer h-10"
+    >
+      Consulta AQUI tus Reservas
+    </Link>
 
   </div>
 </div>
