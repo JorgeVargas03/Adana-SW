@@ -17,6 +17,8 @@ function CalendarAppInstructor() {
         const formattedClasses = data.Clases.map(clase => ({
           classId: clase.id,
           title: clase.title,
+          description: clase.description,
+          price: clase.price,
           date: clase.schedule.date,
           time: clase.schedule.time,
           instructorId: instructorId,
