@@ -1,52 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import { startOfMonth } from 'date-fns';
-import MonthView from './MonthView';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'
+import { startOfMonth } from 'date-fns'
+import MonthViewUser from './MonthViewUser'
+import axios from 'axios'
 
-const CalendarAppUsuario = ({month, user}) =>{
-  const [classes, setClasses] = useState([]);
-  const navigate = useNavigate();
+//Calendario de Reservation, el que ve el CLIENTE para reservar clases
+// Componente debe ser función normal (NO async)
+export const CalendarAppUsuario = ({ month }) => {
+  const [events, setEvents] = useState([])
 
   useEffect(() => {
-    const fetchUserClasses = async () => {
+    //traer la información de la base de datos con un get
+    const fetchEvents = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const instructorId = user?.id;
-        console.log(instructorId)
+        const response = await axios.get("http://localhost:3001/adana-api/v1/reserves/:userId");
+        //router.get("/reserves/:userId", classController.getUserReservations);
 
-        //const res = await axios.get(`http://localhost:3001/adana-api/v1/classes/instructor/${instructorId}/myClasses`);
-                                    //checar la ruta
-        
-        //const res2 = await axios.get(`/instructor/${instructorId}/class/${instructorId}/details`);
-        //PARTE PENDIENTE
-        const data = res.data;
-        console.log("Respuesta del backend:", data);
+        //info de los eventos que trae al calendario para lo basico que es titulo, la fecha pa ver donde ponerlo y los lugares para poner el color
+        const fetchedEvents = response.data.map(evento => ({
+          title: evento.title,
+          date: evento.date
+        }));
 
-        const formattedClasses = data.Clases.map(clase => ({
-            title: clase.schedule.title,
-            date: clase.schedule.date,
-            time: clase.schedule.time,
-            availableSpots: clase.capacity,
-          }));          
-
-        setClasses(formattedClasses);
+        setEvents(fetchedEvents);
       } catch (error) {
-        console.error('Error al cargar las clases del instructor:', error);
+        if (error.response && error.response.status === 404) {
+          console.error("No se encontraron eventos.")
+        } else {
+          console.error("Error al cargar eventos:", error);
+        }
       }
-    };
+    }
 
-    fetchUserClasses();
-  }, [instructorId]);
+    fetchEvents();
+  }, []); // Se ejecuta solo una vez
+
+  //pal calendario en sí ahora sí
+  const firstDayOfMonth = startOfMonth(month)
+  const monthsToShow = [firstDayOfMonth] // Solo uno por ahora
 
   return (
     <div className="w-full p-4 rounded-xl">
-
-
-      <MonthView month={firstDayOfMonth} events={classes} />
+      {monthsToShow.map((monthToShow, idx) => (
+        <div key={idx} className="flex w-full h-full">
+          <MonthViewUser month={monthToShow} events={events} />
+        </div>
+      ))}
     </div>
-  );
-
+  )
 }
-
-export default CalendarAppUsuario;

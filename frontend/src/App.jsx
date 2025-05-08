@@ -35,7 +35,7 @@ const App = () => {
                 <Route path="/signup" element={<SignUp/>} />
                 <Route path="/register" element={<CompleteRegister/>} />
                 <Route path= "/myprofile" element={<MyProfile/>}/>
-                <Route parth= "/myreservation" element={<ReserClient/>}/>
+                <Route path= "/client/myreservation" element={<ReserClient/>}/>
                 <Route path= "/instructorhome" element={<InstructorMain/>}/>
                 <Route path= "/admin/usermanage" element={<UsuariosRegistrados/>}/>
               </Routes>

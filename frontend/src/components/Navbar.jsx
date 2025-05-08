@@ -107,6 +107,8 @@ export default function Navbar() {
   const toProfile = () => {
     navigate('/myprofile');
   }
+
+  console.log(userRole)
   
   //Return para instructores
   if(userRole === 'instructor'){
