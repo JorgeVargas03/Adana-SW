@@ -3,8 +3,6 @@ import CalendarAppInstructor from '../../components/CalendarAppInstructor';
 import { addMonths, subMonths, startOfMonth } from 'date-fns';
 import { isTokenValid } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
-import { Disclosure } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 export default function InstructorClasses() {
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
@@ -23,19 +21,15 @@ export default function InstructorClasses() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const handleCreateClass = () => {
-    // Puede redirigir a una página o abrir un modal
-    navigate('/'); // asegúrate de tener esta ruta definida
-  };
-
   return (
-    <section className="bg-accent1/50 min-h-screen flex flex-col items-center p-6">
-      <div className="justify-between">
-        <h2 className="font-outfit font-bold text-7xl text-[#413324] mb-8 text-right mt-20">
-          Mis Clases
-        </h2>
-
-      </div>
+    <section className="bg-accent1/50 min-h-screen flex flex-col items-center p-6 font-Outfit pt-38">
+      <div className="text-center pb-12">
+    <h2 className="font-bold text-5xl text-center relative inline-block">
+  <span className="relative inline-block before:absolute before:-inset-4 before:block before:-skew-y-2 before:translate-y-1 before:bg-bgcolor">
+    <span className="relative text-fontdef text-7xl">Mis Clases</span>
+  </span>
+</h2>
+    </div>
 
       {/* Navegación de Meses */}
       <div className="flex gap-5 mb-6">
@@ -54,17 +48,7 @@ export default function InstructorClasses() {
 
       {/* Calendario */}
       <div className="w-full max-w-6xl flex flex-col items-center">
-        <CalendarAppInstructor month={currentMonth} />
-      </div>
-
-      {/* Botón para crear clase */}
-      <div className="mt-10">
-        <button
-          onClick={handleCreateClass}
-          className="px-6 py-3 bg-[#7E7EC3] text-white font-semibold rounded-lg hover:bg-[#5c5ca3] transition duration-300"
-        >
-          Crear nueva clase
-        </button>
+        <CalendarAppInstructor month={currentMonth}/>
       </div>
     </section>
   );
