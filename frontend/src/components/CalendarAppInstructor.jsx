@@ -7,37 +7,41 @@ function CalendarAppInstructor() {
   const [classes, setClasses] = useState([]);
   const firstDayOfMonth = startOfMonth(new Date());
 
+  const fetchInstructorClasses = async () => {
+    try {
+      const instructorId = JSON.parse(localStorage.getItem("user"))?.id;
+      const response = await axios.get(`http://localhost:3001/adana-api/v1/classes/instructor/${instructorId}/myClasses`);
+      const data = response.data;
+
+      const formattedClasses = data.Clases.map(clase => ({
+        classId: clase.id,
+        title: clase.title,
+        description: clase.description,
+        price: clase.price,
+        date: clase.schedule.date,
+        time: clase.schedule.time,
+        instructorId: instructorId,
+        availableSpots: clase.capacity - (clase.reserved || 0),
+        capacity: clase.capacity,
+      }));
+
+      setClasses(formattedClasses);
+    } catch (error) {
+      console.error("Error al cargar clases del instructor:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchInstructorClasses = async () => {
-      try {
-        const instructorId = JSON.parse(localStorage.getItem("user"))?.id;
-        const response = await axios.get(`http://localhost:3001/adana-api/v1/classes/instructor/${instructorId}/myClasses`);
-        const data = response.data;
-
-        const formattedClasses = data.Clases.map(clase => ({
-          classId: clase.id,
-          title: clase.title,
-          description: clase.description,
-          price: clase.price,
-          date: clase.schedule.date,
-          time: clase.schedule.time,
-          instructorId: instructorId,
-          availableSpots: clase.capacity-clase.reserved,
-          capacity: clase.capacity,
-        }));
-
-        setClasses(formattedClasses);
-      } catch (error) {
-        console.error("Error al cargar clases del instructor:", error);
-      }
-    };
-
     fetchInstructorClasses();
   }, []);
 
   return (
     <div className="w-full h-full p-4">
-      <MonthViewInstructor month={firstDayOfMonth} events={classes} />
+      <MonthViewInstructor
+        month={firstDayOfMonth}
+        events={classes}
+        onClassAdded={fetchInstructorClasses}
+      />
     </div>
   );
 }

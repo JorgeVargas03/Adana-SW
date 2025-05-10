@@ -95,6 +95,7 @@ const UsuariosRegistrados = () => {
               <option value="Todos">Todos los géneros</option>
               <option value="Hombre">Hombre</option>
               <option value="Mujer">Mujer</option>
+              <option value="Otro">Otro</option>
             </select>
           </div>
 

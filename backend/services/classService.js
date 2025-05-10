@@ -341,6 +341,7 @@ exports.getInstructorClasses = async (instructorId) => {
             return {
                 id: classId,
                 title: classData.title,
+                description: classData.description,
                 schedule: classData.schedule,
                 capacity: classData.capacity,
                 reserved: reservationCount,
