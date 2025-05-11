@@ -23,7 +23,9 @@ export function CalendarAppUsuario () {
       const mappedEvents = reservas.map(reserva => ({
         title: reserva.classTitle,
         instructor: reserva.instructor,
+        description: reserva.description,
         date: new Date(reserva.date),
+        time: reserva.time
       }));
 
 

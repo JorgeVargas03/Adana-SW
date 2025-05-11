@@ -132,11 +132,17 @@ function MonthViewUser({ month, events }) {
                 onClick={(e) => e.stopPropagation()}
               >
                 <h3 className="text-xl font-bold text-[#7E5EC3] mb-2">{selectedEvent.title}</h3>
-                <p className="text-sm text-gray-700 mb-1">
+                <p className="text-sm text-gray-700 mb-2">
                   <span className="font-semibold">Instructor:</span> {selectedEvent.instructor}
                 </p>
-                <p className="text-sm text-gray-700 mb-1">
+                <p className="text-sm text-gray-700 mb-2">
+                  <span className="font-semibold">Descripcion:</span> {selectedEvent.description}
+                </p>
+                <p className="text-sm text-gray-700 mb-2">
                   <span className="font-semibold">Fecha:</span> {format(selectedEvent.date, "PPP", { locale: es })}
+                </p>
+                <p className="text-sm text-gray-700 mb-2">
+                  <span className="font-semibold">Hora:</span> {selectedEvent.time}
                 </p>
                 <button
                   className="mt-4 px-4 py-2 bg-[#7E5EC3] text-white rounded-lg hover:bg-[#6b4fc1] transition cursor-pointer"

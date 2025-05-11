@@ -315,6 +315,7 @@ exports.getUserReservations = async (userId) => {
                             classId,
                             classTitle: classData.title,
                             instructor: instructorName,
+                            description: classData.description,
                             date: classData.schedule.date,
                             time: classData.schedule.time
                         });
