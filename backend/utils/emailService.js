@@ -61,9 +61,10 @@ exports.sendConfirmationEmail = async (destination, classData) => {
 };
 
 // Envía un correo de confirmación de reserva a un cliente, acepta desde 1, hasta mas reservas
-exports.sendMultipleConfirmationEmail = async (destination, classesData = []) => {
+exports.sendMultipleConfirmationEmail = async (destination, classesData = [], totalPaid) => {
   if (!classesData.length) return;
 
+  const paid = parseFloat(totalPaid).toFixed(2);
   // Generar bloques de HTML para cada clase
   const classesHtml = classesData.map(classItem => {
     const date = new Date(classItem.date);
@@ -92,6 +93,7 @@ exports.sendMultipleConfirmationEmail = async (destination, classesData = []) =>
       <ul style="list-style-type: none; padding: 0;">
         ${classesHtml}
       </ul>
+      <p>Total Pagado (con descuento si es el caso): $${paid}</p>
       <p>¡Te esperamos con mucha energía y entusiasmo! ✨</p>
 
       <hr style="margin: 30px 0; border: none; border-top: 1px solid #ccc;">

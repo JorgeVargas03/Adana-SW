@@ -192,7 +192,7 @@ exports.reserveClass = async (userId, classId, instructorId) => {
 };
 
 //Servicio para reservar multiples clases
-exports.reserveMultipleClasses = async (userId, selectedClasses) => {
+exports.reserveMultipleClasses = async (userId, selectedClasses, total = 0) => {
     const results = [];
     const updatesByInstructor = {};
     const confirmedClasses = [];
@@ -277,7 +277,13 @@ exports.reserveMultipleClasses = async (userId, selectedClasses) => {
 
         // 4. Enviar correo si hubo clases confirmadas
         if (confirmedClasses.length > 0) {
-            await emailService.sendMultipleConfirmationEmail(clientData.email, confirmedClasses);
+            if (total === 0) {
+                const totalP = confirmedClasses.reduce((accumulator, currentClass) => {
+                    return accumulator + currentClass.totalPrice;
+                }, 0);
+                total = totalP;
+            }
+            await emailService.sendMultipleConfirmationEmail(clientData.email, confirmedClasses, total);
         }
 
         return {

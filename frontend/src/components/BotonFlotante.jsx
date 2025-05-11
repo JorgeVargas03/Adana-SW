@@ -64,44 +64,48 @@ export default function BotonFlotante() {
   };
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-    const payerId = params.get("PayerID");
+    const capturarPago = async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        const payerId = params.get("PayerID");
 
-    if (token && payerId) {
-      const usuario = JSON.parse(localStorage.getItem("user"));
-      const userId = usuario?.id;
+        if (token && payerId) {
+          const usuario = JSON.parse(localStorage.getItem("user"));
+          const userId = usuario?.id;
 
-      const selectedClasses = eventosUnidos.map(evento => ({
-        classId: evento.classId,
-        instructorId: evento.instructorId
-      }));
+          const selectedClasses = eventosUnidos.map(evento => ({
+            classId: evento.classId,
+            instructorId: evento.instructorId
+          }));
 
-      if (!userId || !selectedClasses) {
-        toast.error("Faltan datos para completar la reserva.");
-        return;
-      }
+          if (!userId || selectedClasses.length === 0) {
+            toast.error("Faltan datos para completar la reserva.");
+            return;
+          }
 
-      const payload = {
-        orderId: token,
-        userId,
-        selectedClasses
-      };
+          const payload = {
+            orderId: token,
+            userId,
+            selectedClasses
+          };
 
-      axios
-        .post("http://localhost:3001/adana-api/v1/payments/paypal/capture", payload)
-        .then((response) => {
+          const response = await axios.post("http://localhost:3001/adana-api/v1/payments/paypal/capture", payload);
+
           console.log(response);
-          toast.success("Te uniste a todas las clases seleccionadas con éxito 🎉");
           limpiarCarrito();
-          navigate(0);
-        })
-        .catch((error) => {
-          console.error("Error al capturar el pago:", error);
-          toast.error("Hubo un problema al capturar el pago.");
-        });
-    }
+          toast.success("Te uniste a todas las clases seleccionadas con éxito 🎉");
+          navigate("/reservation", { replace: true });          
+        }
+      } catch (err) {
+        console.error("Error al capturar el pago:", err);
+        toast.error("Hubo un problema al capturar el pago.");
+      }
+    };
+
+    capturarPago(); // llama la función
   }, []);
+
 
 
   return (

@@ -114,7 +114,7 @@ exports.capturePaymentAndReserve = async (req, res) => {
       }
   
       // 4. Reservar múltiples clases
-      const reservaResult = await classService.reserveMultipleClasses(userId, selectedClasses);
+      const reservaResult = await classService.reserveMultipleClasses(userId, selectedClasses, totalConDescuento);
   
       if (!reservaResult.success) {
         return res.status(400).json({

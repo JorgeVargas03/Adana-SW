@@ -1,6 +1,7 @@
 // services/paymentService.js
 const axios = require("axios");
 const { paymentsCollection } = require("../models/payments");
+const { userCollection } = require("../models/users");
 
 const CLIENT = process.env.PAYPAL_CLIENT_ID;
 const SECRET = process.env.PAYPAL_CLIENT_SECRET;
@@ -35,10 +36,16 @@ exports.captureAndRegisterPayment = async (orderId, userId, classData) => {
 
     const transaction = captureRes.data.purchase_units[0].payments.captures[0];
 
+    //Consultar nombre del usuario
+    const userDoc = await userCollection.doc(userId).get();
+    const userData = userDoc.data();
+
     // Guardar en Firestore
     const paymentId = `payment_${Date.now()}`;
     await paymentsCollection.doc(paymentId).set({
       client_id: userId,
+      client_name: `${userData.name} ${userData.lastname}`,
+      details: classData.title,
       amount: parseFloat(classData.price),
       date: new Date().toISOString(),
       method: "PayPal",
