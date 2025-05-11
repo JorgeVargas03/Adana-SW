@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { startOfMonth } from "date-fns";
 import MonthViewInstructor from "../components/MonthViewInstructor";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function CalendarAppInstructor() {
   const [classes, setClasses] = useState([]);
@@ -10,7 +11,7 @@ function CalendarAppInstructor() {
   const fetchInstructorClasses = async () => {
     try {
       const instructorId = JSON.parse(localStorage.getItem("user"))?.id;
-      const response = await axios.get(`http://localhost:3001/adana-api/v1/classes/instructor/${instructorId}/myClasses`);
+      const response = await axios.get(`${API_URL}/adana-api/v1/classes/instructor/${instructorId}/myClasses`);
       const data = response.data;
 
       const formattedClasses = data.Clases.map(clase => ({

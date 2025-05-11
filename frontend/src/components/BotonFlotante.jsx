@@ -7,6 +7,7 @@ import axios from 'axios';
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 //Botón flotante para el carrito
@@ -41,13 +42,13 @@ export default function BotonFlotante() {
 
       //Sin pago
       /* const response = await axios.post(
-        `http://localhost:3001/adana-api/v1/classes/reserve/${userId}`,
+        `${API_URL}/adana-api/v1/classes/reserve/${userId}`,
         payload
       ); */
 
       //Con pago
       const response = await axios.post(
-        `http://localhost:3001/adana-api/v1/payments/paypal/create-order`,
+        `${API_URL}/adana-api/v1/payments/paypal/create-order`,
         payload
       );
 
@@ -90,7 +91,7 @@ export default function BotonFlotante() {
             selectedClasses
           };
 
-          const response = await axios.post("http://localhost:3001/adana-api/v1/payments/paypal/capture", payload);
+          const response = await axios.post(`${API_URL}/adana-api/v1/payments/paypal/capture`, payload);
 
           console.log(response);
           limpiarCarrito();

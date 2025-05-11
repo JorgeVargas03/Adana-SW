@@ -6,6 +6,7 @@ const { userCollection } = require("../models/users");
 const CLIENT = process.env.PAYPAL_CLIENT_ID;
 const SECRET = process.env.PAYPAL_CLIENT_SECRET;
 const PAYPAL_API = "https://api-m.sandbox.paypal.com"; // cambiar a live en producción
+const URL_FRONT = process.env.APP_URL_BASE;
 
 const getAccessToken = async () => {
   const auth = Buffer.from(`${CLIENT}:${SECRET}`).toString("base64");
@@ -78,8 +79,8 @@ exports.createPayment = async (classData) => {
           }
         ],
         application_context: {
-          return_url: "http://localhost:5173/reservation", // URL a la que PayPal redirige tras aprobar
-          cancel_url: "http://localhost:5173/reservation", // URL a la que redirige si se cancela
+          return_url: `${URL_FRONT}/reservation`, // URL a la que PayPal redirige tras aprobar
+          cancel_url: `${URL_FRONT}/reservation`, // URL a la que redirige si se cancela
         }
       },
       {

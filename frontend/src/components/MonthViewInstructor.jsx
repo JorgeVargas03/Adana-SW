@@ -6,6 +6,7 @@ import axios from 'axios';
 import { isTokenValid } from '../utils/auth';
 import { toast } from 'react-toastify';
 import { parseISO } from 'date-fns';
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 function MonthViewInstructor({ month, events, onClassAdded }) {
@@ -54,7 +55,7 @@ function MonthViewInstructor({ month, events, onClassAdded }) {
       }
 
       const response = await axios.post(
-        `http://localhost:3001/adana-api/v1/classes/${instructorId}/newClass`,
+        `${API_URL}/adana-api/v1/classes/${instructorId}/newClass`,
         classData
       );
 
@@ -89,7 +90,7 @@ function MonthViewInstructor({ month, events, onClassAdded }) {
     try {
       // Asegurarse de que la URL y el manejo de la respuesta son correctos
       const response = await axios.get(
-        `http://localhost:3001/adana-api/v1/classes/instructor/${event.instructorId}/class/${event.classId}/details`
+        `${API_URL}/adana-api/v1/classes/instructor/${event.instructorId}/class/${event.classId}/details`
       );
 
       // Verificar que los estudiantes estén presentes en la respuesta

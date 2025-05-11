@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { es } from 'date-fns/locale';
 import { useCarrito } from '../context/CarritoContext';
 import { toast } from 'react-toastify';
+const API_URL = import.meta.env.VITE_API_URL;
 
 //Realiza el calendario y sus modales
 function MonthView({ month }) {
@@ -36,7 +37,7 @@ function MonthView({ month }) {
       if (!userId) return;
 
       try {
-        const response = await axios.get(`http://localhost:3001/adana-api/v1/classes/reserves/${userId}`);
+        const response = await axios.get(`${API_URL}/adana-api/v1/classes/reserves/${userId}`);
         const reservas = response.data.reservaciones;
         const ids = reservas.map(reserva => reserva.classId); // 👈 Asegúrate de que exista
         setUserReservations(ids);
@@ -62,7 +63,7 @@ function MonthView({ month }) {
     const fetchEvents = async () => {
       try {
         //petición para obtener la info al back
-        const response = await axios.get("http://localhost:3001/adana-api/v1/classes/availability");
+        const response = await axios.get(`${API_URL}/adana-api/v1/classes/availability`);
         const fetchedEvents = response.data.map(clase => {
           const [hour, minute] = clase.time.split(':');
           const [year, month, day] = clase.date.split('-').map(Number);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MonthViewUser from './MonthViewUser';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export function CalendarAppUsuario () {
   const [events, setEvents] = useState([]);
@@ -15,7 +16,7 @@ export function CalendarAppUsuario () {
       }
       console.log(userId);
 
-      const response = await axios.get(`http://localhost:3001/adana-api/v1/classes/reserves/${userId}`);
+      const response = await axios.get(`${API_URL}/adana-api/v1/classes/reserves/${userId}`);
       console.log('Respuesta del backend:', response.data); 
       
       const reservas = response.data.reservaciones;
