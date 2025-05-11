@@ -1,7 +1,7 @@
 // services/classService.js
 const { userCollection } = require("../models/users");
 const { v4: uuidv4 } = require("uuid");
-const emailServive = require('../utils/emailService');
+const emailService = require('../utils/emailService');
 
 // Servicio para crear una nueva clase
 exports.createClass = async (instructorId, classData) => {
@@ -114,6 +114,7 @@ exports.getAvailableClasses = async () => {
                             id: classId,
                             title: clase.title,
                             description: clase.description,
+                            price: clase.price,
                             date: clase.schedule?.date,
                             time: clase.schedule?.time,
                             formattedDate,
@@ -181,7 +182,7 @@ exports.reserveClass = async (userId, classId, instructorId) => {
             totalPrice: classData.price
         };
 
-        await emailServive.sendConfirmationEmail(clientData.email, classInfo);
+        await emailService.sendConfirmationEmail(clientData.email, classInfo);
 
         return { success: true, message: "Reserva realizada con éxito" };
     } catch (error) {
@@ -231,6 +232,15 @@ exports.reserveMultipleClasses = async (userId, selectedClasses) => {
                 // Preparar reserva
                 const reservationId = `res_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
                 classData.reservations = classData.reservations || {};
+                // Verificar si el usuario ya está inscrito
+                const alreadyReserved = Object.values(classData.reservations).some(
+                    (res) => res.client_id === userId
+                );
+
+                if (alreadyReserved) {
+                    results.push({ classId, success: false, message: "Ya estás inscrito en esta clase" });
+                    continue;
+                }
                 classData.reservations[reservationId] = {
                     client_id: userId,
                     client_name: `${clientData.name} ${clientData.lastname}`,
@@ -267,7 +277,7 @@ exports.reserveMultipleClasses = async (userId, selectedClasses) => {
 
         // 4. Enviar correo si hubo clases confirmadas
         if (confirmedClasses.length > 0) {
-            await emailServive.sendMultipleConfirmationEmail(clientData.email, confirmedClasses);
+            await emailService.sendMultipleConfirmationEmail(clientData.email, confirmedClasses);
         }
 
         return {
@@ -302,6 +312,7 @@ exports.getUserReservations = async (userId) => {
                 Object.values(classReservations).forEach((reservation) => {
                     if (reservation.client_id === userId) {
                         reservations.push({
+                            classId,
                             classTitle: classData.title,
                             instructor: instructorName,
                             date: classData.schedule.date,
@@ -428,11 +439,12 @@ exports.getAllClassesHistory = async () => {
                     allClasses.push({
                         id: classId,
                         title: clase.title,
+                        description: clase.description,
+                        price: clase.price,
                         instructorId,
                         instructorName: `${instructor.name} ${instructor.lastname}`,
                         date: clase.schedule.date,
-                        time: clase.schedule.time,
-                        reservations
+                        time: clase.schedule.time
                     });
                 });
             }

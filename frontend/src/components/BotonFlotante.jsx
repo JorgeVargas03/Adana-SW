@@ -4,6 +4,7 @@ import { XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import axios from 'axios';
+import { toast } from "react-toastify";
 
 
 //Botón flotante para el carrito
@@ -51,11 +52,11 @@ export default function BotonFlotante() {
       // window.location.href = approvalLink;
 
       console.log("Reserva múltiple exitosa:", response.data);
-      alert("Te uniste a todas las clases seleccionadas con éxito 🎉");
+      toast.success("Te uniste a todas las clases seleccionadas con éxito 🎉");
       limpiarCarrito();
     } catch (error) {
       console.error("Error al enviar la reserva múltiple:", error);
-      alert("Hubo un problema al unirte a las clases. Revisa consola.");
+      toast.error("Hubo un problema al unirte a las clases. Revisa consola.");
     }
   };
 
