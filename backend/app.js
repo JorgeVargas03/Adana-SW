@@ -8,9 +8,19 @@ const classRoutes = require("./routes/classRoutes");
 const paymentsRoutes = require("./routes/paymentsRoutes");
 
 // Habilita CORS para permitir solicitudes desde tu frontend
+const allowedOrigins = [
+  process.env.URL_LOCAL,
+  process.env.URL_RENDER, // reemplaza con tu URL real de Render
+];
 app.use(cors({
-  origin: "http://localhost:5173", // URL de tu frontend
-  credentials: true,               // Solo si usas cookies o headers personalizados
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("No permitido por CORS"));
+    }
+  },
+  credentials: true,
 }));
 //const paqueteRoutes = require("./routes/paquete.routes");
 
