@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import icon from '../assets/images/icon.png';
 import { loginWithGoogle } from "../services/loginWithGoogle";
 import { login } from '../services/authService';
+import { toast } from 'react-toastify';
 
 const Signin = () => {
   const navigate = useNavigate();
+  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   // Verificar si el usuario ya está autenticado al cargar el componente
   /*
@@ -26,16 +28,21 @@ const Signin = () => {
       localStorage.setItem("user", JSON.stringify(user)); // pasa el user pa la compra
       const gRole = user.role;
       console.log(gRole);
+      toast.success(`¡Inicio de sesión exitoso! Bienvenido: ${user.name}`, {
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      })
+      await sleep(900);
       // Redirigir después de un inicio de sesión exitoso
-      if(gRole == 'instructor'){
-      navigate('/home2');
-      }else if(gRole === 'administrador'){
+      if (gRole == 'instructor') {
+        navigate('/home2');
+      } else if (gRole === 'administrador') {
         navigate('/myprofile');
-      }else{
+      } else {
         navigate('/');
       }
       window.dispatchEvent(new Event('storage'));
-      console.log("Bienvenido:", user.name);
 
     } catch (error) {
       if (error.code === 'USER_NOT_FOUND') {
@@ -50,7 +57,7 @@ const Signin = () => {
         navigate('/register');
       } else {
         console.error("Error desconocido:", error);
-        alert("Error al iniciar sesión con Google.");
+        toast.error("Error al iniciar sesión con Google.");
       }
     }
   };
@@ -61,7 +68,7 @@ const Signin = () => {
   const handleNormalLogin = async () => {
     try {
       if (!correo || !contraseña) {
-        alert("Por favor completa todos los campos.");
+        toast.warn("Por favor completa todos los campos.");
         return;
       }
 
@@ -70,27 +77,44 @@ const Signin = () => {
         password: contraseña,
       };
 
+      // Mostrar loading toast
+      const toastId = toast.loading("Iniciando sesión...");
+      await sleep(1000);
       const sesion = await login(userData);
       const nRole = sesion.role;
-      alert("¡Inicio de sesión exitoso!, Bienvenido:", sesion.name);
-      // Guarda el token en localStorage
-      // Notifica a otros componentes (opcional si ya lo usas)
+
+      // Actualizar toast a éxito
+      toast.update(toastId, {
+        render: `¡Inicio de sesión exitoso! Bienvenido: ${sesion.name}`,
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      await sleep(600);
       localStorage.setItem('user', JSON.stringify(sesion));
       window.dispatchEvent(new Event('storage'));
 
-      // Redirigir después de un inicio de sesión exitoso
-      if(nRole == 'instructor'){
+      if (nRole === 'instructor') {
         navigate('/home2');
-        }else if(nRole === 'administrador'){
-          navigate('/myprofile');
-        }else{
-          navigate('/');
-        }
+      } else if (nRole === 'administrador') {
+        navigate('/myprofile');
+      } else {
+        navigate('/');
+      }
+
     } catch (error) {
       console.error("Error al iniciar sesión usuario:", error);
-      alert("Error al iniciar sesión. Verifica los datos o intenta más tarde.");
+
+      // Si hubo error, actualizar el toast a error
+      toast.update(toastId, {
+        render: "Error al iniciar sesión. Verifica los datos o intenta más tarde.",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
     }
   };
+
 
   return (
     <div className='flex justify-center items-center h-screen w-full bg-accent1/70 mt-10 font-Outfit'>

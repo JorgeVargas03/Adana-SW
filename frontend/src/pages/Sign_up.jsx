@@ -3,9 +3,11 @@ import icon from '../assets/images/icon.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginWithGoogle } from "../services/loginWithGoogle";
 import { registerUser } from '../services/authService';
+import { toast } from 'react-toastify';
 
 
 const SignUp = () => {
+  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
   const navigate = useNavigate();
 
   //Verificar si el usuario ya inicio sesion, si es asi, lo lleva a home
@@ -43,29 +45,44 @@ const SignUp = () => {
   //metodo para el registro de google 
 
   const handleRegister = async () => {
-      try {
-        const user = await loginWithGoogle();
-        window.dispatchEvent(new Event('storage'));
-        console.log("Bienvenido:", user.name);
-        // Redirigir después de un inicio de sesión exitoso
+    try {
+      const user = await loginWithGoogle();
+      localStorage.setItem("user", JSON.stringify(user)); // pasa el user pa la compra
+      const gRole = user.role;
+      console.log(gRole);
+      toast.success(`¡Inicio de sesión exitoso! Bienvenido: ${user.name}`, {
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      })
+      await sleep(900);
+      // Redirigir después de un inicio de sesión exitoso
+      if (gRole == 'instructor') {
+        navigate('/home2');
+      } else if (gRole === 'administrador') {
+        navigate('/myprofile');
+      } else {
         navigate('/');
-      } catch (error) {
-        if (error.code === 'USER_NOT_FOUND') {
-          console.log("Usuario no encontrado. Redirigiendo al formulario de registro...");
-          // Guarda el user temporalmente en localStorage
-          localStorage.setItem("user", JSON.stringify({
-            name: error.profile.displayName,
-            email: error.profile.email,
-            profile_picture: error.profile.photoURL || ""
-          }));
-          // Redirigir a la página de registro (o completar el registro)
-          navigate('/register');
-        } else {
-          console.error("Error desconocido:", error);
-          alert("Error al iniciar sesión con Google.");
-        }
       }
-    };
+      window.dispatchEvent(new Event('storage'));
+
+    } catch (error) {
+      if (error.code === 'USER_NOT_FOUND') {
+        toast.info("Complete su registro para continuar");
+        // Guarda el user temporalmente en localStorage
+        localStorage.setItem("user", JSON.stringify({
+          name: error.profile.displayName,
+          email: error.profile.email,
+          profile_picture: error.profile.photoURL || ""
+        }));
+        // Redirigir a la página de registro (o completar el registro)
+        navigate('/register');
+      } else {
+        console.error("Error desconocido:", error);
+        toast.error("Error al iniciar sesión con Google.");
+      }
+    }
+  };
 
   const handleNormalRegister = async () => {
     try {
@@ -196,9 +213,9 @@ const SignUp = () => {
                   <span>Correo</span>
                 </label>
                 <div className="mt-2">
-                  <input type="email" 
-                   onChange={(e) => setCorreo(e.target.value)}
-                   placeholder="Ingrese un correo" className="peer block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                  <input type="email"
+                    onChange={(e) => setCorreo(e.target.value)}
+                    placeholder="Ingrese un correo" className="peer block w-full rounded-md bg-white py-1.5 px-3 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                   <p className="text-red-700 hidden peer-invalid:block">Por favor, proporciona un correo válido.</p>
                 </div>
               </div>

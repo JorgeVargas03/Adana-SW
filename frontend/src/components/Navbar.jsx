@@ -4,6 +4,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/icon.png';
 import { Disclosure } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
 
 const baseNavigation = [
   { name: 'RESERVA', to: '/reservation' },
@@ -89,6 +90,7 @@ export default function Navbar() {
   };
 
   const handleSignOut = () => {
+    toast.info("Sesion cerrada con éxito, hasta luego!");
     removeToken();
     localStorage.removeItem('user');
     console.log("Token eliminado");

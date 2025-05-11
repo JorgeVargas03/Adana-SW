@@ -76,6 +76,7 @@ function MonthViewInstructor({ month, events, onClassAdded }) {
       });
 
     } catch (error) {
+      toast.error("No se pudo crear la clase, intente de nuevo mas tarde");
       console.error('Error al crear clase:', error);
     }
     setShowCreateModal(false);

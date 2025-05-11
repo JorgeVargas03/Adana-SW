@@ -181,7 +181,7 @@ const MyProfile = () => {
 
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-accent1/70 py-12 font-Outfit pt-30">
+    <section className="min-h-screen flex items-center justify-center bg-accent1/70 py-12 font-Outfit pt-30 pr-30 pl-30">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-md overflow-hidden">
         <div className="flex flex-col md:flex-row">
 

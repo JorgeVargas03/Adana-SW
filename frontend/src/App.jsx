@@ -46,7 +46,10 @@ const App = () => {
           </main>
           <Footer />
         </div>
-        <ToastContainer position="bottom-right" autoClose={3000} />
+        <ToastContainer position="bottom-right"
+         autoClose={3000}
+         theme="colored"
+         newestOnTop />
       </CarritoProvider>
     </Router>
   );
