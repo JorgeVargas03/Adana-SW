@@ -94,7 +94,7 @@ const SignUp = () => {
         !telefono ||
         selectedGender === 'Género'
       ) {
-        alert("Por favor completa todos los campos.");
+        toast.info("Por favor completa todos los campos.");
         return;
       }
 
@@ -109,11 +109,11 @@ const SignUp = () => {
       };
 
       await registerUser(userData);
-      alert("¡Registro exitoso!");
+      toast.success("¡Registro exitoso!");
       navigate('/signin');
     } catch (error) {
       console.error("Error al registrar usuario:", error);
-      alert("Error al registrar. Verifica los datos o intenta más tarde.");
+      toast.error("Error al registrar. Verifica los datos o intenta más tarde.");
     }
   };
 

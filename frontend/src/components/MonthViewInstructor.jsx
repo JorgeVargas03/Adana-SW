@@ -50,7 +50,7 @@ function MonthViewInstructor({ month, events, onClassAdded }) {
       };
       const instructorId = JSON.parse(localStorage.getItem("user"))?.id;
       if (!newClass.title || !newClass.description || !newClass.schedule.date || !newClass.schedule.time || !newClass.capacity) {
-        alert("Por favor completa todos los campos requeridos.");
+        toast.info("Por favor completa todos los campos requeridos.");
         return;
       }
 
