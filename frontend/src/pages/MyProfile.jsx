@@ -213,6 +213,13 @@ const MyProfile = () => {
       return;
     }
 
+    //Validar si los campos no estan vacios
+    // Validar que los campos no estén vacíos ni sean espacios en blanco
+    if (!profileData.name.trim() || !profileData.lastname.trim() || !profileData.phone.trim()) {
+      toast.warn("No se permite dejar campos en blanco");
+      return;
+    }
+
     const formData = new FormData(); // ← Nuevo: usamos FormData para enviar campos + archivos
     let hasChanges = false;
 
@@ -273,6 +280,7 @@ const MyProfile = () => {
       }
 
       await fetchUserInfo();
+      setNewProfilePicture(null);
       toast.success('Cambios guardados exitosamente');
 
       //navigate(0); // Refrescamos la página

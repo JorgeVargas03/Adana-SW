@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { format, startOfMonth, endOfMonth, getDay, isSameDay, eachDayOfInterval, startOfDay } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
+import iconDefault from '../assets/images/icon.png';
 import { es } from 'date-fns/locale';
 import axios from 'axios';
 import { isTokenValid } from '../utils/auth';
