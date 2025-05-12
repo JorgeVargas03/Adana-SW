@@ -21,9 +21,9 @@ const instructorNavigation = [
 ];
 
 const adminNavigation = [
+  { name: 'REPORTES', to: '/faq' },
   { name: 'GESTOR DE USUARIOS', to: '/admin/usermanage' },
   { name: 'GESTOR DE PAGOS', to: '/instructors' },
-  { name: 'BIENESTAR', to: '/wellness' }
 ];
 
 function classNames(...classes) {
