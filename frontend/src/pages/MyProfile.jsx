@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { PaperClipIcon, CameraIcon } from '@heroicons/react/20/solid';
 import iconDefault from '../assets/images/icon.png';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { isTokenValid, removeToken } from '../utils/auth';
+import { toast } from "react-toastify";
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -18,56 +20,164 @@ const MyProfile = () => {
   const [originalData, setOriginalData] = useState({});
   const [newProfilePicture, setNewProfilePicture] = useState(null); // Guardamos la nueva imagen si cambia
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    fetchUserInfo();
+  }, [navigate]);
+  const [showModal, setShowModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [hasPassword, setHasPassword] = useState(false);
+
+
+  const fetchUserInfo = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = localStorage.getItem('token');
+
+      if (!user || !token) {
+        removeToken();
+        navigate('/signin');
+        window.dispatchEvent(new Event('storage'));
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/adana-api/v1/users/${user.id}/info`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al obtener la información del usuario');
+      }
+
+      const data = await response.json();
+
+      setProfileData({
+        name: data.name || '',
+        lastname: data.lastname || '',
+        email: data.email || '',
+        phone: data.phone || '',
+        profile_picture: data.profile_picture || '',
+      });
+
+      setOriginalData({
+        name: data.name || '',
+        lastname: data.lastname || '',
+        phone: data.phone || '',
+        profile_picture: data.profile_picture || '',
+      });
+    } catch (error) {
+      console.error('Error cargando la información del perfil:', error);
+      removeToken();
+      navigate('/signin');
+      window.dispatchEvent(new Event('storage'));
+    }
+  };
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user?.id;
+
+    const checkIfUserHasPassword = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_URL}/adana-api/v1/users/profile/${userId}/hasPassword`);
+        const data = await res.json();
+        setHasPassword(data.hasPassword);
+      } catch (error) {
+        console.error("Error al verificar si el usuario tiene contraseña:", error);
+      }
+    };
 
-        if (!user || !token) {
-          removeToken();
-          navigate('/signin');
-          window.dispatchEvent(new Event('storage'));
-          return;
-        }
+    if (userId) {
+      checkIfUserHasPassword();
+    }
+  }, []);
 
-        const response = await fetch(`${API_URL}/adana-api/v1/users/${user.id}/info`, {
-          method: 'GET',
+  const handleDiscardChanges = () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = localStorage.getItem('token');
+
+    if (!user || !token) {
+      removeToken();
+      navigate('/login');
+      return;
+    }
+
+    let hasChanges = false;
+    hasChanges = validateChanges(false);
+
+    if (!hasChanges) {
+      return;
+    }
+
+    setProfileData((prev) => ({
+      ...prev,
+      name: originalData.name,
+      lastname: originalData.lastname,
+      phone: originalData.phone,
+      profile_picture: originalData.profile_picture,
+    }));
+    setNewProfilePicture(null);
+
+    toast.info("Sus modificaciones se han descartado");
+  };
+
+  const handleSaveNewPassword = async () => {
+    // Validar que los campos no estén vacíos ni sean espacios en blanco
+    if (!currentPassword.trim() || !newPassword.trim() || !confirmPassword.trim()) {
+      toast.error("Todos los campos son obligatorios y no deben ser espacios en blanco.");
+      return;
+    }
+
+    // Verificar que la nueva contraseña y la confirmación sean iguales
+    if (newPassword !== confirmPassword) {
+      toast.error("Las contraseñas no coinciden.");
+      return;
+    }
+
+    // Llamar a la API para actualizar la contraseña
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = localStorage.getItem('token');
+
+      if (!user || !token) {
+        removeToken();
+        navigate('/signin');
+        return;
+      }
+
+      // Enviar solicitud PUT o PATCH a la API para actualizar la contraseña
+      const response = await axios.put(
+        `${API_URL}/adana-api/v1/users/profile/${user.id}/updatePassword`,
+        {
+          currentPassword,
+          newPassword
+        },
+        {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-        });
-
-        if (!response.ok) {
-          throw new Error('Error al obtener la información del usuario');
         }
+      );
 
-        const data = await response.json();
-
-        setProfileData({
-          name: data.name || '',
-          lastname: data.lastname || '',
-          email: data.email || '',
-          phone: data.phone || '',
-          profile_picture: data.profile_picture || '',
-        });
-
-        setOriginalData({
-          name: data.name || '',
-          lastname: data.lastname || '',
-          phone: data.phone || '',
-          profile_picture: data.profile_picture || '',
-        });
-      } catch (error) {
-        console.error('Error cargando la información del perfil:', error);
-        removeToken();
-        navigate('/signin');
-        window.dispatchEvent(new Event('storage'));
+      if (response.status === 200) {
+        toast.success("Contraseña actualizada correctamente.");
+        handleCloseModal(); // Cerrar modal después de éxito
+      } else {
+        toast.error(response.data.message || "Error al actualizar la contraseña.");
       }
-    };
+    } catch (error) {
+      console.error("Error al actualizar la contraseña:", error);
+      toast.error("Hubo un problema al cambiar la contraseña. Inténtalo de nuevo.");
+    }
+  };
 
-    fetchUserInfo();
-  }, [navigate]);
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -75,7 +185,7 @@ const MyProfile = () => {
 
     const MAX_SIZE = 1 * 1024 * 1024; // 1MB
     if (file.size > MAX_SIZE) {
-      alert('La imagen es demasiado grande. El tamaño máximo es 1MB.');
+      toast.warn('La imagen es demasiado grande. El tamaño máximo es 1MB.');
       return;
     }
 
@@ -125,7 +235,7 @@ const MyProfile = () => {
     }
 
     if (!hasChanges) {
-      alert('No hay cambios para guardar');
+      toast.info('No hay cambios para guardar');
       return;
     }
 
@@ -157,29 +267,58 @@ const MyProfile = () => {
         // Guardar de nuevo en localStorage como string
         localStorage.setItem('user', JSON.stringify(ND));
 
+        console.log(localStorage.getItem('user'));
         // Notificar cambios
         window.dispatchEvent(new Event('storage'));
       }
 
-      setOriginalData({
-        name: updatedData.name,
-        lastname: updatedData.lastname,
-        phone: updatedData.phone,
-        profile_picture: updatedData.profile_picture,
-      });
+      await fetchUserInfo();
+      toast.success('Cambios guardados exitosamente');
 
-      setProfileData(updatedData);
-
-
-      alert('Cambios guardados exitosamente');
-      navigate(0); // Refrescamos la página
+      //navigate(0); // Refrescamos la página
     } catch (error) {
       console.error('Error guardando cambios:', error);
-      alert('Hubo un error guardando los cambios');
+      toast.error('Hubo un error guardando los cambios');
     }
   };
 
+  const openModal = () => {
+    setShowModal(true);
+    setTimeout(() => setModalVisible(true), 10); // delay breve para activar animación
+  };
 
+  const closeModal = () => {
+    setModalVisible(false);
+    setTimeout(() => setShowModal(false), 300); // espera animación
+  };
+
+  const resetForm = () => {
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
+
+  const handleCloseModal = () => {
+    resetForm();
+    setShowModal(false);
+  };
+
+
+  const validateChanges = (hasChanges) => {
+    if (profileData.name !== originalData.name) {
+      hasChanges = true;
+    }
+    if (profileData.lastname !== originalData.lastname) {
+      hasChanges = true;
+    }
+    if (profileData.phone !== originalData.phone) {
+      hasChanges = true;
+    }
+    if (newProfilePicture) {
+      hasChanges = true;
+    }
+    return hasChanges;
+  }
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-accent1/70 py-12 font-Outfit pt-30 pr-30 pl-30">
@@ -264,12 +403,31 @@ const MyProfile = () => {
               </div>
 
               {/* Botón guardar */}
-              <div className="mt-8 flex justify-center">
+              <div className="mt-8 flex justify-center gap-x-15">
                 <button
                   onClick={handleSaveChanges}
-                  className="w-1/2 py-3 px-6 text-white bg-fontlink hover:bg-linkselect rounded-lg font-semibold transition duration-200"
+                  className="w-1/2 py-3 mb-8 px-6 text-white bg-fontlink hover:bg-linkselect rounded-lg font-semibold transition duration-200"
                 >
                   Guardar cambios
+                </button>
+                <button
+                  onClick={handleDiscardChanges}
+                  className="w-1/2 py-3 mb-8 px-6 text-white bg-red-400 hover:bg-red-500 rounded-lg font-semibold transition duration-200"
+                >
+                  Descartar cambios
+                </button>
+              </div>
+              <div className="mt-6 flex justify-center">
+                <button
+                  onClick={openModal}
+                  disabled={!hasPassword}
+                  title={!hasPassword ? "Esta función solo está disponible si usas contraseña" : ""}
+                  className={`w-1/2 py-3 px-6 rounded-lg text-white font-semibold transition duration-200 
+                      ${hasPassword
+                      ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
+                      : 'bg-gray-300 text-white cursor-not-allowed'}`}
+                > {/* text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition duration-200*/}
+                  Cambiar contraseña
                 </button>
               </div>
 
@@ -277,8 +435,95 @@ const MyProfile = () => {
           </div>
         </div>
       </div>
+      <AnimatePresence>
+        {showModal && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-black bg-opacity-30"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={handleCloseModal}
+            />
+
+            <motion.div
+              className="fixed inset-0 flex items-center justify-center z-50"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              onClick={handleCloseModal}
+            >
+              <div
+                className="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-lg mx-auto text-fontdef"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h2 className="text-2xl font-bold text-center text-[#7E5EC3] mb-6">Cambiar contraseña</h2>
+
+                <div className="space-y-4">
+                  {/* Contraseña actual */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Contraseña actual</label>
+                    <input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="mt-1 block w-full rounded-lg text-xl border border-gray-300 shadow-sm focus:ring-[#C3C37E] focus:border-[#C3C37E] text-sm px-3 py-2"
+                    />
+                  </div>
+
+                  {/* Nueva contraseña */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Nueva contraseña</label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="mt-1 block w-full rounded-lg text-xl border border-gray-300 shadow-sm focus:ring-[#C3C37E] focus:border-[#C3C37E] text-sm px-3 py-2"
+                    />
+                  </div>
+
+                  {/* Confirmar nueva contraseña */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Confirmar nueva contraseña</label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="mt-1 block w-full rounded-lg text-xl border border-gray-300 shadow-sm focus:ring-[#C3C37E] focus:border-[#C3C37E] text-sm px-3 py-2"
+                    />
+                  </div>
+                </div>
+
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={handleCloseModal}
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-full font-medium transition duration-300"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveNewPassword}
+                    className="bg-[#7E5EC3] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition duration-300"
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+
+
     </section>
   );
 };
+
 
 export default MyProfile;

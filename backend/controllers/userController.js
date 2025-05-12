@@ -67,6 +67,19 @@ exports.updatePassword = async (req, res) => {
   return res.status(result.status || 200).json({ message: result.message });
 };
 
+// Controlador para saber si un usuario tiene una contraseña registrada
+exports.getHasPassword = async (req, res) => {
+  const userId = req.params.userId;
+
+  const result = await userService.userHasPassword(userId);
+  if (!result.success) {
+    return res.status(result.status).json({ message: result.message });
+  }
+
+  return res.status(200).json({ hasPassword: result.hasPassword });
+};
+
+
 // Controlador para obtener usuario por ID
 exports.getUserById = async (req, res) => {
   const { userId } = req.params;

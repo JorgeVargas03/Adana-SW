@@ -13,6 +13,7 @@ router.get('/', userController.getAllUsers);
 router.patch('/:userId/status', userController.updateUserStatus);
 router.patch('/profile/:userId/updateProfile', upload.single('profile_picture'), userController.updateUserProfile);
 router.put('/profile/:userId/updatePassword', userController.updatePassword);
+router.get('/profile/:userId/hasPassword', userController.getHasPassword);
 router.get('/:userId/info', userController.getUserById);
 
 module.exports = router;

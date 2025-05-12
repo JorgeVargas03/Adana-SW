@@ -46,9 +46,9 @@ exports.updateUserStatusService = async (userId, newStatus) => {
 // Servicio para actualizar el perfil de un usuario
 exports.updateUserProfile = async (userId, updateData) => {
   try {
-    let newP = "";
     const userRef = userCollection.doc(userId);
     const userDoc = await userRef.get();
+    let newP = userDoc.data().profile_picture;
 
     if (!userDoc.exists) {
       return { success: false, status: 404, message: "Usuario no encontrado" };
@@ -137,6 +137,24 @@ exports.updateUserPassword = async (userId, currentPassword, newPassword) => {
   } catch (error) {
     console.error("Error al actualizar contraseña:", error);
     return { success: false, status: 500, message: "Error interno del servidor" };
+  }
+};
+
+//Servicio para saber si el usuario tiene una contraseña
+exports.userHasPassword = async (userId) => {
+  try {
+    const userDoc = await userCollection.doc(userId).get();
+    if (!userDoc.exists) {
+      return { success: false, status: 404, hasPassword: false, message: "Usuario no encontrado" };
+    }
+
+    const userData = userDoc.data();
+    const hasPassword = userData.password != null;
+
+    return { success: true, hasPassword };
+  } catch (error) {
+    console.error("Error al verificar si tiene contraseña:", error);
+    return { success: false, status: 500, hasPassword: false, message: "Error del servidor" };
   }
 };
 

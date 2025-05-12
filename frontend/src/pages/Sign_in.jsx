@@ -66,6 +66,7 @@ const Signin = () => {
 
   // Manejar login normal
   const handleNormalLogin = async () => {
+    let toastId;
     try {
       if (!correo || !contraseña) {
         toast.warn("Por favor completa todos los campos.");
@@ -78,7 +79,7 @@ const Signin = () => {
       };
 
       // Mostrar loading toast
-      const toastId = toast.loading("Iniciando sesión...");
+      toastId = toast.loading("Iniciando sesión...");
       await sleep(1000);
       const sesion = await login(userData);
       const nRole = sesion.role;
