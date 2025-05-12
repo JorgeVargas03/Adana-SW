@@ -36,9 +36,9 @@ const Signin = () => {
       await sleep(900);
       // Redirigir después de un inicio de sesión exitoso
       if (gRole == 'instructor') {
-        navigate('/home2');
+        navigate('/instructor/home');
       } else if (gRole === 'administrador') {
-        navigate('/myprofile');
+        navigate('/admin/usermanage');
       } else {
         navigate('/');
       }
@@ -96,9 +96,9 @@ const Signin = () => {
       window.dispatchEvent(new Event('storage'));
 
       if (nRole === 'instructor') {
-        navigate('/home2');
+        navigate('/instructor/home');
       } else if (nRole === 'administrador') {
-        navigate('/myprofile');
+        navigate('/admin/usermanage');
       } else {
         navigate('/');
       }
