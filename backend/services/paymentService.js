@@ -98,4 +98,23 @@ exports.createPayment = async (classData) => {
   }
 };
 
+exports.getPayments = async () => {
+  try {
+    const snapshot = await paymentsCollection.get();
+    const payments = [];
+    snapshot.forEach(doc => {
+      payments.push(doc.data())
+    })
+    if (payments){
+      return { success: true, data: payments, status: 200 };
+    }
+    else{
+      return { success: false, data: payments, status: 404};
+    }
+  }catch (error){
+      console.error('Error al obtener pagos:', error);
+      return { success: false, message: "Error al obtener los pagos" };
+  }
+}
+
 
