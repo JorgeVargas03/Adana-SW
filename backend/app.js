@@ -6,6 +6,8 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const classRoutes = require("./routes/classRoutes");
 const paymentsRoutes = require("./routes/paymentsRoutes");
+const adminRoutes = require('./routes/adminRoutes'); 
+
 
 // Habilita CORS para permitir solicitudes desde tu frontend
 const allowedOrigins = [
@@ -30,6 +32,7 @@ app.use("/auth", authRoutes);
 app.use("/adana-api/v1/users", userRoutes);
 app.use("/adana-api/v1/classes", classRoutes);
 app.use("/adana-api/v1/payments", paymentsRoutes);
+app.use('/adana-api/v1/admin', adminRoutes);
 //app.use("/api", paqueteRoutes);
 
 // Middleware para rutas no definidas (404 global)

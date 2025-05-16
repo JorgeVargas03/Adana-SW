@@ -138,9 +138,6 @@ exports.capturePaymentAndReserve = async (req, res) => {
     }
   };
 
-
-
-
 // Controlador para obtener todos los pagos
 exports.getPayments = async (req, res) => {
   try {
