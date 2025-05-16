@@ -15,6 +15,8 @@ import { CarritoProvider } from './context/CarritoContext';
 import ReserClient from './pages/ReserClient';
 import MyProfile from './pages/MyProfile';
 import UsuariosRegistrados from './pages/admin/UsuariosRegistrados';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 //envueltos con el carrito para que se puedan pasar la información sin problemas
 const App = () => {
@@ -44,6 +46,10 @@ const App = () => {
           </main>
           <Footer />
         </div>
+        <ToastContainer position="bottom-right"
+         autoClose={3000}
+         theme="colored"
+         newestOnTop />
       </CarritoProvider>
     </Router>
   );

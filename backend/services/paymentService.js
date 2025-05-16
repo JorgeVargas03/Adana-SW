@@ -1,10 +1,12 @@
 // services/paymentService.js
 const axios = require("axios");
 const { paymentsCollection } = require("../models/payments");
+const { userCollection } = require("../models/users");
 
 const CLIENT = process.env.PAYPAL_CLIENT_ID;
 const SECRET = process.env.PAYPAL_CLIENT_SECRET;
 const PAYPAL_API = "https://api-m.sandbox.paypal.com"; // cambiar a live en producción
+const URL_FRONT = process.env.APP_URL_BASE;
 
 const getAccessToken = async () => {
   const auth = Buffer.from(`${CLIENT}:${SECRET}`).toString("base64");
@@ -16,41 +18,6 @@ const getAccessToken = async () => {
   });
   return res.data.access_token;
 };
-
-//Servicio para crear pago (1 clase)
-/*
-exports.createPayment = async (classData) => {
-  try {
-    const accessToken = await getAccessToken();
-    const amount = classData.price;
-
-    const res = await axios.post(
-      `${PAYPAL_API}/v2/checkout/orders`,
-      {
-        intent: "CAPTURE",
-        purchase_units: [{
-          amount: {
-            currency_code: "MXN",
-            value: amount.toFixed(2),
-          },
-          description: classData.title,
-        }],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    return { success: true, data: res.data };
-  } catch (error) {
-    console.error("Error al crear pago con PayPal:", error);
-    return { success: false, message: "Error al iniciar pago con PayPal" };
-  }
-};
-*/
 
 //Servicio para capturar y registrar pago (1 o mas clases)
 exports.captureAndRegisterPayment = async (orderId, userId, classData) => {
@@ -70,10 +37,16 @@ exports.captureAndRegisterPayment = async (orderId, userId, classData) => {
 
     const transaction = captureRes.data.purchase_units[0].payments.captures[0];
 
+    //Consultar nombre del usuario
+    const userDoc = await userCollection.doc(userId).get();
+    const userData = userDoc.data();
+
     // Guardar en Firestore
     const paymentId = `payment_${Date.now()}`;
     await paymentsCollection.doc(paymentId).set({
       client_id: userId,
+      client_name: `${userData.name} ${userData.lastname}`,
+      details: classData.title,
       amount: parseFloat(classData.price),
       date: new Date().toISOString(),
       method: "PayPal",
@@ -96,13 +69,19 @@ exports.createPayment = async (classData) => {
       `${PAYPAL_API}/v2/checkout/orders`,
       {
         intent: "CAPTURE",
-        purchase_units: [{
-          amount: {
-            currency_code: "MXN",
-            value: classData.price.toFixed(2),
-          },
-          description: classData.title, // Puede ser "Paquete de X clases"
-        }],
+        purchase_units: [
+          {
+            amount: {
+              currency_code: "MXN",
+              value: classData.price.toFixed(2),
+            },
+            description: classData.title,
+          }
+        ],
+        application_context: {
+          return_url: `${URL_FRONT}/reservation`, // URL a la que PayPal redirige tras aprobar
+          cancel_url: `${URL_FRONT}/reservation`, // URL a la que redirige si se cancela
+        }
       },
       {
         headers: {
@@ -114,8 +93,9 @@ exports.createPayment = async (classData) => {
 
     return { success: true, data: res.data };
   } catch (error) {
-    console.error("Error al crear pago con PayPal:", error);
+    console.error("Error al crear pago con PayPal:", error.response?.data || error);
     return { success: false, message: "Error al iniciar pago con PayPal" };
   }
 };
+
 

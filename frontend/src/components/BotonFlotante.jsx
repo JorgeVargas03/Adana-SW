@@ -4,6 +4,10 @@ import { XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import { useCarrito } from "../context/CarritoContext";
 import axios from 'axios';
+import { toast } from "react-toastify";
+import { useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 //Botón flotante para el carrito
@@ -13,6 +17,7 @@ export default function BotonFlotante() {
   const { eventosUnidos, quitarEvento, limpiarCarrito } = useCarrito();
   const [loading, setLoading] = useState(false);
   const userId = JSON.parse(localStorage.getItem("user"))?.id;
+  const navigate = useNavigate();
 
   //Ahora si debe mandar la puta info carajo
   const handleReservar = async () => {
@@ -36,29 +41,71 @@ export default function BotonFlotante() {
       };
 
       //Sin pago
+      /* const response = await axios.post(
+        `${API_URL}/adana-api/v1/classes/reserve/${userId}`,
+        payload
+      ); */
+
+      //Con pago
       const response = await axios.post(
-        `http://localhost:3001/adana-api/v1/classes/reserve/${userId}`,
+        `${API_URL}/adana-api/v1/payments/paypal/create-order`,
         payload
       );
 
-      //Con pago
-      // const response = await axios.post(
-      //   `http://localhost:3001/adana-api/v1/payments/paypal/create-order`,
-      //   payload
-      // );
+      const { approvalLink } = response.data;
+      window.location.href = approvalLink;
 
-      // const { approvalLink } = response.data;
-      // window.location.href = approvalLink;
-
-      console.log("Reserva múltiple exitosa:", response.data);
-      alert("Te uniste a todas las clases seleccionadas con éxito 🎉");
-      limpiarCarrito();
+      //console.log("Reserva múltiple exitosa:", response.data);
+      //toast.success("Te uniste a todas las clases seleccionadas con éxito 🎉");
+      //limpiarCarrito();
     } catch (error) {
       console.error("Error al enviar la reserva múltiple:", error);
-      alert("Hubo un problema al unirte a las clases. Revisa consola.");
+      toast.error("Hubo un problema al unirte a las clases. Revisa consola.");
     }
   };
 
+  useEffect(() => {
+    const capturarPago = async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+        const payerId = params.get("PayerID");
+
+        if (token && payerId) {
+          const usuario = JSON.parse(localStorage.getItem("user"));
+          const userId = usuario?.id;
+
+          const selectedClasses = eventosUnidos.map(evento => ({
+            classId: evento.classId,
+            instructorId: evento.instructorId
+          }));
+
+          if (!userId || selectedClasses.length === 0) {
+            toast.error("Faltan datos para completar la reserva.");
+            return;
+          }
+
+          const payload = {
+            orderId: token,
+            userId,
+            selectedClasses
+          };
+
+          const response = await axios.post(`${API_URL}/adana-api/v1/payments/paypal/capture`, payload);
+
+          console.log(response);
+          limpiarCarrito();
+          toast.success("Te uniste a todas las clases seleccionadas con éxito 🎉");
+          navigate("/reservation", { replace: true });          
+        }
+      } catch (err) {
+        console.error("Error al capturar el pago:", err);
+        toast.error("Hubo un problema al capturar el pago.");
+      }
+    };
+
+    capturarPago(); // llama la función
+  }, []);
 
 
 

@@ -1,5 +1,6 @@
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 // 1. Crear el contexto
 const CarritoContext = createContext();
@@ -9,7 +10,14 @@ export const useCarrito = () => useContext(CarritoContext);
 
 // 3. Componente proveedor
 export const CarritoProvider = ({ children }) => {
-  const [eventosUnidos, setEventosUnidos] = useState([]);
+  const [eventosUnidos, setEventosUnidos] = useState(() => {
+    const carritoGuardado = localStorage.getItem("carrito");
+    return carritoGuardado ? JSON.parse(carritoGuardado) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("carrito", JSON.stringify(eventosUnidos));
+  }, [eventosUnidos]);
 
   const agregarEvento = (evento) => {
     const yaExiste = eventosUnidos.some(
@@ -17,14 +25,20 @@ export const CarritoProvider = ({ children }) => {
     );
     if (!yaExiste) {
       setEventosUnidos((prev) => [...prev, evento]);
-    }else{
-        alert("Ya te has unido a esta clase.");
-        return;
-      
+      toast.info("Clase agregada al carrito",{
+        position: 'bottom-left'
+      });
+    } else {
+      toast.warn("Esta clase ya se encuentra en el carrito");
+      return;
+
     }
   };
 
-  const limpiarCarrito = () => setEventosUnidos([]);
+  const limpiarCarrito = () => {
+    setEventosUnidos([]);
+    localStorage.removeItem("carrito");
+  };
 
 
   //quitar?

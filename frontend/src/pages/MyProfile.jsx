@@ -4,6 +4,7 @@ import iconDefault from '../assets/images/icon.png';
 import { useNavigate } from 'react-router-dom';
 import { isTokenValid, removeToken } from '../utils/auth';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const MyProfile = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const MyProfile = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:3001/adana-api/v1/users/${user.id}/info`, {
+        const response = await fetch(`${API_URL}/adana-api/v1/users/${user.id}/info`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -130,7 +131,7 @@ const MyProfile = () => {
 
     try {
       const response = await axios.patch(
-        `http://localhost:3001/adana-api/v1/users/profile/${user.id}/updateProfile`,
+        `${API_URL}/adana-api/v1/users/profile/${user.id}/updateProfile`,
         formData,
         {
           headers: {
@@ -181,7 +182,7 @@ const MyProfile = () => {
 
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-accent1/70 py-12 font-Outfit pt-30">
+    <section className="min-h-screen flex items-center justify-center bg-accent1/70 py-12 font-Outfit pt-30 pr-30 pl-30">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-md overflow-hidden">
         <div className="flex flex-col md:flex-row">
 

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import iconDefault from '../../assets/images/icon.png';
+const API_URL = import.meta.env.VITE_API_URL;
 
 // ... [importaciones arriba]
 
@@ -33,7 +34,7 @@ const UsuariosRegistrados = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/adana-api/v1/users`);
+        const response = await axios.get(`${API_URL}/adana-api/v1/users`);
         const data = response.data;
 
         const formattedUsers = data.map(user => ({
@@ -95,6 +96,7 @@ const UsuariosRegistrados = () => {
               <option value="Todos">Todos los géneros</option>
               <option value="Hombre">Hombre</option>
               <option value="Mujer">Mujer</option>
+              <option value="Otro">Otro</option>
             </select>
           </div>
 
