@@ -17,6 +17,7 @@ import MyProfile from './pages/MyProfile';
 import UsuariosRegistrados from './pages/admin/UsuariosRegistrados';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PagosRegistrados from './pages/admin/PagosRegistrados';
 
 //envueltos con el carrito para que se puedan pasar la información sin problemas
 const App = () => {
@@ -41,6 +42,7 @@ const App = () => {
                 <Route path= "/instructorhome" element={<InstructorMain/>}/>
                 <Route path= "/admin/usermanage" element={<UsuariosRegistrados/>}/>
                 <Route path= "/home2" element={<InstructorMain/>}/>
+                <Route path= "/admin/payments" element={<PagosRegistrados/>}/>
               </Routes>
             </div>
           </main>
