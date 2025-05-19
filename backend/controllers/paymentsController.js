@@ -137,5 +137,20 @@ exports.capturePaymentAndReserve = async (req, res) => {
       return res.status(500).json({ success: false, message: "Error interno del servidor" });
     }
   };
-  
+
+// Controlador para obtener todos los pagos
+exports.getPayments = async (req, res) => {
+  try {
+    const result = await paymentService.getPayments();
+    
+    if (result.success) {
+      return res.status(result.status).json(result.data);
+    } else {
+      return res.status(result.status).json({ success: false, message: result.message });
+    }
+  } catch (error) {
+    console.error('Error al obtener los pagos:', error);
+    return res.status(500).json({ success: false, message: "Error interno del servidor" });
+  }
+};
 
