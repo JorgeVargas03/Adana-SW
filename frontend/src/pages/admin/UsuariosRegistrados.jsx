@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import iconDefault from '../../assets/images/icon.png';
 const API_URL = import.meta.env.VITE_API_URL;
+import { Dialog } from '@headlessui/react';
 
-// ... [importaciones arriba]
 
 const UsuariosRegistrados = () => {
   const [search, setSearch] = useState("");
@@ -12,6 +12,17 @@ const UsuariosRegistrados = () => {
   const [genderFilter, setGenderFilter] = useState("Todos");
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+     const [newUser, setNewUser] = useState({
+      name: "",
+      lastname: "",
+      email: "",
+      password: "",
+      phone: "",
+      gender: "",
+      role: "",
+    });
 
   const panelRef = useRef(null);
 
@@ -64,6 +75,19 @@ const UsuariosRegistrados = () => {
     return matchesName && matchesRole && matchesGender;
   });
 
+//poiner un fakin nuevo user
+  const handleInputChange = (e) => {
+    setNewUser({ ...newUser, [e.target.name]: e.target.value });
+  };
+
+  const handleUserSubmit = (e) => {
+    e.preventDefault();
+    console.log("Usuario nuevo:", newUser);
+    setIsModalOpen(false);
+    // Aquí podrías hacer un POST con axios
+  };
+
+
   return (
     <section className="bg-bgcolor min-h-screen">
       <div className="p-6 flex relative bg-bgcolor">
@@ -98,6 +122,13 @@ const UsuariosRegistrados = () => {
               <option value="Mujer">Mujer</option>
               <option value="Otro">Otro</option>
             </select>
+            {/*botón agrehgar neuvo usuario*/}
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-accent2 text-white px-4 py-2 rounded-lg font-semibold hover:bg-accent2/90 cursor-pointer"
+              >
+                +
+              </button>
           </div>
 
           <ul role="list" className="divide-y divide-gray-100 bg-barcolor px-6 rounded-2xl">
@@ -164,6 +195,41 @@ const UsuariosRegistrados = () => {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Modal */}
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md rounded-2xl bg-[#FFFDEF] p-6 shadow-xl space-y-4">
+            <Dialog.Title className="text-lg font-bold text-gray-700">Nuevo Usuario</Dialog.Title>
+            <form onSubmit={handleUserSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <input type="text" name="name" placeholder="Nombre" onChange={handleInputChange} className="input rounded-sm" required />
+                <input type="text" name="lastname" placeholder="Apellido" onChange={handleInputChange} className="input" required />
+              </div>
+              <input type="email" name="email" placeholder="Correo electrónico" onChange={handleInputChange} className="input w-full" required />
+              <input type="password" name="password" placeholder="Contraseña" onChange={handleInputChange} className="input w-full" required />
+              <input type="text" name="phone" placeholder="Teléfono" onChange={handleInputChange} className="input w-full" />
+              <select name="gender" onChange={handleInputChange} className="input w-full cursor-pointer" required>
+                <option value="">Selecciona género</option>
+                <option value="Hombre">Hombre</option>
+                <option value="Mujer">Mujer</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <select name="role" onChange={handleInputChange} className="input w-full cursor-pointer" required>
+                <option value="">Selecciona rol</option>
+                <option value="administrador">Administrador</option>
+                <option value="instructor">Instructor</option>
+                <option value="cliente">Cliente</option>
+              </select>
+              <div className="flex justify-end gap-2 pt-4">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-gray-200 rounded-md cursor-pointer">Cancelar</button>
+                <button type="submit" className="px-4 py-2 bg-accent2 text-white rounded-md cursor-pointer">Guardar</button>
+              </div>
+            </form>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
       </div>
     </section>
   );
