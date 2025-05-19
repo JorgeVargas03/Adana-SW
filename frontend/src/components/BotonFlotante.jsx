@@ -158,7 +158,7 @@ export default function BotonFlotante() {
                       <XMarkIcon className="w-6 h-6 text cursor-pointer" />
                     </button>
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 overflow-y-auto max-h-[80vh]">
                     {eventosUnidos.length === 0 ? (
                       <p className="text-sm text-gray-500">Tu carrito está vacío.</p>
                     ) : (
@@ -187,7 +187,7 @@ export default function BotonFlotante() {
                     {eventosUnidos.length > 0 && (
                       <button
                         onClick={handleReservar}
-                        className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-4 justify-center"
+                        className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer absolute bottom-10 justify-center"
                       >
                         Confirmar compra
                       </button>
