@@ -36,9 +36,9 @@ const Signin = () => {
       await sleep(900);
       // Redirigir después de un inicio de sesión exitoso
       if (gRole == 'instructor') {
-        navigate('/home2');
+        navigate('/instructor/home');
       } else if (gRole === 'administrador') {
-        navigate('/myprofile');
+        navigate('/admin/usermanage');
       } else {
         navigate('/');
       }
@@ -66,6 +66,7 @@ const Signin = () => {
 
   // Manejar login normal
   const handleNormalLogin = async () => {
+    let toastId;
     try {
       if (!correo || !contraseña) {
         toast.warn("Por favor completa todos los campos.");
@@ -78,7 +79,7 @@ const Signin = () => {
       };
 
       // Mostrar loading toast
-      const toastId = toast.loading("Iniciando sesión...");
+      toastId = toast.loading("Iniciando sesión...");
       await sleep(1000);
       const sesion = await login(userData);
       const nRole = sesion.role;
@@ -95,9 +96,9 @@ const Signin = () => {
       window.dispatchEvent(new Event('storage'));
 
       if (nRole === 'instructor') {
-        navigate('/home2');
+        navigate('/instructor/home');
       } else if (nRole === 'administrador') {
-        navigate('/myprofile');
+        navigate('/admin/usermanage');
       } else {
         navigate('/');
       }

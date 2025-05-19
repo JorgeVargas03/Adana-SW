@@ -41,7 +41,7 @@ const App = () => {
                 <Route path= "/client/myreservation" element={<ReserClient/>}/>
                 <Route path= "/instructorhome" element={<InstructorMain/>}/>
                 <Route path= "/admin/usermanage" element={<UsuariosRegistrados/>}/>
-                <Route path= "/home2" element={<InstructorMain/>}/>
+                <Route path= "/instructor/home" element={<InstructorMain/>}/>
                 <Route path= "/admin/payments" element={<PagosRegistrados/>}/>
               </Routes>
             </div>
