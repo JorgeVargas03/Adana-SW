@@ -66,55 +66,67 @@ const Signin = () => {
 
   // Manejar login normal
   const handleNormalLogin = async () => {
-    let toastId;
-    try {
-      if (!correo || !contraseña) {
-        toast.warn("Por favor completa todos los campos.");
-        return;
-      }
+  let toastId;
+  try {
+    if (!correo || !contraseña) {
+      toast.warn("Por favor completa todos los campos.");
+      return;
+    }
 
-      const userData = {
-        email: correo,
-        password: contraseña,
-      };
+    const userData = {
+      email: correo,
+      password: contraseña,
+    };
 
-      // Mostrar loading toast
-      toastId = toast.loading("Iniciando sesión...");
-      await sleep(1000);
-      const sesion = await login(userData);
-      const nRole = sesion.role;
+    toastId = toast.loading("Iniciando sesión...");
+    await sleep(1000);
 
-      // Actualizar toast a éxito
+    const sesion = await login(userData);
+    console.log("Datos recibidos del backend:", sesion);
+
+    // Verificar si el usuario está inactivo
+    if (sesion.status === "inactive") {
       toast.update(toastId, {
-        render: `¡Inicio de sesión exitoso! Bienvenido: ${sesion.name}`,
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      await sleep(600);
-      localStorage.setItem('user', JSON.stringify(sesion));
-      window.dispatchEvent(new Event('storage'));
-
-      if (nRole === 'instructor') {
-        navigate('/instructor/home');
-      } else if (nRole === 'administrador') {
-        navigate('/admin/usermanage');
-      } else {
-        navigate('/');
-      }
-
-    } catch (error) {
-      console.error("Error al iniciar sesión usuario:", error);
-
-      // Si hubo error, actualizar el toast a error
-      toast.update(toastId, {
-        render: "Error al iniciar sesión. Verifica los datos o intenta más tarde.",
+        render: "Tu cuenta está inactiva. Contacta al administrador.",
         type: "error",
         isLoading: false,
         autoClose: 5000,
       });
+      return; // Evita continuar el login
     }
-  };
+
+    const nRole = sesion.role;
+
+    toast.update(toastId, {
+      render: `¡Inicio de sesión exitoso! Bienvenido: ${sesion.name}`,
+      type: "success",
+      isLoading: false,
+      autoClose: 3000,
+    });
+
+    await sleep(600);
+    localStorage.setItem('user', JSON.stringify(sesion));
+    window.dispatchEvent(new Event('storage'));
+
+    if (nRole === 'instructor') {
+      navigate('/instructor/home');
+    } else if (nRole === 'administrador') {
+      navigate('/admin/usermanage');
+    } else {
+      navigate('/');
+    }
+
+  } catch (error) {
+    console.error("Error al iniciar sesión usuario:", error);
+    toast.update(toastId, {
+      render: "Error al iniciar sesión. Verifica los datos o intenta más tarde.",
+      type: "error",
+      isLoading: false,
+      autoClose: 5000,
+    });
+  }
+};
+
 
 
   return (
