@@ -1,3 +1,4 @@
+// MonthViewAdmin.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -11,19 +12,25 @@ import {
 } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { es } from 'date-fns/locale';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 import { useCarrito } from '../context/CarritoContext';
 import { isTokenValid } from '../utils/auth';
 
-function MonthViewAdmin({ month, events }) {
+const API_URL = import.meta.env.VITE_API_URL;
+
+function MonthViewAdmin({ month, events, onClassAdded }) {
   const [showModal, setShowModal] = useState(false);
+  const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [userIdToEnroll, setUserIdToEnroll] = useState('');
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
   const { agregarEvento } = useCarrito();
 
   const days = eachDayOfInterval({
     start: startOfMonth(month),
-    end: endOfMonth(month)
+    end: endOfMonth(month),
   });
 
   const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
@@ -36,6 +43,28 @@ function MonthViewAdmin({ month, events }) {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
+
+  const handleEnroll = async () => {
+    try {
+      const body = {
+        classId: selectedEvent.classId,
+        instructorId: selectedEvent.instructorId,
+      };
+      await axios.post(
+        `${API_URL}/adana-api/v1/classes/reserve/onlyOne/${userIdToEnroll}`,
+        body
+      );
+
+      toast.success('Usuario inscrito correctamente');
+      setShowEnrollModal(false);
+      setShowModal(false);
+      setSelectedEvent(null);
+      onClassAdded();
+    } catch (error) {
+      const message = error.response?.data?.message || 'Error al inscribir usuario';
+      toast.error(message);
+    }
+  };
 
   return (
     <div className="bg-[#F5F0FF] font-outfit rounded-3xl shadow-lg p-6 w-full h-full relative">
@@ -60,7 +89,7 @@ function MonthViewAdmin({ month, events }) {
           {days.map(day => {
             const isToday = isSameDay(day, new Date());
             const dayEvents = events.filter(e =>
-              isSameDay(startOfDay(e.date), startOfDay(day))
+              isSameDay(startOfDay(new Date(e.date)), startOfDay(day))
             );
 
             return (
@@ -85,7 +114,7 @@ function MonthViewAdmin({ month, events }) {
                   {dayEvents.map((event, idx) => (
                     <div
                       key={idx}
-                      className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold cursor-pointer bg-bgcolor`}
+                      className="text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold cursor-pointer bg-bgcolor"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedEvent(event);
@@ -102,6 +131,7 @@ function MonthViewAdmin({ month, events }) {
         </AnimatePresence>
       </div>
 
+      {/* Modal de detalles */}
       <AnimatePresence>
         {showModal && selectedEvent && (
           <>
@@ -132,20 +162,26 @@ function MonthViewAdmin({ month, events }) {
                 onClick={(e) => e.stopPropagation()}
               >
                 <h3 className="text-xl font-bold text-[#7E5EC3] mb-2">{selectedEvent.title}</h3>
-                <p className="text-sm text-gray-700 mb-2">
-                  <span className="font-semibold">Instructor:</span> {selectedEvent.instructor}
+                <p className="text-sm text-gray-700 mb-1"><strong>Clase ID:</strong> {selectedEvent.classId}</p>
+                <p className="text-sm text-gray-700 mb-1"><strong>Instructor:</strong> {selectedEvent.instructorName}</p>
+                <p className="text-sm text-gray-700 mb-1"><strong>Instructor ID:</strong> {selectedEvent.instructorId}</p>
+                <p className="text-sm text-gray-700 mb-1"><strong>Descripción:</strong> {selectedEvent.description}</p>
+                <p className="text-sm text-gray-700 mb-1"><strong>Fecha:</strong> {format(new Date(selectedEvent.date), "PPP", { locale: es })}</p>
+                <p className="text-sm text-gray-700 mb-1"><strong>Hora:</strong> {selectedEvent.time}</p>
+                <p className="text-sm text-gray-700 mb-1"><strong>Precio:</strong> ${selectedEvent.price}</p>
+                <p className="text-sm text-gray-700 mb-3">
+                  <strong>Cupos:</strong> {selectedEvent.availableSpots} / {selectedEvent.capacity}
                 </p>
-                <p className="text-sm text-gray-700 mb-2">
-                  <span className="font-semibold">Descripcion:</span> {selectedEvent.description}
-                </p>
-                <p className="text-sm text-gray-700 mb-2">
-                  <span className="font-semibold">Fecha:</span> {format(selectedEvent.date, "PPP", { locale: es })}
-                </p>
-                <p className="text-sm text-gray-700 mb-2">
-                  <span className="font-semibold">Hora:</span> {selectedEvent.time}
-                </p>
+
                 <button
-                  className="mt-4 px-4 py-2 bg-[#7E5EC3] text-white rounded-lg hover:bg-[#6b4fc1] transition cursor-pointer"
+                  className="mt-2 mr-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  onClick={() => setShowEnrollModal(true)}
+                >
+                  Inscribir un usuario
+                </button>
+
+                <button
+                  className="mt-2 px-4 py-2 bg-[#7E5EC3] text-white rounded-lg hover:bg-[#6b4fc1] transition"
                   onClick={() => {
                     setShowModal(false);
                     setSelectedEvent(null);
@@ -153,6 +189,58 @@ function MonthViewAdmin({ month, events }) {
                 >
                   Cerrar
                 </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Modal para inscribir usuario */}
+      <AnimatePresence>
+        {showEnrollModal && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-black bg-opacity-30"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => setShowEnrollModal(false)}
+            />
+            <motion.div
+              className="fixed inset-0 flex items-center justify-center z-50"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              onClick={() => setShowEnrollModal(false)}
+            >
+              <div
+                className="bg-white p-8 rounded-3xl shadow-2xl text-center max-w-sm mx-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h3 className="text-xl font-bold text-[#7E5EC3] mb-4">Inscribir usuario</h3>
+                <input
+                  type="text"
+                  placeholder="ID del usuario"
+                  className="w-full p-2 mb-4 border border-gray-300 rounded-md"
+                  value={userIdToEnroll}
+                  onChange={(e) => setUserIdToEnroll(e.target.value)}
+                />
+                <div className="flex justify-center gap-2">
+                  <button
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    onClick={handleEnroll}
+                  >
+                    Inscribir
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                    onClick={() => setShowEnrollModal(false)}
+                  >
+                    Cancelar
+                  </button>
+                </div>
               </div>
             </motion.div>
           </>

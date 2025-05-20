@@ -442,11 +442,15 @@ exports.getAllClassesHistory = async () => {
                         }))
                         : [];
 
+                    const availableSpaces = clase.capacity - reservations.length;
+
                     allClasses.push({
                         id: classId,
                         title: clase.title,
                         description: clase.description,
                         price: clase.price,
+                        capacity: clase.capacity,
+                        availableSpaces, // nuevo campo
                         instructorId,
                         instructorName: `${instructor.name} ${instructor.lastname}`,
                         date: clase.schedule.date,

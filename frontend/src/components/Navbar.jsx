@@ -49,7 +49,7 @@ export default function Navbar() {
 
     const handleStorageChange = () => {
       validateToken();
-      let userData = localStorage.getItem('user');
+      const userData = localStorage.getItem('user');
       if (!userData) return setProfilePicture(null);
       try {
         const user = JSON.parse(userData);
@@ -115,8 +115,8 @@ export default function Navbar() {
     }
   };
 
-  const navigation = getNavigationByRole(userRole);
-  const title = getTitleByRole(userRole);
+  const navigation = hasToken ? getNavigationByRole(userRole) : baseNavigation;
+  const title = hasToken ? getTitleByRole(userRole) : 'Adana Pilates Estudio';
 
   const toProfile = () => navigate('/myprofile');
 
@@ -235,19 +235,7 @@ export default function Navbar() {
                   <img className="size-8 rounded-full mr-3" src={profilePicture || logo} alt="User profile" />
                   <span className="text-base font-medium">Mi Perfil</span>
                 </div>
-              ) : (
-                <NavLink
-                  to="/signin"
-                  className={({ isActive }) =>
-                    classNames(
-                      isActive ? 'bg-accent1 text-white'
-                        : (isTransparentRoute && !isScrolled) ? 'text-white hover:bg-white/20' : 'text-gray-900 hover:bg-gray-100',
-                      'block rounded-md px-3 py-2 text-base font-medium')
-                  }
-                >
-                  INGRESAR
-                </NavLink>
-              )}
+              ) : null}
             </div>
           </Disclosure.Panel>
         </>

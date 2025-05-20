@@ -10,8 +10,7 @@ function CalendarAppAdmin() {
 
   const fetchClasses = async () => {
     try {
-      const instructorId = JSON.parse(localStorage.getItem("user"))?.id;
-      const response = await axios.get(`${API_URL}/adana-api/v1/classes`);
+      const response = await axios.get(`${API_URL}/adana-api/v1/classes/`);
       console.log("Respuesta de la API:", response.data);
       const data = response.data;
 
@@ -22,8 +21,9 @@ function CalendarAppAdmin() {
         price: clase.price,
         date: clase.date,
         time: clase.time,
-        instructorId: instructorId,
-        availableSpots: clase.capacity - (clase.reserved || 0),
+        instructorId: clase.instructorId,
+        instructorName: clase.instructorName,
+        availableSpots: clase.availableSpaces,
         capacity: clase.capacity,
       }));
 
