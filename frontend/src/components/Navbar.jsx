@@ -24,6 +24,7 @@ const adminNavigation = [
   { name: 'REPORTES', to: '/admin/reports' },
   { name: 'GESTOR DE USUARIOS', to: '/admin/usermanage' },
   { name: 'GESTOR DE PAGOS', to: '/admin/payments' },
+  { name: 'GESTOR DE RESERVAS', to: '/admin/reservation' },
 ];
 
 function classNames(...classes) {
