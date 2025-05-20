@@ -38,7 +38,7 @@ const Signin = () => {
       if (gRole == 'instructor') {
         navigate('/instructor/home');
       } else if (gRole === 'administrador') {
-        navigate('/admin/usermanage');
+        navigate('/admin/reports');
       } else {
         navigate('/');
       }
