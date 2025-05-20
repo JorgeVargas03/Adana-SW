@@ -76,7 +76,7 @@ const PagosRegistrados = () => {
             </div>
 
             <a
-              href="/reportes"
+              href="/admin/reports"
               className="ml-auto px-4 py-2 bg-accent2 text-white rounded-lg hover:bg-accent1 transition"
             >
               Reportes
