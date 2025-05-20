@@ -185,3 +185,119 @@ exports.sendWelcomeEmail = async (destination, firstName, lastName) => {
     console.error("Error al enviar el correo de bienvenida:", error);
   }
 };
+
+
+//Desactivar cuenta
+exports.sendAccountDeactivationEmail = async (destination, firstName, lastName) => {
+  const fullName = `${firstName} ${lastName}`;
+
+  const mailOptions = {
+    from: `"Equipo Adana Pilates" <${process.env.EMAIL_SENDER}>`,
+    to: destination,
+    subject: "Tu cuenta ha sido desactivada temporalmente",
+    html: `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff3f3; padding: 25px; border-radius: 12px;">
+      <h1 style="color: #c62828;">Hola ${fullName},</h1>
+      <p style="font-size: 16px; color: #333;">
+        Queremos informarte que tu cuenta en <strong>Adana Pilates</strong> ha sido desactivada temporalmente por decisión de nuestro equipo administrativo.
+      </p>
+
+      <p style="font-size: 16px; color: #333;">
+        Esta acción puede deberse a diversas razones internas o de cumplimiento de políticas. Si deseas conocer más detalles o resolver cualquier inquietud, te invitamos a ponerte en contacto con nosotros.
+      </p>
+
+      <div style="background-color: #fff; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+        <p style="margin: 0; font-size: 15px; color: #555;">
+          Estamos disponibles para ayudarte y encontrar la mejor solución posible. 🤝
+        </p>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="mailto:contacto@adanapilates.com" style="
+          display: inline-block;
+          background-color: #e53935;
+          color: white;
+          padding: 12px 24px;
+          border-radius: 8px;
+          text-decoration: none;
+          font-size: 16px;
+          font-weight: bold;">
+          Contactar al equipo
+        </a>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+
+      <p style="font-size: 14px; color: #666; text-align: center;">
+        Atentamente,<br/>
+        <strong>El equipo de Adana Pilates</strong>
+      </p>
+    </div>
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Correo de desactivación enviado a:", destination);
+  } catch (error) {
+    console.error("Error al enviar el correo de desactivación:", error);
+  }
+};
+
+//Reactivar cuenta
+exports.sendAccountReactivationEmail = async (destination, firstName, lastName) => {
+  const fullName = `${firstName} ${lastName}`;
+
+  const mailOptions = {
+    from: `"Equipo Adana Pilates" <${process.env.EMAIL_SENDER}>`,
+    to: destination,
+    subject: "Tu cuenta ha sido reactivada 🎉",
+    html: `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0fef5; padding: 25px; border-radius: 12px;">
+      <h1 style="color: #2e7d32;">¡Hola de nuevo ${fullName}!</h1>
+      <p style="font-size: 16px; color: #333;">
+        Nos alegra informarte que tu cuenta en <strong>Adana Pilates</strong> ha sido reactivada y ya puedes acceder nuevamente a nuestros servicios.
+      </p>
+
+      <p style="font-size: 16px; color: #333;">
+        Gracias por tu paciencia. Estamos felices de tenerte de vuelta y esperamos seguir acompañándote en tu camino hacia el bienestar integral.
+      </p>
+
+      <div style="background-color: #ffffff; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+        <p style="margin: 0; font-size: 15px; color: #555;">
+          Ingresa a tu cuenta para retomar tus clases, talleres y actividades favoritas. 💚
+        </p>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="https://adanapilates.com/login" target="_blank" style="
+          display: inline-block;
+          background-color: #4CAF50;
+          color: white;
+          padding: 12px 24px;
+          border-radius: 8px;
+          text-decoration: none;
+          font-size: 16px;
+          font-weight: bold;">
+          Iniciar sesión
+        </a>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+
+      <p style="font-size: 14px; color: #666; text-align: center;">
+        Con cariño,<br/>
+        <strong>El equipo de Adana Pilates</strong><br/>
+        <em>"Move beyond your possibilities..."</em> 🌿
+      </p>
+    </div>
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Correo de reactivación enviado a:", destination);
+  } catch (error) {
+    console.error("Error al enviar el correo de reactivación:", error);
+  }
+};

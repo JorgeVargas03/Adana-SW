@@ -2,6 +2,8 @@
 const { userCollection } = require("../models/users");
 const cloudinaryService = require('../utils/cloudinaryService');
 const bcrypt = require("bcryptjs");
+const { sendAccountReactivationEmail } = require("../utils/emailService");
+const { sendAccountDeactivationEmail } = require("../utils/emailService");
 
 
 //Obtener todos los usuarios registrados
@@ -35,13 +37,26 @@ exports.updateUserStatusService = async (userId, newStatus) => {
       return { success: false, message: "No se encontró el usuario" };
     }
 
+    const userData = userDoc.data();
     await userRef.update({ status: newStatus });
-    return { success: true, message: "Estado del usuario actualizado exitosamente" };
+
+    if (newStatus === "inactive") {
+      await sendAccountDeactivationEmail(userData.email, userData.firstName, userData.lastName);
+    } else {
+      await sendAccountReactivationEmail(userData.email, userData.firstName, userData.lastName);
+    }
+
+    return {
+      success: true,
+      message: "Estado del usuario actualizado exitosamente",
+      status: newStatus
+    };
   } catch (error) {
     console.error("Error updating user status:", error);
     return { success: false, message: "Server error" };
   }
 };
+
 
 // Servicio para actualizar el perfil de un usuario
 exports.updateUserProfile = async (userId, updateData) => {
