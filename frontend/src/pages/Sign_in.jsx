@@ -84,7 +84,7 @@ const Signin = () => {
     const sesion = await login(userData);
     console.log("Datos recibidos del backend:", sesion);
 
-    // 👉 Verificar si el usuario está inactivo
+    // Verificar si el usuario está inactivo
     if (sesion.status === "inactive") {
       toast.update(toastId, {
         render: "Tu cuenta está inactiva. Contacta al administrador.",

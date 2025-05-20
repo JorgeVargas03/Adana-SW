@@ -151,6 +151,7 @@ exports.login = async (req, res) => {
         lastname: user.lastname,
         email: user.email,
         role: user.role,
+        status: user.status, 
         profile_picture: user.profile_picture || ""
       }
     });

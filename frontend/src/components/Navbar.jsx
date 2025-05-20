@@ -23,7 +23,8 @@ const instructorNavigation = [
 const adminNavigation = [
   { name: 'REPORTES', to: '/faq' },
   { name: 'GESTOR DE USUARIOS', to: '/admin/usermanage' },
-  { name: 'GESTOR DE PAGOS', to: '/instructors' },
+  { name: 'GESTOR DE PAGOS', to: '/admin/payments' },
+  { name: 'GESTOR DE RESERVAS', to: '/admin/reservation' },
 ];
 
 function classNames(...classes) {
