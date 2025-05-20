@@ -80,7 +80,8 @@ exports.loginWithGoogle = async (req, res) => {
       name: user.name,
       lastname: user.lastname || "",
       email: user.email,
-      role: user.role
+      role: user.role,
+      status: user.status
     }
 
     //generar token
@@ -95,7 +96,8 @@ exports.loginWithGoogle = async (req, res) => {
         lastname: user.lastname || "",
         email: user.email,
         role: user.role,
-        profile_picture: user.profile_picture || ""
+        profile_picture: user.profile_picture || "",
+        status: user.status
       }
     });
   } catch (error) {
@@ -136,7 +138,8 @@ exports.login = async (req, res) => {
       name: user.name,
       lastname: user.lastname,
       email: user.email,
-      role: user.role
+      role: user.role,
+      status: user.status
     }
 
     //Generar un token con JWT
@@ -151,8 +154,13 @@ exports.login = async (req, res) => {
         lastname: user.lastname,
         email: user.email,
         role: user.role,
+<<<<<<< HEAD
         status: user.status, 
         profile_picture: user.profile_picture || ""
+=======
+        profile_picture: user.profile_picture || "",
+        status: user.status
+>>>>>>> origin/Jorge
       }
     });
 
@@ -214,7 +222,8 @@ exports.completeGoogleRegistration = async (req, res) => {
       name: name,
       lastname: lastname,
       email: email,
-      role: newUserRef.role
+      role: newUserRef.role,
+      status: newUserRef.status
     }
     //Generar token para el nuevo usuario
     const token = generateToken(userDataToken);
@@ -228,7 +237,8 @@ exports.completeGoogleRegistration = async (req, res) => {
         lastname,
         email,
         role: newUserRef.role,
-        profile_picture
+        profile_picture, 
+        status: userData.status
       }
     });
 
