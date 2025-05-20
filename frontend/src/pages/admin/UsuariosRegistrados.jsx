@@ -12,6 +12,11 @@ const UsuariosRegistrados = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+const [userForStatusChange, setUserForStatusChange] = useState(null);
+const [IsPanelOpen, setIsPanelOpen] = useState(false);
+
+
 
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -68,6 +73,22 @@ const UsuariosRegistrados = () => {
     fetchUsers();
   }, []);
 
+   // 👉 Definimos la función para obtener los usuarios
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/adana-api/v1/users');
+      setUsers(response.data); // o response.data.users según cómo te responda la API
+    } catch (error) {
+      console.error("Error al obtener usuarios:", error);
+    }
+  };
+
+  // 🌀 Carga inicial
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  //sera?
   const handleUserSubmit = async () => {
     try {
       const response = await axios.post("http://localhost:3001/auth/register", formData);
@@ -91,6 +112,31 @@ const UsuariosRegistrados = () => {
     const matchesGender = genderFilter === "Todos" || user.gender?.toLowerCase() === genderFilter.toLowerCase();
     return matchesName && matchesRole && matchesGender;
   });
+
+  //para actualizar el estado
+const handleStatusChange = async () => {
+  try {
+    const userId = userForStatusChange.id; // 👈 usa 'id' en lugar de '_id'
+    const newStatus = userForStatusChange.status === "active" ? "inactive" : "active";
+
+    const response = await axios.patch(`http://localhost:3001/adana-api/v1/users/${userId}/status`, {
+      status: newStatus,
+    });
+
+    console.log("Estado actualizado:", response.data.message);
+
+    // Cerrar modal, limpiar estado, recargar usuarios si es necesario
+    setIsStatusModalOpen(false);
+    setUserForStatusChange(null);
+    fetchUsers(); // si tienes una función para recargar usuarios
+  } catch (error) {
+    console.error("Error al cambiar el estado:", error);
+  }
+};
+
+
+
+
 
   return (
     <section className="bg-bgcolor min-h-screen">
@@ -134,31 +180,44 @@ const UsuariosRegistrados = () => {
             </button>
           </div>
 
-          <ul role="list" className="divide-y divide-gray-100 bg-barcolor rounded-2xl">
-            {filteredUsers.map((usuario) => (
-              <li
-                key={usuario.email}
-                onClick={() => setSelectedUser(usuario)}
-                className="flex justify-between gap-x-6 py-5 px-6 cursor-pointer hover:bg-gray-100 rounded-xl transition"
-              >
-                <div className="flex min-w-0 gap-x-4">
-                  <img
-                    alt=""
-                    src={usuario.profile_picture || iconDefault}
-                    className="size-12 flex-none rounded-full bg-gray-50"
-                  />
-                  <div className="min-w-0 flex-auto">
-                    <p className="text-sm/6 font-semibold text-gray-900">{usuario.name}</p>
-                    <p className="mt-1 truncate text-xs/5 text-gray-500">{usuario.email}</p>
-                  </div>
-                </div>
-                <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                  <p className="text-sm/6 text-gray-900 capitalize">{usuario.role}</p>
-                  <p className="mt-1 text-xs/5 text-gray-500 uppercase">{usuario.status}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+                <ul role="list" className="divide-y divide-gray-100 bg-barcolor rounded-2xl">
+                  {filteredUsers.map((user) => (
+                    <li
+                      key={user.email}
+                      onClick={() => setSelectedUser(user)}
+                      className="flex justify-between gap-x-6 py-5 px-6 cursor-pointer hover:bg-gray-100 rounded-xl transition"
+                    >
+                      <div className="flex min-w-0 gap-x-4">
+                        <img
+                          alt=""
+                          src={user.profile_picture || iconDefault}
+                          className="size-12 flex-none rounded-full bg-gray-50"
+                        />
+                        <div className="min-w-0 flex-auto">
+                          <p className="text-sm/6 font-semibold text-gray-900">{user.name}</p>
+                          <p className="mt-1 truncate text-xs/5 text-gray-500">{user.email}</p>
+                        </div>
+                      </div>
+                      <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+                        <p className="text-sm/6 text-gray-900 capitalize">{user.role}</p>
+                        <p className="mt-1 text-xs/5 text-gray-500 uppercase">{user.status}</p>
+                        {/* Botón para activar/inactivar */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setUserForStatusChange(user);
+                            setIsStatusModalOpen(true);
+                          }}
+                          className="mt-2 text-xs text-blue-600 hover:underline"
+                        >
+                          {user.status === 'active' ? 'Inactivar' : 'Activar'}
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+
         </div>
 
              {/* Panel lateral con diseño mejorado */}
@@ -194,6 +253,8 @@ const UsuariosRegistrados = () => {
                   <p><strong>Género:</strong> {selectedUser.gender || "No especificado"}</p>
                   <p><strong>Teléfono:</strong> {selectedUser.phone || "No disponible"}</p>
                 </div>
+
+
               </div>
             </motion.div>
           )}
@@ -230,6 +291,36 @@ const UsuariosRegistrados = () => {
             </div>
           </div>
         )}
+          {/* Modal para ver si quieres desactivar un usuario*/}
+        {isStatusModalOpen && userForStatusChange && (
+            <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/50">
+              <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
+                <h2 className="text-lg font-semibold text-fontdef mb-4">
+                  ¿Desea {userForStatusChange.status === 'active' ? 'inactivar' : 'activar'} al usuario <strong>{userForStatusChange.name}</strong>?
+                </h2>
+                <div className="mt-6 flex justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      setIsStatusModalOpen(false);
+                      setUserForStatusChange(null);
+                    }}
+                    className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+                  >
+                    No
+                  </button>
+                  <button
+                    onClick={handleStatusChange}
+                    className="px-4 py-2 bg-accent2 text-white rounded-md hover:bg-accent2/90"
+                  >
+                    Sí
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+
+
       </div>
     </section>
   );
