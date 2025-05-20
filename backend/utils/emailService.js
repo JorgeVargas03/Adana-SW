@@ -212,7 +212,7 @@ exports.sendAccountDeactivationEmail = async (destination, firstName, lastName) 
       </div>
 
       <div style="text-align: center; margin-top: 30px;">
-        <a href="mailto:contacto@adanapilates.com" style="
+        <a href="mailto:team.adana.pilates@gmail.com" style="
           display: inline-block;
           background-color: #e53935;
           color: white;

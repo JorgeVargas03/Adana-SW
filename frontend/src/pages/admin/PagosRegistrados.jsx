@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const PagosRegistrados = () => {
   const [pagos, setPagos] = useState([]);
@@ -11,8 +12,8 @@ const PagosRegistrados = () => {
     const obtenerDatos = async () => {
       try {
         const [resPagos, resUsuarios] = await Promise.all([
-          axios.get("http://localhost:3001/adana-api/v1/payments/admin/management"),
-          axios.get("http://localhost:3001/adana-api/v1/users"),
+          axios.get(`${API_URL}/adana-api/v1/payments/admin/management`),
+          axios.get(`${API_URL}/adana-api/v1/users`),
         ]);
 
         setPagos(resPagos.data);
