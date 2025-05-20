@@ -45,11 +45,8 @@ const App = () => {
                 <Route path= "/admin/usermanage" element={<UsuariosRegistrados/>}/>
                 <Route path= "/instructor/home" element={<InstructorMain/>}/>
                 <Route path= "/admin/payments" element={<PagosRegistrados/>}/>
-<<<<<<< HEAD
                 <Route path= "/admin/reservation" element={<GestionarReservas/>}/>
-=======
                 <Route path= "/admin/reports" element={<Reportes/>}/>
->>>>>>> origin/Java3
               </Routes>
             </div>
           </main>
