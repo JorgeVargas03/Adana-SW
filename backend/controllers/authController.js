@@ -154,13 +154,8 @@ exports.login = async (req, res) => {
         lastname: user.lastname,
         email: user.email,
         role: user.role,
-<<<<<<< HEAD
-        status: user.status, 
-        profile_picture: user.profile_picture || ""
-=======
         profile_picture: user.profile_picture || "",
         status: user.status
->>>>>>> origin/Jorge
       }
     });
 
