@@ -169,8 +169,9 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
                 <p className="text-sm text-gray-700 mb-1"><strong>Fecha:</strong> {format(new Date(selectedEvent.date), "PPP", { locale: es })}</p>
                 <p className="text-sm text-gray-700 mb-1"><strong>Hora:</strong> {selectedEvent.time}</p>
                 <p className="text-sm text-gray-700 mb-1"><strong>Precio:</strong> ${selectedEvent.price}</p>
+                <p className="text-sm text-gray-700 mb-1"><strong>Capacidad:</strong> ${selectedEvent.capacity}</p>
                 <p className="text-sm text-gray-700 mb-3">
-                  <strong>Cupos:</strong> {selectedEvent.availableSpots} / {selectedEvent.capacity}
+                  <strong>Cupos:</strong> {selectedEvent.availableSpots}
                 </p>
 
                 <button
