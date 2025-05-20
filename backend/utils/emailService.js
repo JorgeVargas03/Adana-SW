@@ -237,9 +237,9 @@ exports.sendAccountDeactivationEmail = async (destination, firstName, lastName) 
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Correo de desactivación enviado a:", destination);
+    console.log("Correo de inactivación enviado a:", destination);
   } catch (error) {
-    console.error("Error al enviar el correo de desactivación:", error);
+    console.error("Error al enviar el correo de inactivación:", error);
   }
 };
 

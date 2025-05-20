@@ -41,9 +41,9 @@ exports.updateUserStatusService = async (userId, newStatus) => {
     await userRef.update({ status: newStatus });
 
     if (newStatus === "inactive") {
-      await sendAccountDeactivationEmail(userData.email, userData.firstName, userData.lastName);
+      await sendAccountDeactivationEmail(userData.email, userData.name, userData.lastname);
     } else {
-      await sendAccountReactivationEmail(userData.email, userData.firstName, userData.lastName);
+      await sendAccountReactivationEmail(userData.email, userData.name, userData.lastname);
     }
 
     return {
