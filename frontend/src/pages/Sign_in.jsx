@@ -25,6 +25,12 @@ const Signin = () => {
   const handleLogin = async () => {
     try {
       const user = await loginWithGoogle();
+
+      if (user.status === 'inactive') {
+        toast.error("Tu cuenta está inactiva. Contacta al administrador.");
+        return;
+      }
+
       localStorage.setItem("user", JSON.stringify(user)); // pasa el user pa la compra
       const gRole = user.role;
       console.log(gRole);

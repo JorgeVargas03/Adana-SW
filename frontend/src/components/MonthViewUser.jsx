@@ -1,44 +1,36 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  getDay,
-  isSameDay,
-  eachDayOfInterval,
-  startOfDay,
-} from 'date-fns';
+import { useState } from 'react';
+import { format, startOfMonth, endOfMonth, getDay, isSameDay, eachDayOfInterval, startOfDay, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
+import iconDefault from '../assets/images/icon.png';
 import { es } from 'date-fns/locale';
-import { useCarrito } from '../context/CarritoContext';
+import axios from 'axios';
 import { isTokenValid } from '../utils/auth';
+import { toast } from 'react-toastify';
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 function MonthViewUser({ month, events }) {
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [hasToken, setHasToken] = useState(false);
-  const navigate = useNavigate();
-  const { agregarEvento } = useCarrito();
+  const [hasToken, setHasToken] = useState(isTokenValid());
+  const [selectedDate, setSelectedDate] = useState(null); // Fecha seleccionada
 
   const days = eachDayOfInterval({
     start: startOfMonth(month),
-    end: endOfMonth(month)
+    end: endOfMonth(month),
   });
 
   const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   const firstDayIndex = (getDay(startOfMonth(month)) + 6) % 7;
 
-  useEffect(() => {
-    const validateToken = () => setHasToken(isTokenValid());
-    validateToken();
-    const handleStorageChange = () => validateToken();
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+
+  const filteredEvents = selectedDate
+    ? events.filter((event) => isSameDay(startOfDay(parseISO(event.date)), startOfDay(selectedDate)))
+    : events;
+
 
   return (
-    <div className="bg-[#F5F0FF] font-outfit rounded-3xl shadow-lg p-6 w-full h-full relative">
+    <div className="bg-[#F5F0FF] font-outfit rounded-3xl shadow-lg p-6 w-full h-full relative font-Outfit">
       <h2 className="text-3xl font-bold mb-6 text-center text-[#7E5EC3] capitalize">
         {format(month, 'MMMM yyyy', { locale: es })}
       </h2>
@@ -57,13 +49,14 @@ function MonthViewUser({ month, events }) {
         ))}
 
         <AnimatePresence>
-          {days.map(day => {
+          {days.map((day) => {
             const isToday = isSameDay(day, new Date());
-            const dayEvents = events.filter(e =>
-              isSameDay(startOfDay(e.date), startOfDay(day))
+            const dayEvents = filteredEvents.filter((e) =>
+              isSameDay(startOfDay(parseISO(e.date)), startOfDay(day))
             );
 
-            return (
+
+                       return (
               <motion.div
                 key={day}
                 className={`bg-white border border-[#E9DFFB] p-3 rounded-2xl min-h-[150px] flex flex-col items-center hover:bg-[#f2e9fc] ${
@@ -85,7 +78,7 @@ function MonthViewUser({ month, events }) {
                   {dayEvents.map((event, idx) => (
                     <div
                       key={idx}
-                      className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold cursor-pointer bg-bgcolor`}
+                      className="text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold cursor-pointer bg-bgcolor"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedEvent(event);
@@ -102,6 +95,7 @@ function MonthViewUser({ month, events }) {
         </AnimatePresence>
       </div>
 
+{/*Modal para ver el evento seleccionado*/}
       <AnimatePresence>
         {showModal && selectedEvent && (
           <>
@@ -139,11 +133,9 @@ function MonthViewUser({ month, events }) {
                   <span className="font-semibold">Descripcion:</span> {selectedEvent.description}
                 </p>
                 <p className="text-sm text-gray-700 mb-2">
-                  <span className="font-semibold">Fecha:</span> {format(selectedEvent.date, "PPP", { locale: es })}
-                </p>
-                <p className="text-sm text-gray-700 mb-2">
                   <span className="font-semibold">Hora:</span> {selectedEvent.time}
                 </p>
+
                 <button
                   className="mt-4 px-4 py-2 bg-[#7E5EC3] text-white rounded-lg hover:bg-[#6b4fc1] transition cursor-pointer"
                   onClick={() => {
@@ -158,8 +150,11 @@ function MonthViewUser({ month, events }) {
           </>
         )}
       </AnimatePresence>
+
     </div>
   );
 }
+
+
 
 export default MonthViewUser;

@@ -23,7 +23,7 @@ function CalendarAppAdmin() {
         time: clase.time,
         instructorId: clase.instructorId,
         instructorName: clase.instructorName,
-        availableSpots: clase.availableSpaces,
+        availableSpots: clase.availableSpaces - (clase.reserved || 0),
         capacity: clase.capacity,
       }));
 
