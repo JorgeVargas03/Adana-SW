@@ -221,7 +221,7 @@ setRoleData(roleFormattedData);
   }, [selectedMonth, users]);
 
   return (
-    <section className="min-h-screen bg-[#f8f6e9] p-6 md:p-10 font-sans">
+    <section className="min-h-screen bg-bgcolor/80 p-6 md:p-10 font-sans">
       <h1 className="text-4xl font-bold text-[#4b4b4b] mb-8">Reportes</h1>
 
       {/* ComboBox de meses */}
@@ -268,7 +268,7 @@ setRoleData(roleFormattedData);
   </div>
 
   <div className="bg-white shadow-md rounded-lg p-4 text-center">
-    <h3 className="text-xl font-semibold">Total de alumnos</h3>
+    <h3 className="text-xl font-semibold">Total de clientes</h3>
     <p className="text-3xl">{resumen.totalAlumnos}</p>
   </div>
 
@@ -278,17 +278,17 @@ setRoleData(roleFormattedData);
   </div>
 
   <div className="bg-blue-100 shadow-md rounded-lg p-4 text-center">
-    <h3 className="text-xl font-semibold">Hombres</h3>
+    <h3 className="text-xl font-semibold">Total de Hombres</h3>
     <p className="text-3xl">{resumen.totalHombres}</p>
   </div>
 
   <div className="bg-pink-100 shadow-md rounded-lg p-4 text-center">
-    <h3 className="text-xl font-semibold">Mujeres</h3>
+    <h3 className="text-xl font-semibold">Total de Mujeres</h3>
     <p className="text-3xl">{resumen.totalMujeres}</p>
   </div>
 
   <div className="bg-gray-200 shadow-md rounded-lg p-4 text-center">
-    <h3 className="text-xl font-semibold">Otro</h3>
+    <h3 className="text-xl font-semibold">Total Otros</h3>
     <p className="text-3xl">{resumen.totalOtro}</p>
   </div>
 </div>
