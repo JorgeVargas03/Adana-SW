@@ -8,6 +8,9 @@ import { toast } from 'react-toastify';
 
 const Signin = () => {
   const navigate = useNavigate();
+  //Estados: "Active" | "Disable" | "Processing"
+  const [normalLoginState, setNormalLoginState] = useState("Active"); 
+  const [googleLoginState, setGoogleLoginState] = useState("Active");
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   // Verificar si el usuario ya está autenticado al cargar el componente
@@ -23,6 +26,9 @@ const Signin = () => {
 
   // Iniciar sesión con Google
   const handleLogin = async () => {
+    if (googleLoginState === "Processing") return;
+      setGoogleLoginState("Processing");
+      setNormalLoginState("Disable");
     try {
       const user = await loginWithGoogle();
 
@@ -65,13 +71,19 @@ const Signin = () => {
         console.error("Error desconocido:", error);
         toast.error("Error al iniciar sesión con Google.");
       }
-    }
+    } finally {
+    setGoogleLoginState("Active");
+    setNormalLoginState("Active");
+  }
   };
   const [correo, setCorreo] = useState('');
   const [contraseña, setContraseña] = useState('');
 
   // Manejar login normal
   const handleNormalLogin = async () => {
+    if (normalLoginState === "Processing") return;
+    setNormalLoginState("Processing");
+    setGoogleLoginState("Disable");
   let toastId;
   try {
     if (!correo || !contraseña) {
@@ -130,6 +142,9 @@ const Signin = () => {
       isLoading: false,
       autoClose: 5000,
     });
+  } finally {
+    setNormalLoginState("Active");
+    setGoogleLoginState("Active");
   }
 };
 
@@ -188,21 +203,50 @@ const Signin = () => {
 
               <div>
                 <button
-                  type="button"
-                  onClick={handleNormalLogin}
-                  className="h-10 font-Outfit items-center flex w-full justify-center rounded-md bg-accent2 px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs hover:bg-accent2/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Acceder
-                </button>
+  type="button"
+  onClick={handleNormalLogin}
+  disabled={normalLoginState === "Disable" || normalLoginState === "Processing"}
+  className={`h-10 font-Outfit flex items-center justify-center w-full rounded-md px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs
+    ${
+      normalLoginState === "Processing"
+        ? "bg-accent2/60 cursor-wait"
+        : normalLoginState === "Disable"
+        ? "bg-accent2/40 cursor-not-allowed"
+        : "bg-accent2 hover:bg-accent2/90"
+    }
+  `}
+>
+  {normalLoginState === "Processing" ? (
+    <div className="w-5 h-5 border-2 border-t-transparent border-[#FFFDEF] rounded-full animate-spin"></div>
+  ) : (
+    "Acceder"
+  )}
+</button>
+
               </div>
             </form>
 
-            <div className="mt-8 flex flex-col items-center gap-y-4">
+            <div className="mt-6 flex flex-col items-center gap-y-4">
               <button
-                onClick={handleLogin}
-                className="flex w-full justify-center font-Outfit items-center gap-2 rounded-md bg-accent2 px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs hover:bg-accent2/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <svg width="30px" height="30px" viewBox="0 0 32 32" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg">
+  onClick={handleLogin}
+  disabled={googleLoginState === "Disable" || googleLoginState === "Processing"}
+  className={`flex w-full h-10 justify-center font-Outfit items-center gap-2 rounded-md px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs
+    ${
+      googleLoginState === "Processing"
+        ? "bg-accent2/60 cursor-wait"
+        : googleLoginState === "Disable"
+        ? "bg-accent2/40 cursor-not-allowed"
+        : "bg-accent2 hover:bg-accent2/90"
+    }
+  `}
+>
+  {googleLoginState === "Processing" ? (
+    <>
+      <div className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+    </>
+  ) : (
+    <>
+      <svg width="30px" height="30px" viewBox="0 0 32 32" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg">
                   <path d="M23.75,16A7.7446,7.7446,0,0,1,8.7177,18.6259L4.2849,22.1721A13.244,13.244,0,0,0,29.25,16" fill="#00ac47" />
                   <path d="M23.75,16a7.7387,7.7387,0,0,1-3.2516,6.2987l4.3824,3.5059A13.2042,13.2042,0,0,0,29.25,16" fill="#4285f4" />
                   <path d="M8.25,16a7.698,7.698,0,0,1,.4677-2.6259L4.2849,9.8279a13.177,13.177,0,0,0,0,12.3442l4.4328-3.5462A7.698,7.698,0,0,1,8.25,16Z" fill="#ffba00" />
@@ -212,7 +256,9 @@ const Signin = () => {
                   <path d="M29.25,15v1L27,19.5H16.5V14H28.25A1,1,0,0,1,29.25,15Z" fill="#4285f4" />
                 </svg>
                 Google
-              </button>
+    </>
+  )}
+</button>
             </div>
 
             <div className='mt-6 text-center text-sm text-gray-500'>
