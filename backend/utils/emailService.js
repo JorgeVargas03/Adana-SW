@@ -1,5 +1,6 @@
 // utils/emailService.js
 const nodemailer = require("nodemailer");
+const url = process.env.APP_URL_BASE;
 
 // Configurar el transporter para cuentas de Google
 const transporter = nodemailer.createTransport({
@@ -152,7 +153,7 @@ exports.sendWelcomeEmail = async (destination, firstName, lastName) => {
       </p>
 
       <div style="text-align: center; margin-top: 30px;">
-        <a href="https://adanapilates.com" target="_blank" style="
+        <a href="${url}" target="_blank" style="
           display: inline-block;
           background-color: #4CAF50;
           color: white;
@@ -269,7 +270,7 @@ exports.sendAccountReactivationEmail = async (destination, firstName, lastName) 
       </div>
 
       <div style="text-align: center; margin-top: 30px;">
-        <a href="https://adanapilates.com/login" target="_blank" style="
+        <a href="${url}/signin" target="_blank" style="
           display: inline-block;
           background-color: #4CAF50;
           color: white;
