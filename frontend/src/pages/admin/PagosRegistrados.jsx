@@ -18,6 +18,8 @@ const PagosRegistrados = () => {
 
         setPagos(resPagos.data);
         setUsuarios(resUsuarios.data);
+        console.log("Pagos:", resPagos.data);
+        console.log("Usuarios:", resUsuarios.data); 
       } catch (error) {
         console.error("Error al obtener datos:", error);
       }
@@ -57,7 +59,7 @@ const PagosRegistrados = () => {
             <select
               value={mesActual}
               onChange={(e) => setMesActual(parseInt(e.target.value))}
-              className="p-2 rounded-lg bg-white border border-gray-300 text-fontdef cursor-pointer"
+              className="p-2 rounded-lg border-2 border-fontdef/50 text-fontdef bg-barcolor cursor-pointer"
             >
               {mesesDisponibles.map((mes, index) => (
                 <option key={index} value={index}>{mes}</option>
@@ -71,20 +73,20 @@ const PagosRegistrados = () => {
                 max={1000}
                 value={minMonto}
                 onChange={(e) => setMinMonto(parseInt(e.target.value))}
-                className="accent-accent1"
+                className="accent-accent1 w-60"
               />
               <span className="text-gray-700 text-sm">Min: ${minMonto}</span>
             </div>
 
             <a
               href="/admin/reports"
-              className="ml-auto px-4 py-2 bg-accent2 text-white rounded-lg hover:bg-accent1 transition"
+              className="ml-auto px-4 py-2 bg-accent2 text-white rounded-lg hover:bg-fontlink transition"
             >
               Reportes
             </a>
           </div>
 
-          <ul role="list" className="divide-y divide-gray-100 bg-barcolor rounded-2xl">
+          <ul role="list" className="divide-y divide-gray-100 bg-white rounded-2xl">
             {pagosFiltrados.length === 0 ? (
               <li className="py-6 text-center">No hay pagos para este mes con ese monto.</li>
             ) : (
