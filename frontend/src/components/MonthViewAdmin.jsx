@@ -48,29 +48,47 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
   }, []);
 
   const handleEnroll = async () => {
-    setIsEnrolling(true);
-    try {
-      const body = {
-        classId: selectedEvent.classId,
-        instructorId: selectedEvent.instructorId,
-      };
-      await axios.post(
-        `${API_URL}/adana-api/v1/classes/reserve/onlyOne/${userIdToEnroll}`,
-        body
-      );
+  setIsEnrolling(true);
+  try {
+    // 1. Obtener estudiantes actuales
+    const response = await axios.get(
+      `${API_URL}/adana-api/v1/classes/instructor/${selectedEvent.instructorId}/class/${selectedEvent.classId}/details`
+    );
 
-      toast.success('Usuario inscrito correctamente');
-      setShowEnrollModal(false);
-      setShowModal(false);
-      setSelectedEvent(null);
-      onClassAdded();
-    } catch (error) {
-      const message = error.response?.data?.message || 'Error al inscribir usuario';
-      toast.error(message);
-    } finally {
-      setIsEnrolling(false);
+    const students = response.data?.students || [];
+
+    // 2. Verificar si el usuario ya está inscrito
+    const alreadyEnrolled = students.some(student => student.id === userIdToEnroll);
+
+    if (alreadyEnrolled) {
+      toast.error("Este usuario ya está inscrito en esta clase.");
+      return; // Salir para no hacer el POST
     }
-  };
+
+    // 3. Si no está inscrito, hacer POST para inscribir
+    const body = {
+      classId: selectedEvent.classId,
+      instructorId: selectedEvent.instructorId,
+    };
+    await axios.post(
+      `${API_URL}/adana-api/v1/classes/reserve/onlyOne/${userIdToEnroll}`,
+      body
+    );
+
+    toast.success('Usuario inscrito correctamente');
+    setShowEnrollModal(false);
+    setShowModal(false);
+    setSelectedEvent(null);
+    onClassAdded();
+
+  } catch (error) {
+    const message = error.response?.data?.message || 'Error al inscribir usuario';
+    toast.error(message);
+  } finally {
+    setIsEnrolling(false);
+  }
+};
+
 
   return (
     <div className="bg-[#F5F0FF] font-outfit rounded-3xl shadow-lg p-6 w-full h-full relative">
