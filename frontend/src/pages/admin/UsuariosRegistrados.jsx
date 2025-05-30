@@ -15,7 +15,8 @@ const UsuariosRegistrados = () => {
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [userForStatusChange, setUserForStatusChange] = useState(null);
   const [IsPanelOpen, setIsPanelOpen] = useState(false);
-
+  const [isProcessingStatusChange, setIsProcessingStatusChange] = useState(false);
+  const [isRegisteringUser, setIsRegisteringUser] = useState(false);
 
 
   // Estados del formulario
@@ -31,7 +32,17 @@ const UsuariosRegistrados = () => {
 
   const panelRef = useRef(null);
 
+  function spanishStatus(status) {
+      switch (status) {
+        case 'active':  
+          return 'Activo';  
+        case 'inactive':  
+          return 'Inactivo';
+        }
+      }
+
   useEffect(() => {
+    
     function handleClickOutside(event) {
       if (panelRef.current && !panelRef.current.contains(event.target)) {
         setSelectedUser(null);
@@ -103,6 +114,7 @@ const UsuariosRegistrados = () => {
 
   //sera?
   const handleUserSubmit = async () => {
+    setIsRegisteringUser(true);
     try {
       const response = await axios.post(`${API_URL}/auth/register`, formData);
       console.log("Usuario creado:", response.data);
@@ -117,6 +129,9 @@ const UsuariosRegistrados = () => {
         setError("Ocurrió un error al registrar el usuario");
 
       }
+    }finally {
+      setIsRegisteringUser(false);
+      fetchUsers(); // Recargar usuarios después de registrar uno nuevo
     }
   };
 
@@ -146,6 +161,8 @@ const UsuariosRegistrados = () => {
       fetchUsers(); // si tienes una función para recargar usuarios
     } catch (error) {
       console.error("Error al cambiar el estado:", error);
+    } finally {
+      setIsProcessingStatusChange(false); // Asegúrate de restablecer el estado de procesamiento
     }
   };
 
@@ -189,13 +206,13 @@ const UsuariosRegistrados = () => {
             </select>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-4 py-2 bg-accent2 text-white rounded-lg hover:bg-accent2/90 transition"
+              className="px-4 py-2 bg-accent2 text-white rounded-lg hover:bg-fontlink transition cursor-pointer"
             >
               Agregar usuario
             </button>
           </div>
 
-          <ul role="list" className="divide-y divide-gray-100 bg-barcolor rounded-2xl">
+          <ul role="list" className="divide-y divide-gray-100 bg-white rounded-2xl">
             {filteredUsers.map((user) => (
               <li
                 key={user.email}
@@ -215,7 +232,7 @@ const UsuariosRegistrados = () => {
                 </div>
                 <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
                   <p className="text-sm/6 text-gray-900 capitalize">{user.role}</p>
-                  <p className="mt-1 text-xs/5 text-gray-500 uppercase">{user.status}</p>
+                  <p className="mt-1 text-xs/5 text-gray-500 uppercase">{spanishStatus(user.status)}</p>
                   {/* Botón para activar/inactivar */}
                   <button
                     onClick={(e) => {
@@ -223,9 +240,9 @@ const UsuariosRegistrados = () => {
                       setUserForStatusChange(user);
                       setIsStatusModalOpen(true);
                     }}
-                    className="mt-2 text-xs text-blue-600 hover:underline"
+                    className="mt-2 text-xs text-blue-600 hover:underline cursor-pointer"
                   >
-                    {user.status === 'active' ? 'Inactivar' : 'Activar'}
+                    {user.status === 'active' ? 'Desactivar' : 'Reactivar'}
                   </button>
                 </div>
               </li>
@@ -245,11 +262,11 @@ const UsuariosRegistrados = () => {
               exit={{ x: 100, opacity: 0 }}
               transition={{ duration: 0.3 }}
               ref={panelRef}
-              className="w-96 h-115 sticky top-0 right-0 bottom-0 bg-white shadow-2xl rounded-l-3xl p-6 mt-25 z-10 border-l-2 border-gray-200 "
+              className="w-96 h-screen fixed top-0 right-0 bottom-0 bg-white shadow-2xl p-6 mt-24 z-10 border-l-2 border-gray-200 "
             >
               <button
                 onClick={() => setSelectedUser(null)}
-                className="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-2xl font-bold mt-2 cursor-pointer"
+                className="absolute top-3 right-4 text-gray-400 hover:text-red-500 text-4xl font-bold mt-2 cursor-pointer"
               >
                 ×
               </button>
@@ -264,7 +281,7 @@ const UsuariosRegistrados = () => {
                 <div className="text-left text-fontdef space-y-2 text-sm">
                   <p><strong>ID:</strong> {selectedUser.id}</p>
                   <p><strong>Rol:</strong> {selectedUser.role}</p>
-                  <p><strong>Estado:</strong> {selectedUser.status}</p>
+                  <p><strong>Estado:</strong> {spanishStatus(selectedUser.status)}</p>
                   <p><strong>Género:</strong> {selectedUser.gender || "No especificado"}</p>
                   <p><strong>Teléfono:</strong> {selectedUser.phone || "No disponible"}</p>
                 </div>
@@ -300,8 +317,40 @@ const UsuariosRegistrados = () => {
                 </select>
               </div>
               <div className="mt-6 flex justify-end gap-2">
-                <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">Cancelar</button>
-                <button onClick={handleUserSubmit} className="px-4 py-2 bg-accent2 text-white rounded-md hover:bg-accent2/90">Registrar</button>
+                <div className="mt-6 flex justify-end gap-2">
+  <button
+    onClick={() => setIsModalOpen(false)}
+    disabled={isRegisteringUser}
+    className={`px-4 py-2 rounded-md ${
+      isRegisteringUser
+        ? 'bg-gray-300 cursor-progress'
+        : 'bg-gray-300 hover:bg-gray-400 cursor-pointer'
+    }`}
+  >
+    {isRegisteringUser ? (
+      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+    ) : (
+      'Cancelar'
+    )}
+  </button>
+
+  <button
+    onClick={handleUserSubmit}
+    disabled={isRegisteringUser}
+    className={`px-4 py-2 text-white rounded-md flex items-center justify-center ${
+      isRegisteringUser
+        ? 'bg-accent2/70 cursor-progress'
+        : 'bg-accent2 hover:bg-accent2/90 cursor-pointer'
+    }`}
+  >
+    {isRegisteringUser ? (
+      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+    ) : (
+      'Registrar'
+    )}
+  </button>
+</div>
+
               </div>
             </div>
           </div>
@@ -311,24 +360,43 @@ const UsuariosRegistrados = () => {
           <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/50">
             <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md">
               <h2 className="text-lg font-semibold text-fontdef mb-4">
-                ¿Desea {userForStatusChange.status === 'active' ? 'inactivar' : 'activar'} al usuario <strong>{userForStatusChange.name}</strong>?
+                ¿Desea {userForStatusChange.status === 'active' ? 'desactivar' : 'reactivar'} al usuario <strong>{userForStatusChange.name}</strong>?
               </h2>
               <div className="mt-6 flex justify-end gap-2">
                 <button
-                  onClick={() => {
-                    setIsStatusModalOpen(false);
-                    setUserForStatusChange(null);
-                  }}
-                  className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
-                >
-                  No
-                </button>
+  onClick={() => {
+    setIsStatusModalOpen(false);
+    setUserForStatusChange(null);
+  }}
+  disabled={isProcessingStatusChange}
+  className={`px-4 py-2 rounded-md cursor-pointer ${
+    isProcessingStatusChange ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-300 hover:bg-gray-400'
+  }`}
+>
+  No
+</button>
+
                 <button
-                  onClick={handleStatusChange(userForStatusChange.name)}
-                  className="px-4 py-2 bg-accent2 text-white rounded-md hover:bg-accent2/90"
-                >
-                  Sí
-                </button>
+  onClick={() => {
+    setIsProcessingStatusChange(true);
+    handleStatusChange(userForStatusChange.name);
+  }}
+  disabled={isProcessingStatusChange}
+  className={`px-4 py-2 rounded-md text-white flex items-center justify-center ${
+  isProcessingStatusChange
+    ? 'bg-accent2/70 cursor-progress'
+    : 'bg-accent2 hover:bg-accent2/90 cursor-pointer'
+}`}
+
+>
+  {isProcessingStatusChange ? (
+    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin cursor-progress"></div>
+  ) : (
+    'Sí'
+  )}
+</button>
+
+
               </div>
             </div>
           </div>

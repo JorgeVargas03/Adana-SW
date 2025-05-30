@@ -233,7 +233,7 @@ setRoleData(roleFormattedData);
           id="monthSelect"
           value={selectedMonth}
           onChange={(e) => setSelectedMonth(e.target.value)}
-          className="p-2 rounded-lg border border-gray-300 text-gray-700 w-full max-w-xs bg-white"
+          className="w-full max-w-xs border-2 border-fontdef/50 rounded-lg p-2 text-fontdef bg-barcolor cursor-pointer"
         >
           {availableMonths.map((month) => (
             <option key={month} value={month}>
@@ -262,32 +262,32 @@ setRoleData(roleFormattedData);
       </div>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
-  <div className="bg-white shadow-md rounded-lg p-4 text-center">
+  <div className="bg-white shadow-md rounded-lg p-4 text-center hover:transform hover:scale-105 transition-all duration-300">
     <h3 className="text-xl font-semibold">Usuarios registrados</h3>
     <p className="text-3xl">{resumen.totalUsuarios}</p>
   </div>
 
-  <div className="bg-white shadow-md rounded-lg p-4 text-center">
+  <div className="bg-white shadow-md rounded-lg p-4 text-center hover:transform hover:scale-105 transition-all duration-300">
     <h3 className="text-xl font-semibold">Total de clientes</h3>
     <p className="text-3xl">{resumen.totalAlumnos}</p>
   </div>
 
-  <div className="bg-white shadow-md rounded-lg p-4 text-center">
+  <div className="bg-white shadow-md rounded-lg p-4 text-center hover:transform hover:scale-105 transition-all duration-300">
     <h3 className="text-xl font-semibold">Clases este mes</h3>
     <p className="text-3xl">{resumen.totalClasesMes}</p>
   </div>
 
-  <div className="bg-blue-100 shadow-md rounded-lg p-4 text-center">
+  <div className="bg-blue-100 shadow-md rounded-lg p-4 text-center hover:transform hover:scale-105 transition-all duration-300">
     <h3 className="text-xl font-semibold">Total de Hombres</h3>
     <p className="text-3xl">{resumen.totalHombres}</p>
   </div>
 
-  <div className="bg-pink-100 shadow-md rounded-lg p-4 text-center">
+  <div className="bg-pink-100 shadow-md rounded-lg p-4 text-center hover:transform hover:scale-105 transition-all duration-300">
     <h3 className="text-xl font-semibold">Total de Mujeres</h3>
     <p className="text-3xl">{resumen.totalMujeres}</p>
   </div>
 
-  <div className="bg-gray-200 shadow-md rounded-lg p-4 text-center">
+  <div className="bg-gray-200 shadow-md rounded-lg p-4 text-center hover:transform hover:scale-105 transition-all duration-300">
     <h3 className="text-xl font-semibold">Total Otros</h3>
     <p className="text-3xl">{resumen.totalOtro}</p>
   </div>

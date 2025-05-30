@@ -27,6 +27,9 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
   const { agregarEvento } = useCarrito();
+  const [isEnrolling, setIsEnrolling] = useState(false);
+  const [students, setStudents] = useState([]); // Estudiantes
+
 
   const days = eachDayOfInterval({
     start: startOfMonth(month),
@@ -45,6 +48,7 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
   }, []);
 
   const handleEnroll = async () => {
+    setIsEnrolling(true);
     try {
       const body = {
         classId: selectedEvent.classId,
@@ -63,6 +67,8 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
     } catch (error) {
       const message = error.response?.data?.message || 'Error al inscribir usuario';
       toast.error(message);
+    } finally {
+      setIsEnrolling(false);
     }
   };
 
@@ -230,17 +236,33 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
                 />
                 <div className="flex justify-center gap-2">
                   <button
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                    onClick={handleEnroll}
-                  >
-                    Inscribir
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
-                    onClick={() => setShowEnrollModal(false)}
-                  >
-                    Cancelar
-                  </button>
+  className={`w-24 px-4 py-2 text-white rounded-lg flex items-center justify-center ${
+    isEnrolling
+      ? 'bg-green-600/70 cursor-progress'
+      : 'bg-green-600 hover:bg-green-700 cursor-pointer'
+  }`}
+  onClick={handleEnroll}
+  disabled={isEnrolling}
+>
+  {isEnrolling ? (
+    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+  ) : (
+    'Inscribir'
+  )}
+</button>
+
+<button
+  className={`px-4 py-2 text-white rounded-lg ${
+    isEnrolling
+      ? 'bg-gray-400 cursor-progress'
+      : 'bg-gray-400 hover:bg-gray-500 cursor-pointer'
+  }`}
+  onClick={() => setShowEnrollModal(false)}
+  disabled={isEnrolling}
+>
+  Cancelar
+</button>
+
                 </div>
               </div>
             </motion.div>

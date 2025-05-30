@@ -159,7 +159,7 @@ function MonthViewInstructor({ month, events, onClassAdded }) {
                   {dayEvents.map((event) => (
                     <div
                       key={event.classId}
-                      className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold ${getEventColor(event.availableSpots)}`}
+                      className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold ${getEventColor(event.availableSpots, event.capacity)}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedDate(event.date); // ✅ Aquí sí se selecciona la fecha correcta
@@ -220,26 +220,28 @@ function MonthViewInstructor({ month, events, onClassAdded }) {
                       <p className="text-sm text-gray-700 mb-4"><strong>Reservados:</strong> {selectedEvent.capacity - selectedEvent.availableSpots} / {selectedEvent.capacity}</p>
 
                       {students.length > 0 && (
-                        <div className="text-left text-sm mb-4">
-                          <strong className="text-lg">Estudiantes inscritos:</strong>
-                          <ul className="justify-end mt-2 divide-y divide-gray-100">
-                            {students.map((s, i) => (
-                              <li key={i}>
-                                <div className="flex min-w-0 gap-x-5 py-1">
-                                  <img
-                                    alt=""
-                                    src={s.profile_picture || iconDefault} // opcional si no tienes imagen
-                                    className="size-8 flex-none rounded-full bg-gray-50"
-                                  />
-                                  <div className="min-w-0 flex-auto">
-                                    <p className="mt-1 truncate text-xs/5 text-gray-500">{s.name}</p>
-                                  </div>
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+  <div className="text-left text-sm mb-4">
+    <strong className="text-lg">Estudiantes inscritos:</strong>
+    <div className="mt-2 max-h-52 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-[#C3C37E]/70 scrollbar-track-transparent">
+      <ul className="divide-y divide-gray-100">
+        {students.map((s, i) => (
+          <li key={i}>
+            <div className="flex min-w-0 gap-x-5 py-1">
+              <img
+                alt=""
+                src={s.profile_picture || iconDefault}
+                className="size-8 flex-none rounded-full bg-gray-50"
+              />
+              <div className="min-w-0 flex-auto">
+                <p className="mt-1 truncate text-xs/5 text-gray-500">{s.name}</p>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+)}
 
                       <button
                         className="bg-[#C3C37E] hover:bg-[#5e46a5] text-white px-6 py-2 rounded-full font-semibold transition cursor-pointer"
@@ -375,9 +377,13 @@ function MonthViewInstructor({ month, events, onClassAdded }) {
   );
 }
 
-function getEventColor(spots) {
-  if (spots >= 5) return 'bg-green-200 text-green-800';
-  if (spots >= 2) return 'bg-yellow-200 text-yellow-800';
+function getEventColor(spots, capacity) {
+  const total = Number(capacity);
+  const percentage = (spots / total) * 100;
+
+  if (percentage > 50) return 'bg-green-200 text-green-800';
+  if (percentage >= 25) return 'bg-yellow-200 text-yellow-800';
+  if (percentage > 0) return 'bg-orange-200 text-yellow-800';
   return 'bg-red-200 text-red-800';
 }
 

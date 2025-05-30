@@ -64,18 +64,19 @@ export default function Reservation() {
         <ul className="text-gray-700 list-disc list-inside text-justify">
           <li><span className="font-bold text-green-500">Verde:</span> Muchos espacios disponibles</li>
           <li><span className="font-bold text-yellow-500">Amarillo:</span> Espacios moderados</li>
+          <li><span className="font-bold text-orange-500">Naranja:</span> Clase casi llena</li>
           <li><span className="font-bold text-red-500">Rojo:</span> Sin espacios disponibles</li>
         </ul>
       </div>
     </div>
 
   </div>
-  <div> {/*Boton pa sus reservas*/}
+  <div className='flex justify-center'> {/*Boton pa sus reservas*/}
       <Link
       to="/client/myreservation"
-      className="flex w-full justify-center font-Outfit items-center gap-2 rounded-md bg-accent2 px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs hover:bg-accent2/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer h-10"
+      className="mt-4 flex w-sm justify-center font-Outfit items-center gap-2 rounded-md bg-accent2 px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs hover:bg-accent2/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer h-10"
     >
-      Consulta AQUI tus Reservas
+      Consulta aquí tus Reservas
     </Link>
 
   </div>

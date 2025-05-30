@@ -20,20 +20,27 @@ export const CarritoProvider = ({ children }) => {
   }, [eventosUnidos]);
 
   const agregarEvento = (evento) => {
-    const yaExiste = eventosUnidos.some(
-      (e) => e.classId === evento.classId && e.instructorId === evento.instructorId
-    );
-    if (!yaExiste) {
-      setEventosUnidos((prev) => [...prev, evento]);
-      toast.info("Clase agregada al carrito",{
-        position: 'bottom-left'
-      });
-    } else {
-      toast.warn("Esta clase ya se encuentra en el carrito");
-      return;
+  if (evento.availableSpots === 0) {
+    toast.error("No puedes agregar una clase llena al carrito", {
+      position: 'bottom-left',
+    });
+    return;
+  }
 
-    }
-  };
+  const yaExiste = eventosUnidos.some(
+    (e) => e.classId === evento.classId && e.instructorId === evento.instructorId
+  );
+
+  if (!yaExiste) {
+    setEventosUnidos((prev) => [...prev, evento]);
+    toast.info("Clase agregada al carrito", {
+      position: 'bottom-left'
+    });
+  } else {
+    toast.warn("Esta clase ya se encuentra en el carrito");
+  }
+};
+
 
   const limpiarCarrito = () => {
     setEventosUnidos([]);
