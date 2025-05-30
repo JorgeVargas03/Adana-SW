@@ -61,7 +61,7 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
     const alreadyEnrolled = students.some(student => student.id === userIdToEnroll);
 
     if (alreadyEnrolled) {
-      toast.error("Este usuario ya está inscrito en esta clase.");
+      toast.error("El usuario ya estaba inscrito en esta clase.");
       return; // Salir para no hacer el POST
     }
 
