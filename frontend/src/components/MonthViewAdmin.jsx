@@ -1,22 +1,14 @@
-// MonthViewAdmin.jsx
+ // MonthViewAdmin.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  getDay,
-  isSameDay,
-  eachDayOfInterval,
-  startOfDay,
-} from 'date-fns';
+import {format,startOfMonth,endOfMonth,getDay,isSameDay,eachDayOfInterval,startOfDay} from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { es } from 'date-fns/locale';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useCarrito } from '../context/CarritoContext';
 import { isTokenValid } from '../utils/auth';
-
+import { parseISO } from 'date-fns';
 const API_URL = import.meta.env.VITE_API_URL;
 
 function MonthViewAdmin({ month, events, onClassAdded }) {
@@ -24,6 +16,7 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
   const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [userIdToEnroll, setUserIdToEnroll] = useState('');
+  const [selectedDate, setSelectedDate] = useState(null); // Fecha seleccionada
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
   const { agregarEvento } = useCarrito();
@@ -38,14 +31,6 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
 
   const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   const firstDayIndex = (getDay(startOfMonth(month)) + 6) % 7;
-
-  useEffect(() => {
-    const validateToken = () => setHasToken(isTokenValid());
-    validateToken();
-    const handleStorageChange = () => validateToken();
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
 
   const handleEnroll = async () => {
   setIsEnrolling(true);
@@ -90,6 +75,10 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
 };
 
 
+    const filteredEvents = selectedDate
+      ? events.filter((event) => isSameDay(startOfDay(parseISO(event.date)), startOfDay(selectedDate)))
+      : events;
+
   return (
     <div className="bg-[#F5F0FF] font-outfit rounded-3xl shadow-lg p-6 w-full h-full relative">
       <h2 className="text-3xl font-bold mb-6 text-center text-[#7E5EC3] capitalize">
@@ -110,10 +99,10 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
         ))}
 
         <AnimatePresence>
-          {days.map(day => {
+          {days.map((day) => {
             const isToday = isSameDay(day, new Date());
-            const dayEvents = events.filter(e =>
-              isSameDay(startOfDay(new Date(e.date)), startOfDay(day))
+            const dayEvents = filteredEvents.filter((e) =>
+              isSameDay(startOfDay(parseISO(e.date)), startOfDay(day))
             );
 
             return (
@@ -190,10 +179,9 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
                 <p className="text-sm text-gray-700 mb-1"><strong>Instructor:</strong> {selectedEvent.instructorName}</p>
                 <p className="text-sm text-gray-700 mb-1"><strong>Instructor ID:</strong> {selectedEvent.instructorId}</p>
                 <p className="text-sm text-gray-700 mb-1"><strong>Descripción:</strong> {selectedEvent.description}</p>
-                <p className="text-sm text-gray-700 mb-1"><strong>Fecha:</strong> {format(new Date(selectedEvent.date), "PPP", { locale: es })}</p>
                 <p className="text-sm text-gray-700 mb-1"><strong>Hora:</strong> {selectedEvent.time}</p>
                 <p className="text-sm text-gray-700 mb-1"><strong>Precio:</strong> ${selectedEvent.price}</p>
-                <p className="text-sm text-gray-700 mb-1"><strong>Capacidad:</strong> ${selectedEvent.capacity}</p>
+                <p className="text-sm text-gray-700 mb-1"><strong>Capacidad:</strong> {selectedEvent.availableSpots} / {selectedEvent.capacity}</p> 
                 <p className="text-sm text-gray-700 mb-3">
                   <strong>Cupos:</strong> {selectedEvent.availableSpots}
                 </p>
@@ -291,4 +279,4 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
   );
 }
 
-export default MonthViewAdmin;
+export default MonthViewAdmin; 

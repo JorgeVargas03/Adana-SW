@@ -25,7 +25,7 @@ export function CalendarAppUsuario () {
         title: reserva.classTitle,
         instructor: reserva.instructor,
         description: reserva.description,
-        date: new Date(reserva.date),
+        date: reserva.date,
         time: reserva.time
       }));
 
