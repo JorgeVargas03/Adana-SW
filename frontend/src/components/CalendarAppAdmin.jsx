@@ -14,24 +14,18 @@ function CalendarAppAdmin() {
       console.log("Respuesta de la API:", response.data);
       const data = response.data;
 
-      const formattedClasses = data.map(clase => {
-  const [year, month, day] = clase.date.split("-");
-  const localDate = new Date(Number(year), Number(month) - 1, Number(day));
-
-  return {
-    classId: clase.id,
-    title: clase.title,
-    description: clase.description,
-    price: clase.price,
-    date: localDate,
-    time: clase.time,
-    instructorId: clase.instructorId,
-    instructorName: clase.instructorName,
-    availableSpots: clase.availableSpaces,
-    capacity: clase.capacity,
-  };
-});
-
+      const formattedClasses = data.map(clase => ({
+        classId: clase.id,
+        title: clase.title,
+        description: clase.description,
+        price: clase.price,
+        date: clase.date,
+        time: clase.time,
+        instructorId: clase.instructorId,
+        instructorName: clase.instructorName,
+        availableSpots: clase.availableSpaces - (clase.reserved || 0),
+        capacity: clase.capacity,
+      }));
 
       setClasses(formattedClasses);
     } catch (error) {
