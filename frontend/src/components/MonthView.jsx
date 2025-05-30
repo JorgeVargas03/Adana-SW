@@ -153,7 +153,7 @@ function MonthView({ month }) {
                   {dayEvents.map((event, idx) => (
                     <div
                       key={idx} //trae el color de las clases, cambiar en el futuro para que se extraiga luego luego del back
-                      className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold cursor-pointer ${getEventColor(event.availableSpots)}`}
+                      className={`text-xs text-ellipsis px-2 py-1 rounded-md text-center font-semibold cursor-pointer ${getEventColor(event.availableSpots, event.capacity)}`}
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedEvent(event);
@@ -225,15 +225,24 @@ function MonthView({ month }) {
                             return;
                           }
 
-                          agregarEvento({
-                            classId: selectedEvent.classId,
-                            instructorId: selectedEvent.instructorId,
-                            title: selectedEvent.title,
-                            description: selectedEvent.description,
-                            instructorName: selectedEvent.instructor,
-                            price: selectedEvent.price,
-                            formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
-                          });
+                          if (selectedEvent.availableSpots === 0) {
+  setShowModal(false);
+  setSelectedEvent(null);
+  toast.error("Esta clase ya está llena.");
+  return;
+}
+
+agregarEvento({
+  classId: selectedEvent.classId,
+  instructorId: selectedEvent.instructorId,
+  title: selectedEvent.title,
+  description: selectedEvent.description,
+  instructorName: selectedEvent.instructor,
+  price: selectedEvent.price,
+  formattedDate: format(selectedEvent.date, "dd/MM/yyyy HH:mm"),
+  availableSpots: selectedEvent.availableSpots // 👈 importante para futura validación
+});
+
 
                           console.log('Evento guardado:', selectedEvent.classId);
                           setShowModal(false);
@@ -272,10 +281,15 @@ function MonthView({ month }) {
 }
 
 //metodo para los colores, actualizar
-function getEventColor(spots) {
-  if (spots >= 5) return 'bg-green-200 text-green-800';
-  if (spots >= 2) return 'bg-yellow-200 text-yellow-800';
+function getEventColor(spots, capacity) {
+  const total = Number(capacity);
+  const percentage = (spots / total) * 100;
+
+  if (percentage > 50) return 'bg-green-200 text-green-800';
+  if (percentage >= 25) return 'bg-yellow-200 text-yellow-800';
+  if (percentage > 0) return 'bg-orange-200 text-yellow-800';
   return 'bg-red-200 text-red-800';
 }
+
 
 export default MonthView;

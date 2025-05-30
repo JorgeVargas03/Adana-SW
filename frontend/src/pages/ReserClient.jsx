@@ -52,10 +52,10 @@ export default function ReserClient() {
           </div>
 
           {/* Aquí ajustamos el margen superior del botón para que quede pegado */}
-          <div className="mt-4"> {/* Asegúrate de que no haya margen adicional */}
+          <div className="mt-4 flex justify-center"> {/* Asegúrate de que no haya margen adicional */}
             <Link
               to="/reservation"
-              className="flex w-full justify-center font-Outfit items-center gap-2 rounded-md bg-accent2 px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs hover:bg-accent2/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer h-10"
+              className="flex w-sm justify-center font-Outfit items-center gap-2 rounded-md bg-accent2 px-3 py-1.5 text-md font-semibold text-[#FFFDEF] shadow-xs hover:bg-accent2/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer h-10"
             >
               Volver al calendario de reservas
             </Link>

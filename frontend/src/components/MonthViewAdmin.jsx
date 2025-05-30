@@ -20,6 +20,9 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
   const { agregarEvento } = useCarrito();
+  const [isEnrolling, setIsEnrolling] = useState(false);
+  const [students, setStudents] = useState([]); // Estudiantes
+
 
   const days = eachDayOfInterval({
     start: startOfMonth(month),
@@ -30,26 +33,47 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
   const firstDayIndex = (getDay(startOfMonth(month)) + 6) % 7;
 
   const handleEnroll = async () => {
-    try {
-      const body = {
-        classId: selectedEvent.classId,
-        instructorId: selectedEvent.instructorId,
-      };
-      await axios.post(
-        `${API_URL}/adana-api/v1/classes/reserve/onlyOne/${userIdToEnroll}`,
-        body
-      );
+  setIsEnrolling(true);
+  try {
+    // 1. Obtener estudiantes actuales
+    const response = await axios.get(
+      `${API_URL}/adana-api/v1/classes/instructor/${selectedEvent.instructorId}/class/${selectedEvent.classId}/details`
+    );
 
-      toast.success('Usuario inscrito correctamente');
-      setShowEnrollModal(false);
-      setShowModal(false);
-      setSelectedEvent(null);
-      onClassAdded();
-    } catch (error) {
-      const message = error.response?.data?.message || 'Error al inscribir usuario';
-      toast.error(message);
+    const students = response.data?.students || [];
+
+    // 2. Verificar si el usuario ya está inscrito
+    const alreadyEnrolled = students.some(student => student.id === userIdToEnroll);
+
+    if (alreadyEnrolled) {
+      toast.error("Este usuario ya está inscrito en esta clase.");
+      return; // Salir para no hacer el POST
     }
-  };
+
+    // 3. Si no está inscrito, hacer POST para inscribir
+    const body = {
+      classId: selectedEvent.classId,
+      instructorId: selectedEvent.instructorId,
+    };
+    await axios.post(
+      `${API_URL}/adana-api/v1/classes/reserve/onlyOne/${userIdToEnroll}`,
+      body
+    );
+
+    toast.success('Usuario inscrito correctamente');
+    setShowEnrollModal(false);
+    setShowModal(false);
+    setSelectedEvent(null);
+    onClassAdded();
+
+  } catch (error) {
+    const message = error.response?.data?.message || 'Error al inscribir usuario';
+    toast.error(message);
+  } finally {
+    setIsEnrolling(false);
+  }
+};
+
 
     const filteredEvents = selectedDate
       ? events.filter((event) => isSameDay(startOfDay(parseISO(event.date)), startOfDay(selectedDate)))
@@ -218,17 +242,33 @@ function MonthViewAdmin({ month, events, onClassAdded }) {
                 />
                 <div className="flex justify-center gap-2">
                   <button
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                    onClick={handleEnroll}
-                  >
-                    Inscribir
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
-                    onClick={() => setShowEnrollModal(false)}
-                  >
-                    Cancelar
-                  </button>
+  className={`w-24 px-4 py-2 text-white rounded-lg flex items-center justify-center ${
+    isEnrolling
+      ? 'bg-green-600/70 cursor-progress'
+      : 'bg-green-600 hover:bg-green-700 cursor-pointer'
+  }`}
+  onClick={handleEnroll}
+  disabled={isEnrolling}
+>
+  {isEnrolling ? (
+    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+  ) : (
+    'Inscribir'
+  )}
+</button>
+
+<button
+  className={`px-4 py-2 text-white rounded-lg ${
+    isEnrolling
+      ? 'bg-gray-400 cursor-progress'
+      : 'bg-gray-400 hover:bg-gray-500 cursor-pointer'
+  }`}
+  onClick={() => setShowEnrollModal(false)}
+  disabled={isEnrolling}
+>
+  Cancelar
+</button>
+
                 </div>
               </div>
             </motion.div>
