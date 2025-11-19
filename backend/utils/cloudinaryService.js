@@ -41,3 +41,13 @@ exports.uploadImageToCloudinary = async (input, filename, mimeType, folder = und
     throw error;
   }
 };
+
+exports.destroyImageFromCloudinary = async (publicId) => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
+  } catch (error) {
+    console.error('Error al destruir la imagen en Cloudinary:', error);
+    throw error;
+  }
+};

@@ -16,5 +16,6 @@ router.put('/profile/:userId/updatePassword', userController.updatePassword);
 router.get('/profile/:userId/hasPassword', userController.getHasPassword);
 router.get('/:userId/info', userController.getUserById);
 router.post('/upload/image', upload.single('image'), userController.uploadImageProfile);
+router.delete('/delete/image/:publicId', userController.deleteImageProfile);
 
 module.exports = router;
