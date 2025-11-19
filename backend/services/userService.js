@@ -223,7 +223,7 @@ exports.uploadImageProfile = async (image, filename) => {
     }
 
     const base64Image = fileBuffer.toString('base64');
-    const imageUrl = await cloudinaryService.uploadImageToCloudinary(base64Image, filename, mimeType);
+    const imageUrl = await cloudinaryService.uploadImageToCloudinary(base64Image, filename, mimeType, "connixia-uploads");
 
     if (imageUrl) {
       return { 
