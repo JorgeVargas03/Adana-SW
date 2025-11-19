@@ -9,7 +9,7 @@ cloudinary.config({
 });
 
 // Función para subir una imagen a Cloudinary
-exports.uploadImageToCloudinary = async (input, filename, mimeType) => {
+exports.uploadImageToCloudinary = async (input, filename, mimeType, folder = undefined) => {
   try {
     let dataUri;
 
@@ -29,7 +29,7 @@ exports.uploadImageToCloudinary = async (input, filename, mimeType) => {
 
     // Subir la imagen a Cloudinary
     const result = await cloudinary.uploader.upload(dataUri, {
-      folder: 'users_profile', // Puedes cambiar el nombre de la carpeta según tus necesidades
+      folder: folder || 'users_profile', // Puedes cambiar el nombre de la carpeta según tus necesidades
       public_id: filename,       // Opcional: establecer un nombre público para la imagen
       overwrite: true,           // Opcional: sobrescribir si ya existe una imagen con el mismo public_id
     });

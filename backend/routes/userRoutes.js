@@ -15,5 +15,6 @@ router.patch('/profile/:userId/updateProfile', upload.single('profile_picture'),
 router.put('/profile/:userId/updatePassword', userController.updatePassword);
 router.get('/profile/:userId/hasPassword', userController.getHasPassword);
 router.get('/:userId/info', userController.getUserById);
+router.post('/upload/image', upload.single('image'), userController.uploadImageProfile);
 
 module.exports = router;

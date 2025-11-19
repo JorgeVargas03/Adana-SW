@@ -205,3 +205,41 @@ exports.getUserById = async (userId) => {
 };
 
 
+//Servicio para subir una imagen a Cloudinary (libre)
+exports.uploadImageProfile = async (image, filename) => {
+  try {
+    // Formatos de imagen permitidos
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/bmp'];
+
+    const fileBuffer = image.buffer;
+    const mimeType = image.mimetype;
+
+    if (!allowedMimeTypes.includes(mimeType)) {
+      return {
+        success: false,
+        status: 400,
+        message: "Tipo de imagen no permitido. Solo JPG, PNG, WEBP, GIF, SVG o BMP.",
+      };
+    }
+
+    const base64Image = fileBuffer.toString('base64');
+    const imageUrl = await cloudinaryService.uploadImageToCloudinary(base64Image, filename, mimeType);
+
+    if (imageUrl) {
+      return { 
+        success: true, 
+        profileImageUrl: imageUrl, 
+        message: "Imagen subida correctamente" 
+      };
+    } else {
+      return {
+        success: false,
+        status: 500,
+        message: "Error al subir la imagen",
+      };
+    }
+  } catch (error) {
+    console.error("Error al subir la imagen:", error);
+    return { success: false, status: 500, message: "Error interno del servidor" };
+  }
+};

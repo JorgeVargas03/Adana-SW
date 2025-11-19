@@ -94,4 +94,30 @@ exports.getUserById = async (req, res) => {
 };
 
 
+// Controlador para subir una imagen a Cloudinary (libre)
+exports.uploadImageProfile = async (req, res) => {
+  const imageFile = req.file;
+  const { filename } = req.body;
 
+  // Validar que se proporcionó una imagen
+  if (!imageFile) {
+    return res.status(400).json({ message: "Se requiere una imagen" });
+  }
+
+  // Validar que se proporcionó un nombre de archivo
+  if (!filename) {
+    return res.status(400).json({ message: "Se requiere un nombre de archivo" });
+  }
+
+  const result = await userService.uploadImageProfile(imageFile, filename);
+
+  if (!result.success) {
+    return res.status(result.status).json({ message: result.message });
+  }
+
+  return res.status(200).json({ 
+    success: result.success,
+    profileImageUrl: result.profileImageUrl, 
+    message: result.message 
+  });
+};
