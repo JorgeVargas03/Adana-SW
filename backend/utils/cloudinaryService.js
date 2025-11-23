@@ -45,7 +45,7 @@ exports.uploadImageToCloudinary = async (input, filename, mimeType, folder = und
 exports.destroyImageFromCloudinary = async (publicId) => {
   const folder = 'connixia-uploads/';
   try {
-    const result = await cloudinary.uploader.destroy(folder + publicId,{invalidate: true});
+    const result = await cloudinary.uploader.destroy(folder + publicId, { invalidate: true });
     return { result, success: true, message: "Imagen eliminada correctamente de Cloudinary" };
   } catch (error) {
     console.error('Error al destruir la imagen en Cloudinary:', error);
