@@ -43,11 +43,21 @@ exports.uploadImageToCloudinary = async (input, filename, mimeType, folder = und
 };
 
 exports.destroyImageFromCloudinary = async (publicId) => {
+  const folder = 'connixia-uploads/';
   try {
-    const result = await cloudinary.uploader.destroy(publicId);
+    const result = await cloudinary.uploader.destroy(folder + publicId);
     return { result, success: true, message: "Imagen eliminada correctamente de Cloudinary" };
   } catch (error) {
     console.error('Error al destruir la imagen en Cloudinary:', error);
     throw error;
   }
+};
+
+exports.listResources = async () => {
+  const res = await cloudinary.api.resources({
+    resource_type: 'image',
+    type: 'upload',
+    max_results: 50 // hasta cierto tope (usa paginación con next_cursor)
+  });
+  return { res, success: true, message: "Imágenes listadas correctamente de Cloudinary" };
 };

@@ -1,6 +1,6 @@
 // controllers/userController.js
 const userService = require('../services/userService');
-const { destroyImageFromCloudinary } = require('../utils/cloudinaryService');
+const { destroyImageFromCloudinary, listResources } = require('../utils/cloudinaryService');
 
 //Obtener todos los usuarios
 exports.getAllUsers = async (req, res) => {
@@ -131,4 +131,13 @@ exports.deleteImageProfile = async (req, res) => {
     return res.status(400).json({ message: result.message });
   }
   return res.status(200).json({ message: result.message });
+};
+
+exports.getImageProfile = async (req, res) => {
+  const result = await listResources();
+
+  if (!result.success) {
+    return res.status(400).json({ message: result.message });
+  }
+  return res.status(200).json({ message: result.message, ...result });
 };
