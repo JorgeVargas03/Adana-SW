@@ -38,7 +38,7 @@ exports.uploadImageToCloudinary = async (input, filename, mimeType, folder = und
     return result.secure_url;
   } catch (error) {
     console.error('Error al subir la imagen a Cloudinary:', error);
-    throw error;
+    return;
   }
 };
 
@@ -49,7 +49,7 @@ exports.destroyImageFromCloudinary = async (publicId) => {
     return { result, success: true, message: "Imagen eliminada correctamente de Cloudinary" };
   } catch (error) {
     console.error('Error al destruir la imagen en Cloudinary:', error);
-    throw error;
+    return;
   }
 };
 
